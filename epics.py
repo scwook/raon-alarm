@@ -6,6 +6,10 @@ app = Flask(__name__)
 
 SERVER_ADDR = 'localhost'
 
+dbSample = [
+    {'pvname':'scwook:ai1', 'state':'alarm', ''}
+    ]
+
 c = pvaccess.Channel('scwook:ai1')
 count = 0
 
