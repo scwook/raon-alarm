@@ -7,15 +7,15 @@ app = Flask(__name__)
 SERVER_ADDR = 'localhost'
 
 dbSample = [
-    {'pvname':'scwook:ai1', 'state':'alarm', ''}
+    {'pvname':'scwook:ai1', 'value':'', 'condition':'0', 'state':'normal', 'active':'enable'},
+    {'pvname':'scwook:ai2', 'value':'', 'condition':'0', 'state':'normal', 'active':'enable'}
     ]
 
+
 c = pvaccess.Channel('scwook:ai1')
-count = 0
 
 def echo(x):
-    global count
-    count += 1
+
     print('count', count)
 
 c.subscribe('echo', echo)
