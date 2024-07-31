@@ -7,28 +7,33 @@ import time
 SERVER_ADDR = 'localhost'
 
 dbSample = [
-    {'pvname':'scwook:ai1', 'value':5.0, 'condition':0, 'state':'normal', 'active':True, 'timestamp': '0'},
-    {'pvname':'scwook:ai2', 'value':5.0, 'condition':0, 'state':'normal', 'active':False, 'timestamp': '0'}
+    {'pvname':'scwook:ai1', 'value':5.0, 'condition':0, 'state':'normal', 'active':True, 'lasttime': '0', 'repeat':0},
+    {'pvname':'scwook:ai2', 'value':5.0, 'condition':0, 'state':'normal', 'active':False, 'lasttime': '0', 'repeat':0}
     ]
+
+def checkAlarm():
+
+    print('alarm')
+
 
 class ChannelMonitor:
     def __init__(self, info):
-        self.info = info
+        self.alarmInfo = info
         self.channel = Channel(info['pvname'], ProviderType.CA)
 
-    def monitor(self, data):
-        currentValue = dict(data)
-        alarmValue = self.info['value']
-        alarmState = self.info['state']
-        alarmActive = self.info['active']
+    def monitor(self, channelData):
+        recordData = dict(channelData)
+        alarmValue = self.alarmInfo['value']
+        alarmState = self.alarmInfo['state']
+        alarmActive = self.alarmInfo['active']
 
-        if currentValue['value'] > alarmValue:
+        if recordData['value'] > alarmValue:
             if alarmActive and alarmState == 'normal':
-                print(self.info['pvname'], 'alarm')
-                self.info['state'] = 'alarm'
-                self.info['timestamp'] = int(time.time())
+                print(self.alarmInfo['pvname'], 'alarm')
+                self.alarmInfo['state'] = 'alarm'
+                self.alarmInfo['timestamp'] = int(time.time())
             else:
-                print(self.info['pvname'], 'alarm deactive')
+                print(self.alarmInfo['pvname'], 'alarm deactive')
 
 
 # c = pvaccess.Channel('scwook:ai1')
