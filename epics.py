@@ -11,10 +11,18 @@ dbSample = [
     {'pvname':'scwook:ai2', 'value':5.0, 'condition':0, 'state':'normal', 'active':False, 'lasttime': '0', 'repeat':0}
     ]
 
-def checkAlarm():
+def valueCompare(referenceValue, comparisonValue, operator):
+    if operator == 0:
+        return (referenceValue == comparisonValue)
 
-    print('alarm')
+    elif operator == 1:
+        return (referenceValue > comparisonValue)
+    
+    elif operator == 2:
+        return (referenceValue < comparisonValue)
 
+    else:
+        return None
 
 class ChannelMonitor:
     def __init__(self, info):
