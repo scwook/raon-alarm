@@ -24,6 +24,9 @@ def valueCompare(referenceValue, comparisonValue, operator):
     else:
         return None
 
+def typeConversion(value):
+    return 'aa'
+
 class ChannelMonitor:
     def __init__(self, info):
         self.alarmInfo = info
@@ -31,11 +34,14 @@ class ChannelMonitor:
 
     def monitor(self, channelData):
         recordData = dict(channelData)
+
+        pvValue = recordData['value']
         alarmValue = self.alarmInfo['value']
         alarmState = self.alarmInfo['state']
         alarmActive = self.alarmInfo['active']
 
-        if recordData['value'] > alarmValue:
+        operatorResult = valueCompare(pvValue, alarmValue, 1)
+        if operatorResult:
             if alarmActive and alarmState == 'normal':
                 print(self.alarmInfo['pvname'], 'alarm')
                 self.alarmInfo['state'] = 'alarm'
@@ -54,8 +60,8 @@ monitoringList = list()
 channelList.append(ChannelMonitor(dbSample[0]))
 channelList.append(ChannelMonitor(dbSample[1]))
 
-channelList[0].channel.subscribe(channelList[0].info['pvname'], channelList[0].monitor)
-channelList[1].channel.subscribe(channelList[1].info['pvname'], channelList[1].monitor)
+channelList[0].channel.subscribe(channelList[0].alarmInfo['pvname'], channelList[0].monitor)
+channelList[1].channel.subscribe(channelList[1].alarmInfo['pvname'], channelList[1].monitor)
 
 channelList[0].channel.startMonitor()
 channelList[1].channel.startMonitor()
@@ -65,7 +71,7 @@ print('current time', current_time)
 time.sleep(20)
 
 print('unsubscribe channel1')
-channelList[0].channel.unsubscribe(channelList[0].info['pvname'])
+channelList[0].channel.unsubscribe(channelList[0].alarmInfo['pvname'])
 
 current_time = int(time.time())
 print('current time', current_time)
