@@ -2,9 +2,9 @@ from pvaccess import *
 import time
 import asyncio
 import threading
-# from flask import Flask
+from flask import Flask
 
-# app = Flask(__name__)
+app = Flask(__name__)
 
 SERVER_ADDR = 'localhost'
 
@@ -119,16 +119,9 @@ channelList[0].channel.startMonitor()
 # current_time = int(time.time())
 # print('current time', current_time)
 
-time.sleep(50)
+@app.route('/', methods=['GET'])
+def test():
+    return "OK"
 
-channelList[0].alarmInfo['state'] = 'normal'
-
-time.sleep(100)
-
-
-# @app.route('/', methods=['GET'])
-# def test():
-    # return "OK"
-
-# if __name__ == "__main__":
-    # app.run(host=SERVER_ADDR, port="8000")
+if __name__ == "__main__":
+    app.run(host=SERVER_ADDR, port="8000")
