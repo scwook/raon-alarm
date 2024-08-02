@@ -1,7 +1,9 @@
-from pvaccess import *
 import time
 import asyncio
 import threading
+import pymysql
+
+from pvaccess import *
 from flask import Flask
 
 app = Flask(__name__)
@@ -11,8 +13,8 @@ SERVER_ADDR = 'localhost'
 dbPhone = ['01048792718']
 
 dbSample = [
-    {'pvname':'scwook:ai1', 'value':5.0, 'operator':1, 'state':'normal', 'activation':True, 'lasttime': '0', 'repeat':10, 'delay': 2},
-    {'pvname':'scwook:ai2', 'value':5.0, 'operator':1, 'state':'normal', 'activation':False, 'lasttime': '0', 'repeat':0, 'delay': 2}
+    {'pvname':'scwook:ai1', 'desc': '', 'value':5.0, 'operator':1, 'state':'normal', 'activation':True, 'lasttime': '0', 'repeat':10, 'delay': 2},
+    {'pvname':'scwook:ai2', 'desc': '', 'value':5.0, 'operator':1, 'state':'normal', 'activation':False, 'lasttime': '0', 'repeat':0, 'delay': 2}
     ]
 
 def valueCompare(referenceValue, comparisonValue, operator):
