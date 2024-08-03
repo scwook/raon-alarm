@@ -7,22 +7,35 @@ DB_DATABASE = 'alarm_sms'
 
 FROM_NUMBER = '0428788831'
 
-conn = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8')
-searchPV = 'scwook:ai1'
-query='SELECT * FROM sms_info WHERE pvname LIKE ' + "'" + searchPV + "'"
+def getPhoneList(pvName):
 
-alarmSMS = conn.cursor()
-alarmSMS.execute(query)
+    conn = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8')
+    searchPV = 'scwook:ai1'
+    query='SELECT * FROM sms_info WHERE pvname LIKE ' + "'" + searchPV + "'"
 
-smsList = []
-for x in alarmSMS:
-    toNumber = x[0]
-    smsMessage = 'test message'
+    alarmSMS = conn.cursor()
+    alarmSMS.execute(query)
 
-    smsList.append({'to':toNumber, 'from':FROM_NUMBER, 'text': smsMessage})
-    
-smsData = {'messages': smsList}
-print(smsData)
+    smsList = []
+    for x in alarmSMS:
+        toNumber = x[0]
+        smsMessage = 'test message'
+
+        smsList.append({'to':toNumber, 'from':FROM_NUMBER, 'text': smsMessage})
+        
+    return smsList
+
+
+def getAlarmInfo(pvName):
+    return 'aa'
+
+
+def getEntireAlarmList():
+    return 'nn'
+
+
+    # smsData = {'messages': smsList}
+    # print(smsData)
 # data = {
 #     'messages': [
 #         {
