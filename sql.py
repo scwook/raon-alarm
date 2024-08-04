@@ -70,11 +70,13 @@ def getAlarmLog(pvName):
 def setAlarmLog():
     conn = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8')
     query='INSERT INTO alarm_log(date, pvname, log) values()'
-    print('aa')
 
-    insertSnapshotQuery = 'INSERT INTO snapshot_info(timestamp,description,eventid) values(' + snapshotTimestamp + "," + snapshotDescription + "," + lastEventIDStr + ")"
-    timeleap.execute(insertSnapshotQuery)
+    cursor = conn.cursor()
+    cursor.execute(query)
+
     conn.commit()
+
+    print('aa')
 
 def deleteAlarmInfo(pvName):
     print('aa')
