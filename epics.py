@@ -1,21 +1,5 @@
-import time
-import asyncio
 import threading
-import pymysql
-
 from pvaccess import *
-from flask import Flask
-
-app = Flask(__name__)
-
-SERVER_ADDR = 'localhost'
-
-dbPhone = ['01048792718']
-
-dbSample = [
-    {'pvname':'scwook:ai1', 'desc': '', 'value':5.0, 'operator':1, 'state':'normal', 'activation':True, 'lasttime': '0', 'repeat':10, 'delay': 2},
-    {'pvname':'scwook:ai2', 'desc': '', 'value':5.0, 'operator':1, 'state':'normal', 'activation':False, 'lasttime': '0', 'repeat':0, 'delay': 2}
-    ]
 
 def valueCompare(referenceValue, comparisonValue, operator):
     if operator == 0:
@@ -99,16 +83,7 @@ class ChannelMonitor:
                     else:
                         print('already alarm raise no repeat')
 
-channelList = list()
-monitoringList = list()
 
-channelList.append(ChannelMonitor(dbSample[0]))
-channelList.append(ChannelMonitor(dbSample[1]))
-
-channelList[0].channel.subscribe(channelList[0].alarmInfo['pvname'], channelList[0].alarmMonitor)
-channelList[1].channel.subscribe(channelList[1].alarmInfo['pvname'], channelList[1].alarmMonitor)
-
-channelList[0].channel.startMonitor()
 # channelList[1].channel.startMonitor()
 
 # current_time = int(time.time())
@@ -121,9 +96,3 @@ channelList[0].channel.startMonitor()
 # current_time = int(time.time())
 # print('current time', current_time)
 
-@app.route('/', methods=['GET'])
-def test():
-    return "OK"
-
-if __name__ == "__main__":
-    app.run(host=SERVER_ADDR, port="8000")
