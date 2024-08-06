@@ -64,9 +64,22 @@ def deleteAlarmInfo(conn, pvName):
         cursor.execute(query)
         conn.commit()
 
-def updateAlarmInfo(conn, data):
+def updateAlarmRecord(conn, data):
     with conn.cursor() as cursor:        
         query = 'UPDATE alarm_info SET description="%s", value="%s", operator=%d, state="%s", activation=%d, repetation=%d, delay=%d WHERE pvname="%s"' % (data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[0])
+        cursor.execute(query)
+        conn.commit()
+
+def updateAlarmFieldStr(conn, pvName, field, strValue):
+    with conn.cursor() as cursor:        
+        query = 'UPDATE alarm_info SET %s="%s" WHERE pvname="%s"' % (field, strValue, pvName)
+        cursor.execute(query)
+        conn.commit()
+
+
+def updateAlarmFieldInt(conn, pvName, field, intValue):
+    with conn.cursor() as cursor:        
+        query = 'UPDATE alarm_info SET %s="%d" WHERE pvname="%s"' % (field, intValue, pvName)
         cursor.execute(query)
         conn.commit()
 

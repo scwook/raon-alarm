@@ -14,15 +14,12 @@ SERVER_ADDR = 'localhost'
 conn = sql.getDbConnection()
 alarmList = sql.getAlarmList(conn)
 
-
-print(sql.getDbConnection())
 # dbPhone = ['01048792718']
 
 # dbSample = [
 #     {'pvname':'scwook:ai1', 'desc': '', 'value':5.0, 'operator':1, 'state':'normal', 'activation':True, 'lasttime': '0', 'repeat':10, 'delay': 2},
 #     {'pvname':'scwook:ai2', 'desc': '', 'value':5.0, 'operator':1, 'state':'normal', 'activation':False, 'lasttime': '0', 'repeat':0, 'delay': 2}
 #     ]
-
 
 channelList = list()
 monitoringList = list()
