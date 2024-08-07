@@ -54,11 +54,14 @@ class ChannelMonitor:
                     
                     else:
                         print('already alarm raise no repeat')
+                
+                else:
+                    print('alarm state error')
 
             else:
                 print('No alarm')
         else:
-            print('alarm actived')
+            print('alarm activation false')
 
 
 
@@ -92,10 +95,12 @@ def alarmDelay(channelClass):
     pvValue = channelClass.channel.get().toDict()['value']
     alarmValue = channelClass.alarmInfo['value']
     operator = int(channelClass.alarmInfo['operator'])
+    alarmActivation = channelClass.alarmInfo['activation']
+
     valueType = channelClass.valueType
     result = valueCompare(pvValue, alarmValue, operator, valueType)
 
-    if result:
+    if result and alarmActivation:
         channelClass.alarmInfo['state'] = 'alarm'
         pvName = channelClass.alarmInfo['pvname']
         alarmLog = 'alarm raised'
@@ -112,10 +117,12 @@ def alarmDelay(channelClass):
 
 def alarmRepeat(repeatTime, channelClass):
     alarmState = channelClass.alarmInfo['state']
+    alarmActivation = channelClass.alarmInfo['activation']
+
     timer = threading.Timer(repeatTime, alarmRepeat, args=[repeatTime, channelClass])
     timer.start()
 
-    if alarmState == 'alarm':
+    if alarmState == 'alarm' and alarmActivation:
         pvName = channelClass.alarmInfo['pvname']
         alarmLog = 'alarm raised'
         

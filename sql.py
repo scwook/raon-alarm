@@ -76,6 +76,12 @@ def updateAlarmFieldStr(conn, pvName, field, strValue):
         cursor.execute(query)
         conn.commit()
 
+def clearAlarm(conn):
+    with conn.cursor() as cursor:        
+        query = 'UPDATE alarm_info SET state="normal"'
+        cursor.execute(query)
+        conn.commit()
+
 
 def updateAlarmFieldInt(conn, pvName, field, intValue):
     with conn.cursor() as cursor:        

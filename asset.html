@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" type="text/css" href="common.css">
+<link rel="stylesheet" type="text/css" href="asset.css">
+<link rel="stylesheet" type="text/css" href="script/swiper-bundle.min.css">
+<script src="script/swiper-bundle.min.js"></script>
+
+<style>
+	.swiper-slide {
+		background-position: center;
+		background-size: cover;
+		width: 640px;
+		height: 400px;
+		/* background-color: #fff; */
+		box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+		/* opacity: 0.5; */
+		/* filter: blur(4px); */
+		/* background: #d1ebff; */
+		border-radius: 10px;
+	}
+
+	.swiper-slide-active .asset-container {
+		background-color: rgba(0, 0, 0, 0.3);
+		/* filter: blur(0px); */
+		/* background: #fff; */
+	}
+
+	.swiper-container-3d .swiper-slide-shadow-left,
+	.swiper-container-3d .swiper-slide-shadow-right {
+		background-image: none;
+	}
+</style>
+
+<body>
+    <div style="margin:auto; position: relative; width:1920px; height:80px;">
+        <div id="time-stamp"></div>
+        <svg id="under-line" width="1920" height="42">
+            <polyline class="under-line-style" points="0 40 760 40 791 0" />
+            <polyline class="under-line-style" points="1920 40 1160 40 1129 0" />
+        </svg>
+        <svg id="center-top" width="400" height="80">
+            <path
+                d="M12.5,0H0L57,76a10,10,0,0,0,8,4H335a10,10,0,0,0,8-4L400,0H387.5L338,66a10,10,0,0,1-8,4H70a10,10,0,0,1-8-4Z"
+                style="fill:#f3f3f3" />
+        </svg>
+        <div id="raon-box"><a href="main.html"><img width="133.7666" height="33.8293" src="images/raon-white.svg"></a>
+        </div>
+        <div id="accelerator-control"><a href="member.html">C</a><a href="bab.html">S</a></div>
+        <div id="left-menu">
+            <a href="" class="secret-menu">Logbook</a>
+            <a href="" class="secret-menu">Finder</a>
+            <a href="" class="secret-menu">Naming</a>
+            <a href="download.html">Download</a>
+            <a href="document.html">Document</a>
+        </div>
+        <div id="right-menu">
+            <a href="monitoring.html">Monitoring</a>
+            <a href="schedule.html">Dobby</a>
+            <a href="archive.html">Archive</a>
+            <a href="timeleap.html">PlanB</a>
+            <a href="asset.html">Asset</a>
+        </div>
+    </div>
+
+	<div style="height:50px"></div>
+
+	<div id="form-container">
+		<form method=post name="fileInfo" enctype=multipart/form-data id="form-asset">
+			<div id="form-asset-container">
+				<span onclick="document.getElementById('form-container').style.display='none'" id="close">&times;</span>
+
+				<label>Asset Number</label>
+				<input type="text" id="form-asset-number" placeholder="ex) 20130619" name="assetNumber" value=""
+					minlength="9" maxlength="9" onkeydown="if (event.keyCode == 13) { return false;}">
+
+				<label>Date</label>
+				<input type="text" id="form-asset-date" placeholder="ex) 2013-06-19" name="assetDate" value=""
+					onkeydown="if (event.keyCode == 13) { return false;}">
+
+				<label>Device Name</label>
+				<input type="text" id="form-device-name" placeholder="" name="assetName" value="" onkeydown="if
+                (event.keyCode == 13) { return false;}">
+
+				<label>Manager</label>
+				<select id="form-asset-manager" name="assetManager">
+					<option selected="selected">이상일</option>
+					<option>최용준</option>
+					<option>김용학</option>
+					<option>손창욱</option>
+					<option>박미정</option>
+				</select>
+
+				<label>Location</label>
+				<select id="form-asset-location" name="assetLocation">
+					<option>중앙제어센터 1층 중앙제어실</option>
+					<option>중앙제어센터 1층 관람 및 회의실</option>
+					<option>중앙제어센터 1층 서버실</option>
+					<option>중앙제어센터 1층 TPS</option>
+					<option>중앙제어센터 2층 제어실험실</option>
+					<option selected="selected">중앙제어센터 2층 장비보관실</option>
+					<option>중앙제어센터 2층 연구실</option>
+					<option>가속기동 SCL3 터널</option>
+					<option>가속기동 SCL3 갤러리</option>
+					<option>가속기동 SCL2 터널</option>
+					<option>가속기동 SCL2 갤러리</option>
+					<option>가속기동 SCL 터널 굴절부</option>
+					<option>가속기동 SCL 터널 갤러리</option>
+					<option>가속기동 ISOL 지하 1층</option>
+					<option>가속기동 ISOL 1층</option>
+					<option>헬륨압축기동</option>
+					<option>극저온설비동</option>
+					<option>신동 SRF 시험동</option>
+					<option>신동 초전도 조립동</option>
+					<option>KAIST 문지캠퍼스 1층</option>
+					<option>KAIST 문지캠퍼스 2층</option>
+				</select>
+
+				<input type=file name=file>
+			</div>
+		</form>
+	</div>
+
+	<div id="body" style="margin:auto; position:relative; width:1920px; height:900px;">
+		<button id="new-asset-button" onclick="showNewAssetForm()">+</button>
+		<!-- <button class="update-asset-button" onclick="showUpdateAssetForm()">-</button> -->
+
+		<div class="search-box">
+			<input type="number" id="input-search" placeholder="Asset Number">
+			<svg onclick="searchData()" style="position: absolute; left:1325px; top: 13px">
+				<defs>
+					<style>
+						.cls-1 {
+							fill: none;
+							stroke: #6d6d6d;
+							stroke-miterlimit: 10;
+							stroke-width: 3px;
+						}
+					</style>
+				</defs>
+				<circle class="cls-1" cx="10.5" cy="10.5" r="9" />
+				<line class="cls-1" x1="17.04" y1="17.04" x2="25.04" y2="25.04" />
+			</svg>
+		</div>
+
+		<div class="swiper-container">
+			<div class="swiper-wrapper">
+				<!-- <div class="swiper-slide">
+					<div class="asset-image" style="background-image: url('images/1.JPG');"></div>
+					<div class="asset-container">
+						<div class="asset-name">19인치 Rack (SHR-27SS)</div>
+						<div class="asset-location">신동3 중앙제어센터 1층 가속기제어팀</div>
+						<div class="asset-date">1983-06-19</div>
+						<div class="asset-manager">손창욱</div>
+						<div class="asset-number">198306194</div>
+						<button class="update-asset-button" onclick="console.log('wefwef')">-</button>
+					</div>
+				</div> -->
+			</div>
+		</div>
+	</div>
+</body>
+
+<script>
+	// Control Server
+	// var serverAddr = 'http://192.168.68.14'
+	// var imageServer = serverAddr + ':4879/asset_image/'
+	// var inventoryAddr = serverAddr + ':9010/inventory'
+	// var retrieveAddr = inventoryAddr + '/retrieve/*';
+	// var insertAddr = inventoryAddr + '/insert';
+	// var updateAddr = inventoryAddr + '/update';
+
+	// scwook Server
+	var serverAddr = 'http://192.168.68.126'
+	var imageServer = serverAddr + ':4879/asset_image/'
+	var inventoryAddr = serverAddr + ':8080/inventory'
+	var retrieveAddr = inventoryAddr + '/retrieve/*';
+	var insertAddr = inventoryAddr + '/insert';
+	var updateAddr = inventoryAddr + '/update';
+
+	var slideIndex = {};
+	var swiper = new Swiper('.swiper-container', {
+		effect: 'coverflow',
+		grabCursor: true,
+		centeredSlides: true,
+		slidesPerView: '3',
+		// preventClicks: false,
+		// preventClicksProgagation: false,
+		coverflowEffect: {
+			rotate: 0,
+			stretch: -160,
+			depth: 200,
+			modifier: 2,
+			slideShadows: true,
+		},
+
+		virtual: {
+			// cache: true,
+			slides: []
+		}
+		// loop: true
+	});
+
+	function createSwiperSlide(jsonData) {
+		// var swiperWrapperClass = document.getElementsByClassName('swiper-wrapper');
+		var count = 0;
+		var nameDic = { '이상일': 'SI', '최용준': 'YJ', '김용학': 'YH', '손창욱': 'CW', '박미정': 'MJ' };
+		var slideArray = [];
+
+		for (let i = 0; i < jsonData.length; i++) {
+			// var sampleAsset = count * 11;
+
+			var slideItemElem = document.createElement('DIV');
+			slideItemElem.classList.add('swiper-slide');
+
+			var assetImageElem = document.createElement('DIV');
+			assetImageElem.classList.add('asset-image');
+
+			if (jsonData[i].fileName) {
+				assetImageElem.style.backgroundImage = 'url("' + imageServer + jsonData[i].id + '/' + jsonData[i].fileName + '")';
+			}
+			else {
+				assetImageElem.style.backgroundImage = 'url(images/noImage.svg)';
+			}
+
+			var assetContainerElem = document.createElement('DIV');
+			assetContainerElem.classList.add('asset-container');
+
+			var assetNumberElem = document.createElement('DIV');
+			var assetDateElem = document.createElement('DIV');
+			var assetManagerElem = document.createElement('DIV');
+			var assetNameElem = document.createElement('DIV');
+			var assetLocationElem = document.createElement('DIV');
+
+			assetNumberElem.classList.add('asset-number');
+			assetDateElem.classList.add('asset-date');
+			assetManagerElem.classList.add('asset-manager');
+			assetNameElem.classList.add('asset-name');
+			assetLocationElem.classList.add('asset-location');
+
+			// Edit Button
+			var assetUpdateButtonHTML = '<svg width="38" height="36" class="update-asset-button"' +
+				'onclick="showUpdateAssetForm(' + "'" + jsonData[i].assetNumber + "'" + ')">' +
+				'<path d="M34.84.5h1.39a2,2,0,0,1,2,2V4.42a0,0,0,0,1,0,0H32.84a0,0,0,0,1,0,0V2.5A2,2,0,0,1,34.84.5Z" transform="translate(12.15 -24.41) rotate(45)" style="fill:#fff" />' +
+				'<polygon points="31.23 2.96 12.74 21.45 10.83 27.17 16.55 25.26 35.04 6.77 31.23 2.96" style="fill:#fff" />' +
+				'<polygon points="28.77 20.7 28.77 32.77 3.23 32.77 3.23 7.23 20.5 7.23 23.74 4 0 4 0 36 32 36 32 17.47 28.77 20.7" style="fill:#fff" />' +
+				'</svg>';
+
+			// var assetUpdateButtonHTML = '<button class="update-asset-button" onclick="showUpdateAssetForm('
+			// 	+ "'" + jsonData[i].assetNum + "'" +
+			// 	')">E</button>';
+
+			// Set Asset Data
+			assetNumberElem.innerText = jsonData[i].assetNumber;
+			assetDateElem.innerText = jsonData[i].date;
+			assetNameElem.innerText = jsonData[i].deviceName;
+			assetManagerElem.innerText = nameDic[jsonData[i].manager];
+			assetLocationElem.innerText = jsonData[i].location;
+
+			assetContainerElem.appendChild(assetNumberElem);
+			assetContainerElem.appendChild(assetDateElem);
+			assetContainerElem.appendChild(assetNameElem);
+			assetContainerElem.appendChild(assetManagerElem);
+			assetContainerElem.appendChild(assetLocationElem);
+
+			// assetContainerElem.appendChild(assetEditButtonElem);
+			assetContainerElem.innerHTML += assetUpdateButtonHTML;
+
+			slideItemElem.appendChild(assetImageElem);
+			slideItemElem.appendChild(assetContainerElem);
+
+			slideArray.push(slideItemElem.outerHTML);
+
+			var indexData = {
+				'index': count,
+				'assetNumber': jsonData[i].assetNumber,
+				'date': jsonData[i].date,
+				'deviceName': jsonData[i].deviceName,
+				'manager': jsonData[i].manager,
+				'location': jsonData[i].location
+			};
+
+			slideIndex[jsonData[i].assetNumber] = indexData;
+			count += 1;
+		}
+
+		swiper.virtual.appendSlide(slideArray);
+		swiper.update();
+		// swiper.init();
+	}
+
+	function showNewAssetForm() {
+		// Remove Button
+		var saveButton = document.getElementsByClassName('save-button');
+		for (let i = 0; i < saveButton.length; i++) {
+			saveButton[i].remove();
+		}
+
+		var formContainerID = document.getElementById('form-container');
+
+		var newSaveButtonElem = document.createElement('BUTTON');
+		newSaveButtonElem.classList.add('save-button');
+		newSaveButtonElem.addEventListener('click', function () { setAssetData() });
+		newSaveButtonElem.style.backgroundColor = '#4CAF50';
+		newSaveButtonElem.innerText = 'Save';
+		document.getElementById('form-asset-container').appendChild(newSaveButtonElem);
+
+		formContainerID.style.display = 'block';
+	}
+
+	function showUpdateAssetForm(assetNumber) {
+		// console.log(assetNumber, assetDate, assetName, assetManager, assetLocation);
+		var assetData = slideIndex[assetNumber];
+
+		// Remove Button
+		var saveButton = document.getElementsByClassName('save-button');
+		for (let i = 0; i < saveButton.length; i++) {
+			saveButton[i].remove();
+		}
+
+		var formContainerID = document.getElementById('form-container');
+
+		managerSelectionIndex = { '이상일': 0, '최용준': 1, '김용학': 2, '손창욱': 3, '박미정': 4 };
+		locationSelectionIndex = {
+			'중앙제어센터 1층 중앙제어실': 0,
+			'중앙제어센터 1층 관람 및 회의실': 1,
+			'중앙제어센터 1층 서버실': 2,
+			'중앙제어센터 1층 TPS': 3,
+			'중앙제어센터 2층 장비보관실': 4,
+			'중앙제어센터 2층 연구실': 5,
+			'가속기동 SCL3 터널': 6,
+			'가속기동 SCL3 갤러리': 7,
+			'가속기동 SCL2 터널': 8,
+			'가속기동 SCL2 갤러리': 9,
+			'가속기동 SCL 터널 굴절부': 10,
+			'가속기동 SCL 터널 갤러리': 11,
+			'가속기동 ISOL 지하 1층': 12,
+			'가속기동 ISOL 1층': 13,
+			'헬륨압축기동': 14,
+			'극저온설비동': 15,
+			'신동 SRF 시험동': 16,
+			'신동 초전도 조립동': 17,
+			'KAIST 문지캠퍼스 1층': 18,
+			'KAIST 문지캠퍼스 2층': 19
+		};
+
+		// Set Current Asset Data
+		document.getElementById('form-asset-number').value = assetData.assetNumber;
+		document.getElementById('form-asset-date').value = assetData.date;
+		document.getElementById('form-device-name').value = assetData.deviceName;
+		document.getElementById('form-asset-manager').selectedIndex = managerSelectionIndex[assetData.manager];
+		document.getElementById('form-asset-location').selectedIndex = locationSelectionIndex[assetData.location];
+
+		var newSaveButtonElem = document.createElement('BUTTON');
+		newSaveButtonElem.classList.add('save-button');
+		newSaveButtonElem.addEventListener('click', function () { updateAssetData(assetData.assetNumber) });
+		newSaveButtonElem.style.backgroundColor = '#008CBA';
+		newSaveButtonElem.innerText = 'Update';
+		document.getElementById('form-asset-container').appendChild(newSaveButtonElem);
+
+		formContainerID.style.display = 'block';
+	}
+
+
+	function searchData() {
+		var searchAssetNumber = document.getElementById("input-search").value;
+		if (searchAssetNumber.length) {
+			// var assetNumber = document.getElementById('input').value;
+			var assetIndex = slideIndex[searchAssetNumber].index;
+			if (assetIndex) {
+				swiper.slideTo(assetIndex, 1000, false);
+			}
+			else {
+				alert("No Result");
+			}
+		}
+		else {
+			alert("No Asset Number have been specified.");
+		}
+	}
+
+	document.addEventListener("keydown", function (event) {
+		var slideMove = document.getElementsByClassName("swiper-container")[0];
+
+		switch (event.keyCode) {
+			case 13:
+				searchData();
+				break;
+
+			case 37: // Arrow Left
+				swiper.slidePrev(500, false);
+				break;
+			case 39:
+				swiper.slideNext(500, false);
+				break;
+		}
+	});
+
+	// Get Asset Data From Database
+	function getAssetData() {
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				var jsonValue = JSON.parse(this.responseText);
+				createSwiperSlide(jsonValue);
+			}
+			// else {
+			// 	alert('Status Error : ' + this.status);
+			// }
+
+		};
+		// var rName = "http://192.168.68.126:8080/inventory/retrieve/*";
+		xhttp.open("GET", retrieveAddr, false);
+		xhttp.send();
+	}
+
+	// Insert New Asset Data to Database
+	function setAssetData() {
+		var formData = new FormData(document.forms.namedItem("fileInfo"));
+
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				switch (this.responseText) {
+					case 'success':
+						break;
+					case 'overlab':
+						alert('Asset Number alrady exist');
+						break;
+					case 'fail':
+						alert('File Upload Error');
+				}
+			}
+			// else {
+			// 	alert('Status Error : ' + this.status);
+			// }
+		};
+
+		// var rName = "http://192.168.68.126:8080/inventory/insert";
+		xhttp.open("POST", insertAddr, false);
+		xhttp.send(formData);
+	}
+
+	// Update Asset Data
+	function updateAssetData(referenceAssetNumber) {
+		var formData = new FormData(document.forms.namedItem("fileInfo"));
+		formData.append('reference', referenceAssetNumber);
+
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				switch (this.responseText) {
+					case 'success':
+						break;
+					case 'overlab':
+						alert('Asset Number alrady exist');
+						break;
+					case 'fail':
+						alert('File Upload Error');
+				}
+			}
+			// else {
+			// 	alert('Status Error : ' + this.status);
+			// }
+		};
+
+		// var rName = "http://192.168.68.126:8080/inventory/update";
+		xhttp.open("POST", updateAddr, false);
+		xhttp.send(formData);
+	}
+
+	function timer() {
+		var d = new Date();
+		document.getElementById('time-stamp').innerHTML = d.toLocaleTimeString('en-GB');
+	}
+
+	window.onload = function () {
+		var myVar = setInterval(timer, 1000);
+
+		getAssetData();
+	}
+
+</script>
+
+</html>
+

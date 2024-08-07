@@ -1,25 +1,19 @@
 import time
-
-# from flask import Flask
-
 import sql
 import epics
+import json
+from flask import Flask, jsonify
+from flask import request
+from flask_cors import CORS
 
+# SERVER_ADDR = 'localhost'
+SERVER_ADDR = '192.168.131.161'
 
-SERVER_ADDR = 'localhost'
-
-# app = Flask(__name__)
-
+app = Flask(__name__)
+CORS(app)
 
 conn = sql.getDbConnection()
 alarmList = sql.getAlarmList(conn)
-
-# dbPhone = ['01048792718']
-
-# dbSample = [
-#     {'pvname':'scwook:ai1', 'desc': '', 'value':5.0, 'operator':1, 'state':'normal', 'activation':True, 'lasttime': '0', 'repeat':10, 'delay': 2},
-#     {'pvname':'scwook:ai2', 'desc': '', 'value':5.0, 'operator':1, 'state':'normal', 'activation':False, 'lasttime': '0', 'repeat':0, 'delay': 2}
-#     ]
 
 channelList = list()
 monitoringList = list()
@@ -31,18 +25,45 @@ for y in channelList:
     y.channel.subscribe(y.alarmInfo['pvname'], y.alarmMonitor)
     # y.channel.startMonitor()
 
-
 channelList[0].channel.startMonitor()
 
-    # channelList[0].channel.subscribe(channelList[0].alarmInfo['pvname'], channelList[0].alarmMonitor)
+# channelList[0].channel.subscribe(channelList[0].alarmInfo['pvname'], channelList[0].alarmMonitor)
 # channelList[1].channel.subscribe(channelList[1].alarmInfo['pvname'], channelList[1].alarmMonitor)
 
 # channelList[0].channel.startMonitor()
 
-time.sleep(60)
-# @app.route('/', methods=['GET'])
-# def test():
-#     return "OK"
+# time.sleep(10)
 
-# if __name__ == "__main__":
-#     app.run(host=SERVER_ADDR, port="8000")
+# pv = 'scwook:ai1'
+
+# for x in alarmList:
+#     if x['pvname'] == pv:
+#         x['activation'] = False
+#         print('%s activation False' % (x['pvname']))
+
+@app.route('/', methods=['POST'])
+def test():
+    formData = request.form
+    print(formData)
+    return "OK"
+
+@app.route('/get', methods=['GET'])
+def getData():
+    result = sql.getAlarmList(conn)
+
+    return json.dumps(result, ensure_ascii=False)
+
+
+@app.route('/clear', methods=['POST'])
+def clearAlarm():
+    sql.clearAlarm(conn)
+
+    for x in channelList:
+        x.alarmInfo['state'] = 'normal'
+
+
+    return "OK"
+
+
+if __name__ == "__main__":
+    app.run(host=SERVER_ADDR, port="8000")
