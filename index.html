@@ -2,61 +2,69 @@
 <html>
 
 <body>
-<form method="post" name="alarmInfo" enctype="multipart/form-data" id="alarm-info">
-    <div id="form-container">
-        <label>Process Variable</label>
-        <input type="text" id="form-pvname" placeholder="" name="pvname" value="">
+    <form method="post" name="alarmInfo" enctype="multipart/form-data" id="alarm-info">
+        <div id="form-container">
+            <label>Process Variable</label>
+            <input type="text" id="form-pvname" placeholder="" name="pvname" value="">
 
-        <label>Value</label>
-        <input type="number" id="form-value" name="value">
+            <label>Value</label>
+            <input type="number" id="form-value" name="value">
 
-        <input type="radio" id="form-activation-true" name="activation" value="True">
-        <label for="form-activation-true">True</label>
-        <input type="radio" id="form-activation-false" name="activation" value="False">
-        <label for="form-activation-false">False</label>
+            <input type="radio" id="form-activation-true" name="activation" value="True">
+            <label for="form-activation-true">True</label>
+            <input type="radio" id="form-activation-false" name="activation" value="False">
+            <label for="form-activation-false">False</label>
 
-        <label>Repetation</label>
+            <label>Repetation</label>
 
-        <select if="form-repetation" name="repetation">
-            <option selected="selected">No</option>
-            <option>1min</option>
-            <option>5min</option>
-            <option>10min</option>
-            <option>30min</option>
-            <option>60min</option>
-        </select>
+            <select if="form-repetation" name="repetation">
+                <option selected="selected">No</option>
+                <option>1min</option>
+                <option>5min</option>
+                <option>10min</option>
+                <option>30min</option>
+                <option>60min</option>
+            </select>
 
-        <label>Delay</label>
-        <select if="form-delay" name="delay">
-            <option>immediately</option>
-            <option>5s</option>
-            <option>10s</option>
-            <option>30s</option>
-            <option>60s</option>
-        </select>
+            <label>Delay</label>
+            <select if="form-delay" name="delay">
+                <option>immediately</option>
+                <option>5s</option>
+                <option>10s</option>
+                <option>30s</option>
+                <option>60s</option>
+            </select>
 
-        <button type="button" onclick="setData()">Send</button>
-    </div>
-</form>
+            <button type="button" onclick="setData()">Send</button>
+        </div>
 
-<form method="post" name="smsInfo" enctype="multipart/form-data" id="sms-info">
-    <div id="form-sms-container">
-        <label>Phone Number</label>
-        <input type="number" id="form-sms-phone" name="phone">
+        <form method="post" name="smsInfo" enctype="multipart/form-data" id="sms-info">
+            <div id="form-sms-container">
+                <div>
+                    <label>Phone Number</label>
+                    <input type="number" id="form-sms-phone" name="phone">
+                </div>
+                <div>
+                    <label>Phone Number</label>
+                    <input type="number" id="form-sms-phone" name="phone">
+                </div>
+                <button type="button" onclick="setPhone()">Set</button>
+            </div>
+        </form>
+    </form>
 
-        <button type="button" onclick="setPhone()">Set</button>
-    </div>
-</form>
 
-<p id="alarm-state">state</p>
 
-<button type="button" onclick="getData()">Get</button>
-<button type="button" onclick="clearAlarm()">Clear</button>
+    <p id="alarm-state">state</p>
+
+    <button type="button" onclick="getAlarmData()">Get Alarm</button>
+    <button type="button" onclick="getSMSData()">Get SMS</button>
+
+    <button type="button" onclick="clearAlarm()">Clear</button>
 
 
 </body>
 <script>
-    setInterval(getData, 2000);
 
     function setData() {
         var formData = new FormData(document.forms.namedItem("alarmInfo"));
@@ -84,40 +92,40 @@
         xhttp.send(formData);
     }
 
-    function getData() {
+    function getAlarmData() {
         var xhttp = new XMLHttpRequest();
-		xhttp.onreadystatechange = function () {
-			if (this.readyState == 4 && this.status == 200) {
-				var jsonValue = JSON.parse(this.responseText);
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var jsonValue = JSON.parse(this.responseText);
                 // console.log(jsonValue);
-                document.getElementById('alarm-state').innerText = jsonValue[0].state 
+                document.getElementById('alarm-state').innerText = jsonValue[0].state
             }
-			// else {
-			// 	alert('Status Error : ' + this.status);
-			// }
+            // else {
+            // 	alert('Status Error : ' + this.status);
+            // }
 
-		};
+        };
 
         var serverAddr = "http://192.168.131.161:8000/get";
-		xhttp.open("GET", serverAddr, false);
-		xhttp.send();
+        xhttp.open("GET", serverAddr, false);
+        xhttp.send();
     }
 
     function clearAlarm() {
         var xhttp = new XMLHttpRequest();
-		xhttp.onreadystatechange = function () {
-			if (this.readyState == 4 && this.status == 200) {
-				// var jsonValue = JSON.parse(this.responseText);
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                // var jsonValue = JSON.parse(this.responseText);
             }
-			// else {
-			// 	alert('Status Error : ' + this.status);
-			// }
+            // else {
+            // 	alert('Status Error : ' + this.status);
+            // }
 
-		};
+        };
 
         var serverAddr = "http://192.168.131.161:8000/clear";
-		xhttp.open("POST", serverAddr, false);
-		xhttp.send();
+        xhttp.open("POST", serverAddr, false);
+        xhttp.send();
     }
 </script>
 
