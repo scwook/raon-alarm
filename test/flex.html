@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<style>
+    * {
+        box-sizing: bor;
+    }
+
+    .flexbox {
+        display: flex;
+        flex-direction: column;
+        width: 500px;
+        background-color: blueviolet;
+    }
+
+    .item {
+        width: 80%;
+        height: 40px;
+        margin: 10px;
+        background-color: beige;
+        transition: transform 2s;
+    }
+</style>
+
+<body>
+    <div class="flexbox">
+        <div class="item"></div>
+        <div class="item"></div>
+        <div id="item3" class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+    </div>
+
+    <button type="button" onclick="removeitem()">remove</button>
+    
+</body>
+<script>
+
+function removeitem() {
+    document.getElementById('item3').remove()
+}
+</script>
+
+</html>
