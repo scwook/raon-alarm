@@ -61,8 +61,13 @@ def clearAlarm():
     for x in channelList:
         x.alarmInfo['state'] = 'normal'
 
-
     return "OK"
+
+@app.route('/getAlarmData', methods=['GET'])
+def getAlarmData():
+    result = sql.getAlarmData(conn)
+
+    return json.dumps(result, ensure_ascii=False)
 
 
 if __name__ == "__main__":

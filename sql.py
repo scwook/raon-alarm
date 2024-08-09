@@ -13,6 +13,21 @@ connection = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, d
 def getDbConnection():
     return connection
 
+def getAlarmData(conn):
+    with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
+        query='SELECT * FROM alarm_info'
+        cursor.execute(query)
+        result = cursor.fetchall()
+
+        for x in result:
+            pvname = x['pvname']
+            query = 'SELECT * FROM sms_info WHERE pvname="%s"' % (pvname)
+            cursor.execute(query)
+            x['sms'] = cursor.fetchall()
+
+        return result
+
+
 def getSMSList(conn, pvName):
     # conn = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8')
     # cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -20,7 +35,7 @@ def getSMSList(conn, pvName):
         query='SELECT * FROM sms_info WHERE pvname LIKE ' + "'" + pvName + "'"
         cursor.execute(query)
         result = cursor.fetchall()
-
+        
         return result
 
 def getAlarmInfo(conn, pvName):
@@ -115,7 +130,7 @@ def insertSMSInfo(conn, phone, pvName):
         conn.commit()
 
     # conn.close()
-
+getAlarmData(connection)
 
 # testData = ('scwook:ai2', 'update', "12.1E-7", 1, 'alarm', 1, 10, 20)
 # updateAlarmInfo(testData)

@@ -12,6 +12,19 @@
         background-color: blueviolet;
     }
 
+    .pitme {
+        display: flex;
+        flex-direction: column;
+        background-color: aqua;
+    }
+
+    .sitem {
+        width: 80%;
+        height: 30px;
+        margin: 10px;
+        background-color: blue;
+    }
+
     .item {
         width: 80%;
         height: 40px;
@@ -23,7 +36,10 @@
 
 <body>
     <div class="flexbox">
-        <div class="item"></div>
+        <div class="pitem">
+            <div class="sitem"></div>
+            <div id="sub-item" class="sitem"></div>
+        </div>
         <div class="item"></div>
         <div id="item3" class="item"></div>
         <div class="item"></div>
@@ -32,13 +48,38 @@
     </div>
 
     <button type="button" onclick="removeitem()">remove</button>
+    <button type="button" onclick="displayitem()">display</button>
     
+
+
+    <div style="display: flex; width:1000px; height:80px; background-color: blueviolet;">
+        <div style="flex: 1; background-color: brown; margin:5px">asdfadsf</div>
+        <div style="flex: 1; background-color: brown; margin:5px">sdfasdf</div>
+        <div style="flex: 1; background-color: brown; margin:5px">asddasdfsfddddddfasdf</div>
+        <div style="flex: 1; background-color: brown; margin:5px">sdfasdfsa</div>
+
+    </div>
+
+    <div style="display: flex; width:100%; height:80px; flex-direction: column; background-color: aliceblue; align-items: end;">
+        <div style="width:20%; height:20px; background-color: bisque;"></div>
+    </div>
 </body>
 <script>
 
 function removeitem() {
     document.getElementById('item3').remove()
 }
+
+function displayitem() {
+    let id = document.getElementById('sub-item')
+    let display = id.style.display;
+    if (display == 'none') {
+        id.style.display = "block";
+    }
+    else {
+        id.style.display = "none";
+    }
+}   
 </script>
 
 </html>

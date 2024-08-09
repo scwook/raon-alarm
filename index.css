@@ -1,0 +1,172 @@
+@font-face {
+    font-family: "Roboto-Regular";
+    src: url(fonts/Roboto-Regular.ttf);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0px;
+}
+
+body {
+    font-family: "Roboto-Regular";
+    background-color: #222831;
+}
+
+#alarm-list-container {
+    width: 1800px;
+    height: 100%;
+    margin: auto;
+    flex-direction: column;
+}
+
+.alarmItem {
+    display: flex;
+    flex-direction: column;
+    align-content: flex-end;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    width: 1760px;
+    margin: 20px;
+}
+
+.alarmInfo {
+    display: flex;
+    width: 100%;
+    height: 80px;
+    padding: 16px;
+    border-radius: 10px;
+    background-color: #31363f;
+}
+
+.smsInfo {
+    display: flex;
+    width: 20%;
+    height: 60px;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 8px;
+    background-color: #28313f;
+}
+
+.alarmActivation {
+    display: flex;
+    width: 80px;
+    height: 46px;
+    align-items: center;
+    justify-content: center;
+    /* background-color: green; */
+}
+
+.alarmPVName {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex: 3;
+    color: #eeeeee;
+    font-size: 24px;
+}
+
+.alarmValue {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex: 1;
+    color: #eeeeee;
+    font-size: 24px;
+}
+
+.alarmCondition {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex: 1;
+    color: #eeeeee;
+    font-size: 28px;
+}
+
+.alarmStatus {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex: 1;
+}
+
+.alarmDelay {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex: 1;
+    color: #eeeeee;
+    font-size: 24px;
+}
+
+.alarmRepetation {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex: 1;
+    color: #eeeeee;
+    font-size: 24px;
+}
+
+.alarmPhone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.alarmEdit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.alarmDelete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.icon-fill {
+    fill: #eeeeee;
+}
+
+.icon-alarm {
+    fill: #d4145a;
+}
+
+.icon-normal {
+    fill: #22b573;
+}
+
+.smsActivation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.smsPhoneNumber {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex: 2;
+    color: #eeeeee;
+    font-size: 20px;
+}
+
+.smsDelete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
