@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+    }
+
+    .container>* {
+        transform-origin: left top;
+    }
+
+
+    /* To make codepen preatty */
+    body {
+        margin: 0;
+        background: #12c2e9;
+        background: linear-gradient(45deg, #f64f59, #c471ed, #12c2e9);
+        min-height: 100vh;
+        font-family: 'Quicksand', sans-serif;
+        user-select: none;
+    }
+
+    .container {
+        justify-content: center;
+        padding: 0.5rem;
+    }
+
+    .container>* {
+        flex-grow: 1;
+        flex-basis: 10rem;
+        max-width: 40rem;
+        cursor: pointer;
+        background-color: #fff;
+        border-radius: 5px;
+        height: 10rem;
+        margin: 0.5rem;
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+        opacity: 0.9;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5em;
+        color: #AAA;
+        text-align: center;
+        overflow: hidden;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <div></div>
+        <div></div>
+        <div style="flex-basis: 20rem;">Click me</div>
+        <div></div>
+        <div style="flex-basis: 30rem;"></div>
+        <div></div>
+        <div style="flex-basis: 5rem;"></div>
+        <div></div>
+        <div style="flex-basis: 5rem;"></div>
+        <div></div>
+        <div style="flex-basis: 2.5em;"></div>
+        <div style="flex-basis: 40rem;"></div>
+        <div></div>
+        <div style="flex-basis: 20rem;"></div>
+        <div style="flex-basis: 20rem;"></div>
+        <div></div>
+        <div></div>
+        <div style="flex-basis: 25rem;"></div>
+        <div style="flex-basis: 2.5rem;"></div>
+        <div style="flex-basis: 25rem;"></div>
+        <div></div>
+        <div></div>
+        <div style="flex-basis: 20rem;"></div>
+        <div style="flex-basis: 5rem;"></div>
+    </div>
+</body>
+<script>
+    "use strict";
+    const container = document.querySelector(".container");
+    for (const item of container.children) {
+        item.addEventListener("click", () => {
+            removeFlexItem(container, item);
+        });
+    }
+    function removeFlexItem(container, item) {
+        const oldFlexItemsInfo = getFlexItemsInfo(container);
+        container.removeChild(item);
+        const newFlexItemsInfo = getFlexItemsInfo(container);
+        aminateFlexItems(oldFlexItemsInfo, newFlexItemsInfo);
+    }
+    function getFlexItemsInfo(container) {
+        return Array.from(container.children).map((item) => {
+            const rect = item.getBoundingClientRect();
+            return {
+                element: item,
+                x: rect.left,
+                y: rect.top,
+                width: rect.right - rect.left,
+                height: rect.bottom - rect.top
+            };
+        });
+    }
+    function aminateFlexItems(oldFlexItemsInfo, newFlexItemsInfo) {
+        for (const newFlexItemInfo of newFlexItemsInfo) {
+            const oldFlexItemInfo = oldFlexItemsInfo.find((itemInfo) => itemInfo.element === newFlexItemInfo.element);
+            const translateX = oldFlexItemInfo.x - newFlexItemInfo.x;
+            const translateY = oldFlexItemInfo.y - newFlexItemInfo.y;
+            const scaleX = oldFlexItemInfo.width / newFlexItemInfo.width;
+            const scaleY = oldFlexItemInfo.height / newFlexItemInfo.height;
+            newFlexItemInfo.element.animate([
+                {
+                    transform: `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`
+                },
+                { transform: "none" }
+            ], {
+                duration: 250,
+                easing: "ease-out"
+            });
+        }
+    }
+</script>
+
+</html>
