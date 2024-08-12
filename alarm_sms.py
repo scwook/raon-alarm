@@ -12,8 +12,8 @@ SERVER_ADDR = '192.168.131.161'
 app = Flask(__name__)
 CORS(app)
 
-conn = sql.getDbConnection()
-alarmList = sql.getAlarmList(conn)
+# conn = sql.getDbConnection()
+alarmList = sql.getAlarmList()
 
 channelList = list()
 monitoringList = list()
@@ -49,14 +49,14 @@ def test():
 
 @app.route('/get', methods=['GET'])
 def getData():
-    result = sql.getAlarmList(conn)
+    result = sql.getAlarmList()
 
     return json.dumps(result, ensure_ascii=False)
 
 
 @app.route('/clear', methods=['POST'])
 def clearAlarm():
-    sql.clearAlarm(conn)
+    sql.clearAlarm()
 
     for x in channelList:
         x.alarmInfo['state'] = 'normal'
@@ -65,7 +65,7 @@ def clearAlarm():
 
 @app.route('/getAlarmData', methods=['GET'])
 def getAlarmData():
-    result = sql.getAlarmData(conn)
+    result = sql.getAlarmData()
 
     return json.dumps(result, ensure_ascii=False)
 

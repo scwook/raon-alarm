@@ -13,124 +13,139 @@ connection = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, d
 def getDbConnection():
     return connection
 
-def getAlarmData(conn):
-    with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
-        query='SELECT * FROM alarm_info'
-        cursor.execute(query)
-        result = cursor.fetchall()
-
-        for x in result:
-            pvname = x['pvname']
-            query = 'SELECT * FROM sms_info WHERE pvname="%s"' % (pvname)
+def getAlarmData():
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
+            query='SELECT * FROM alarm_info'
             cursor.execute(query)
-            x['sms'] = cursor.fetchall()
+            result = cursor.fetchall()
 
-        return result
+            for x in result:
+                pvname = x['pvname']
+                query = 'SELECT * FROM sms_info WHERE pvname="%s"' % (pvname)
+                cursor.execute(query)
+                x['sms'] = cursor.fetchall()
+
+            return result
 
 
-def getSMSList(conn, pvName):
+def getSMSList(pvName):
     # conn = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8')
     # cursor = conn.cursor(pymysql.cursors.DictCursor)
-    with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
-        query='SELECT * FROM sms_info WHERE pvname LIKE ' + "'" + pvName + "'"
-        cursor.execute(query)
-        result = cursor.fetchall()
-        
-        return result
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
+            query='SELECT * FROM sms_info WHERE pvname LIKE ' + "'" + pvName + "'"
+            cursor.execute(query)
+            result = cursor.fetchall()
+            
+            return result
 
-def getAlarmInfo(conn, pvName):
-    with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
-        query='SELECT * FROM alarm_info WHERE pvname LIKE ' + "'" + pvName + "'"
-        cursor.execute(query)
-        result = cursor.fetchone()
+def getAlarmInfo(pvName):
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
+            query='SELECT * FROM alarm_info WHERE pvname LIKE ' + "'" + pvName + "'"
+            cursor.execute(query)
+            result = cursor.fetchone()
 
-        return result
+            return result
 
-def getAlarmList(conn):
-    with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
-        query='SELECT * FROM alarm_info'
-        cursor.execute(query)
-        result = cursor.fetchall()
+def getAlarmList():
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
+            query='SELECT * FROM alarm_info'
+            cursor.execute(query)
+            result = cursor.fetchall()
 
-        return result
+            return result
 
-def getAlarmLog(conn, pvName):
-    with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
-        query='SELECT * FROM alarm_log WHERE pvname LIKE ' + "'" + pvName + "'"    
-        cursor.execute(query)
-        result = cursor.fetchall()
-        
-        return result
+def getAlarmLog(pvName):
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
+            query='SELECT * FROM alarm_log WHERE pvname LIKE ' + "'" + pvName + "'"    
+            cursor.execute(query)
+            result = cursor.fetchall()
+            
+            return result
 
-def insertAlarmLog(conn, pvname, log):
-    with conn.cursor() as cursor:        
-        query='INSERT INTO alarm_log(pvname, log) values("%s", "%s")' % (pvname, log)
-        cursor.execute(query)
-        conn.commit()
-
-
-def deleteAlarmInfo(conn, pvName):
-    with conn.cursor() as cursor:        
-        query='DELETE FROM sms_info WHERE pvname=' + "'" + pvName + "'"
-        cursor.execute(query)
-        conn.commit()
-
-        query='DELETE FROM alarm_info WHERE pvname=' + "'" + pvName + "'"
-        cursor.execute(query)
-        conn.commit()
-
-def updateAlarmRecord(conn, data):
-    with conn.cursor() as cursor:        
-        query = 'UPDATE alarm_info SET description="%s", value="%s", operator=%d, state="%s", activation=%d, repetation=%d, delay=%d WHERE pvname="%s"' % (data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[0])
-        cursor.execute(query)
-        conn.commit()
-
-def updateAlarmFieldStr(conn, pvName, field, strValue):
-    with conn.cursor() as cursor:        
-        query = 'UPDATE alarm_info SET %s="%s" WHERE pvname="%s"' % (field, strValue, pvName)
-        cursor.execute(query)
-        conn.commit()
-
-def clearAlarm(conn):
-    with conn.cursor() as cursor:        
-        query = 'UPDATE alarm_info SET state="normal"'
-        cursor.execute(query)
-        conn.commit()
+def insertAlarmLog(pvname, log):
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor() as cursor:        
+            query='INSERT INTO alarm_log(pvname, log) values("%s", "%s")' % (pvname, log)
+            cursor.execute(query)
+            conn.commit()
 
 
-def updateAlarmFieldInt(conn, pvName, field, intValue):
-    with conn.cursor() as cursor:        
-        query = 'UPDATE alarm_info SET %s="%d" WHERE pvname="%s"' % (field, intValue, pvName)
-        cursor.execute(query)
-        conn.commit()
+def deleteAlarmInfo(pvName):
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor() as cursor:        
+            query='DELETE FROM sms_info WHERE pvname=' + "'" + pvName + "'"
+            cursor.execute(query)
+            conn.commit()
+
+            query='DELETE FROM alarm_info WHERE pvname=' + "'" + pvName + "'"
+            cursor.execute(query)
+            conn.commit()
+
+def updateAlarmRecord(data):
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+
+        with conn.cursor() as cursor:        
+            query = 'UPDATE alarm_info SET description="%s", value="%s", operator=%d, state="%s", activation=%d, repetation=%d, delay=%d WHERE pvname="%s"' % (data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[0])
+            cursor.execute(query)
+            conn.commit()
+
+def updateAlarmFieldStr(pvName, field, strValue):
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor() as cursor:        
+            query = 'UPDATE alarm_info SET %s="%s" WHERE pvname="%s"' % (field, strValue, pvName)
+            cursor.execute(query)
+            conn.commit()
+
+def clearAlarm():
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor() as cursor:        
+            query = 'UPDATE alarm_info SET state="normal"'
+            cursor.execute(query)
+            conn.commit()
+
+def updateAlarmFieldInt(pvName, field, intValue):
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor() as cursor:        
+            query = 'UPDATE alarm_info SET %s="%d" WHERE pvname="%s"' % (field, intValue, pvName)
+            cursor.execute(query)
+            conn.commit()
 
 
-def deleteSMSListFromPhone(conn, phone):
-    with conn.cursor() as cursor:
-        query='DELETE FROM sms_info WHERE phone=' + "'" + phone + "'"
-        cursor.execute(query)
-        conn.commit()
+def deleteSMSListFromPhone(phone):
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor() as cursor:
+            query='DELETE FROM sms_info WHERE phone=' + "'" + phone + "'"
+            cursor.execute(query)
+            conn.commit()
 
-def deleteSMSListFromPVName(conn, pvName):
-    with conn.cursor() as cursor:
-        query='DELETE FROM sms_info WHERE pvname=' + "'" + pvName + "'"
-        cursor.execute(query)
-        conn.commit()
+def deleteSMSListFromPVName(pvName):
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor() as cursor:
+            query='DELETE FROM sms_info WHERE pvname=' + "'" + pvName + "'"
+            cursor.execute(query)
+            conn.commit()
 
-def deleteSMSList(conn, phone, pvName):
-    with conn.cursor() as cursor:
-        query='DELETE FROM sms_info WHERE phone=' + "'" + phone + "'" + ' AND pvname=' + "'" + pvName + "'"
-        cursor.execute(query)
-        conn.commit()
+def deleteSMSList(phone, pvName):
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor() as cursor:
+            query='DELETE FROM sms_info WHERE phone=' + "'" + phone + "'" + ' AND pvname=' + "'" + pvName + "'"
+            cursor.execute(query)
+            conn.commit()
 
-def insertSMSInfo(conn, phone, pvName):
-    with conn.cursor() as cursor:
-        query='INSERT INTO sms_info(phone, pvname) values("%s", "%s")' % (phone, pvName)
-        cursor.execute(query)
-        conn.commit()
+def insertSMSInfo(phone, pvName):
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor() as cursor:
+            query='INSERT INTO sms_info(phone, pvname) values("%s", "%s")' % (phone, pvName)
+            cursor.execute(query)
+            conn.commit()
 
     # conn.close()
-getAlarmData(connection)
+getAlarmData()
 
 # testData = ('scwook:ai2', 'update', "12.1E-7", 1, 'alarm', 1, 10, 20)
 # updateAlarmInfo(testData)

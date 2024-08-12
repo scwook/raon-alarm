@@ -18,9 +18,150 @@ body {
     background-color: #222831;
 }
 
+#header {
+    display: flex;
+    width: 1800px;
+    height: 60px;
+    padding: 16px;
+    margin: auto;
+}
+
+#raon-logo {
+    flex-grow: 3;
+}
+
+#title {
+    display: flex;
+    color: #eeeeee;
+    font-size: 32px;
+    flex-grow: 6;
+    align-items: center;
+    justify-content: center;
+
+}
+
+#search {
+    display: flex;
+    height: 40px;
+    /* padding: 6px; */
+    flex-grow: 3;
+
+}
+
+#new-alarm {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: #eeeeee;
+    flex-grow: 1;
+}
+
+#search-bar {
+    display: flex;
+    flex-grow: 9;
+    height: 100%;
+    border-radius: 6px;
+    /* border: 0px; */
+    background-color: #31363f;
+    /* outline: none; */
+    padding: 8px;
+}
+
+#search-input {
+    background-color: #31363f;
+    flex-grow: 1;
+    height: 100%;
+    outline: none;
+    border: 0px;
+    color: #eeeeee;
+    outline: none;
+    font-size: 20px;
+}
+
+#search-button {
+    height: 100%;
+    aspect-ratio: 1/1;
+    border: none;
+}
+
+#alarm-summary-container {
+    display: flex;
+    margin: 20px auto 20px auto;
+    width: 1800px;
+    height: 120px;
+    justify-content: flex-end;
+}
+
+#summary-normal-icon,
+#summary-alarm-icon {
+    display: flex;
+    width: 120px;
+    aspect-ratio: 1/1;
+    justify-content: center;
+    align-items: center;
+}
+
+#summary-normal-text,
+#summary-alarm-text {
+    display: flex;
+    width: 120px;
+    aspect-ratio: 1/1;
+    justify-content: left;
+    align-items: center;
+    color:#eeeeee;
+    font-size: 60px;
+}
+
+#alarm-list-title {
+    display: flex;
+    width: 1760px;
+    margin: auto;
+    height: 60px;
+    padding: 16px;
+    color: #aaaaaa;
+    font-size: 24px;
+}
+
+#title-activation {
+    display: flex;
+    width: 80px;
+    height: 46px;
+    align-items: center;
+    justify-content: center;
+}
+
+#title-pvname {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex: 3;
+}
+
+#title-value,
+#title-condition,
+#title-status,
+#title-delay,
+#title-repetation {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex: 1;
+}
+
+#title-phone,
+#title-edit,
+#title-delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
 #alarm-list-container {
     width: 1800px;
-    height: 100%;
+    /* height: 100%; */
     margin: auto;
     flex-direction: column;
 }
@@ -45,7 +186,7 @@ body {
 }
 
 .smsInfo {
-    display: flex;
+    display: none;
     width: 20%;
     height: 60px;
     padding: 10px;

@@ -70,13 +70,13 @@ function removeitem() {
 }
 
 function displayitem() {
-    let id = document.getElementById('sub-item')
-    let display = id.style.display;
+    let id = document.getElementsByClassName('sitem');
+    let display = id[0].style.display;
     if (display == 'none') {
-        id.style.display = "block";
+        id[0].style.display = "block";
     }
     else {
-        id.style.display = "none";
+        id[0].style.display = "none";
     }
 }
 </script>

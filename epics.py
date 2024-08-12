@@ -134,12 +134,12 @@ def alarmRepeat(repeatTime, channelClass):
         print('     stop alarm repeat and start monitoring')
 
 def updateAlarmFieldStr(pvname, field, value):
-    conn = sql.getDbConnection()
-    sql.updateAlarmFieldStr(conn, pvname, field, value)
+    # conn = sql.getDbConnection()
+    sql.updateAlarmFieldStr(pvname, field, value)
 
 def writeAlarmLog(pvname, log):
-    conn = sql.getDbConnection()
-    sql.insertAlarmLog(conn, pvname, log)
+    # conn = sql.getDbConnection()
+    sql.insertAlarmLog(pvname, log)
 
 def sendAlarmSMS():
     print('alarm send')
