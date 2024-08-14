@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        min-height: 100vh;
+        margin: 0px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #222831;
+    }
+
+    #create-body {
+        /* display: flex; */
+        /* flex-direction: column; */
+        width: 500px;
+        height: 800px;
+        background-color: #3C434C;
+        border-radius: 10px;
+        box-shadow: 0px 0px 20px 5px #111111;
+    }
+
+    .item {
+        display: flex;
+        flex-direction: column;
+        margin: 20px 40px 20px 40px;
+        /* background-color: #222831; */
+        gap: 10px;
+    }
+
+    label {
+        color: #eee;
+        font-size: 24px;
+    }
+
+    input {
+        font-size: 21px;
+        height: 50px;
+        border-radius: 8px;
+        background-color: #e5e5e5;
+        outline: none;
+        padding: 10px;
+        border: 0px;
+    }
+
+    .sitem-container {
+        display: flex;
+        align-items: center;
+
+        /* justify-content: space-between; */
+        /* background-color: #e5e5e5; */
+    }
+
+    .sitem {
+        height: 50px;
+    }
+
+    select {
+        height: 100%;
+        font-size: 21px;
+        border-radius: 8px;
+        outline: none;
+        border: 0px;
+        background-color: #e5e5e5;
+        padding: 10px;
+    }
+
+    .addButton {
+        width: 26;
+        height: 26px;
+        margin-left: 20px;
+    }
+
+    .list {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 300px;
+        overflow: scroll;
+    }
+
+    .listItem {
+        display: flex;
+        margin-top: 10px;
+        width: 100%;
+        height: 60px;
+        padding: 15px 30px 15px 30px;
+        border-radius: 8px;
+        background-color: #28313F;
+    }
+
+    .phoneIcon {
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        width: 20px;
+        height: 30px;
+        flex: 1;
+    }
+
+    .phoneNumber {
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        flex: 2;
+        color: #eeeeee;
+        font-size: 20px;
+    }
+
+    .phoneDelete {
+        display: flex;
+        align-items: center;
+        justify-content: right;
+        flex: 1
+    }
+
+    .createButton {
+        width: 200px;
+        height: 60px;
+        border: 0px;
+        margin-top: 60px;
+        border-radius: 8px;
+        background-color: #29ABE2;
+        color: #eeeeee;
+        font-size: 24px;
+    }
+</style>
+
+<body>
+    <div id="create-body">
+        <div class="item">
+            <label>Process Variable</label>
+            <input type="text">
+        </div>
+
+        <div class="item">
+            <label>Value</label>
+            <div class="sitem-container">
+                <div class="sitem">
+                    <input type="text" style="width: 130px; margin-right: 20px;">
+                </div>
+                <div class="sitem">
+                    <select style="width: 70px; margin-right: 40px;">
+                        <option>0s</option>
+                        <option>5s</option>
+                        <option>10s</option>
+                        <option>30s</option>
+                        <option>60s</option>
+                    </select>
+                </div>
+                <div class="sitem">
+                    <select style="width: 70px; margin-right: 20px;">
+                        <option>0s</option>
+                        <option>5s</option>
+                        <option>10s</option>
+                        <option>30s</option>
+                        <option>60s</option>
+                    </select>
+                </div>
+                <div class="sitem">
+                    <select style="width: 70px; margin-right: 0px;">
+                        <option>1m</option>
+                        <option>5m</option>
+                        <option>10m</option>
+                        <option>30m</option>
+                        <option>60m</option>
+                    </select>
+                </div>
+                <!-- <input type="text">
+                    <input type="text">
+                    <input type="text">
+                    <input type="text"> -->
+            </div>
+        </div>
+
+        <div class="item" style="margin-top: 60px">
+            <div class="sitem-container">
+                <label>Message List</label>
+                <div class="addButton" type="button">
+                    <svg width="26" height="26">
+                        <defs>
+                            <style>
+                                .cls-1 {
+                                    fill: #29abe2;
+                                }
+
+                                .cls-2 {
+                                    fill: #eee;
+                                }
+                            </style>
+                        </defs>
+                        <circle class="cls-1" cx="13" cy="13" r="13" />
+                        <polygon class="cls-2"
+                            points="20.8 11 15 11 15 5.2 11 5.2 11 11 5.2 11 5.2 15 11 15 11 20.8 15 20.8 15 15 20.8 15 20.8 11" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="list">
+                <div class="listItem">
+                    <div class="phoneIcon">
+                        <svg width="22" height="30">
+                            <path style="fill:#eeeeee"
+                                d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" />
+                        </svg>
+                    </div>
+                    <div class="phoneNumber">0428788841</div>
+                    <div class="phoneDelete">
+                        <svg width="25" height="25">
+                            <circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a" />
+                            <rect x="5" y="10.5" width="15" height="4" style="fill:#eee" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="listItem">
+                    <div class="phoneIcon">
+                        <svg width="22" height="30">
+                            <path style="fill:#eeeeee"
+                                d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" />
+                        </svg>
+                    </div>
+                    <div class="phoneNumber">0428788841</div>
+                    <div class="phoneDelete">
+                        <svg width="25" height="25">
+                            <circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a" />
+                            <rect x="5" y="10.5" width="15" height="4" style="fill:#eee" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="listItem">
+                    <div class="phoneIcon">
+                        <svg width="22" height="30">
+                            <path style="fill:#eeeeee"
+                                d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" />
+                        </svg>
+                    </div>
+                    <div class="phoneNumber">0428788841</div>
+                    <div class="phoneDelete">
+                        <svg width="25" height="25">
+                            <circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a" />
+                            <rect x="5" y="10.5" width="15" height="4" style="fill:#eee" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="listItem">
+                    <div class="phoneIcon">
+                        <svg width="22" height="30">
+                            <path style="fill:#eeeeee"
+                                d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" />
+                        </svg>
+                    </div>
+                    <div class="phoneNumber">0428788841</div>
+                    <div class="phoneDelete">
+                        <svg width="25" height="25">
+                            <circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a" />
+                            <rect x="5" y="10.5" width="15" height="4" style="fill:#eee" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="listItem">
+                    <div class="phoneIcon">
+                        <svg width="22" height="30">
+                            <path style="fill:#eeeeee"
+                                d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" />
+                        </svg>
+                    </div>
+                    <div class="phoneNumber">0428788841</div>
+                    <div class="phoneDelete">
+                        <svg width="25" height="25">
+                            <circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a" />
+                            <rect x="5" y="10.5" width="15" height="4" style="fill:#eee" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="listItem">
+                    <div class="phoneIcon">
+                        <svg width="22" height="30">
+                            <path style="fill:#eeeeee"
+                                d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" />
+                        </svg>
+                    </div>
+                    <div class="phoneNumber">0428788841</div>
+                    <div class="phoneDelete">
+                        <svg width="25" height="25">
+                            <circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a" />
+                            <rect x="5" y="10.5" width="15" height="4" style="fill:#eee" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="createButton">Create</button>
+
+        </div>
+
+    </div>
+</body>
+<script>
+
+</script>
+
+</html>
