@@ -15,6 +15,8 @@
     }
 
     #create-body {
+        display: none;
+        position: relative;
         /* display: flex; */
         /* flex-direction: column; */
         width: 500px;
@@ -22,6 +24,8 @@
         background-color: #3C434C;
         border-radius: 10px;
         box-shadow: 0px 0px 20px 5px #111111;
+        transition: all .4s;
+        opacity: 0;
     }
 
     .item {
@@ -75,7 +79,7 @@
         margin-left: 20px;
     }
 
-    .list {
+    #list {
         display: flex;
         flex-direction: column;
         width: 100%;
@@ -128,10 +132,40 @@
         color: #eeeeee;
         font-size: 24px;
     }
+
+    .cancelButton {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        top: -15px;
+        right: -15px;
+    }
+
+    .inputPhone {
+        height: 30px;
+        font-size: 20px;
+        background-color: #28313F;
+        transition: .4s;
+        color: #eeeeee;
+        font-size: 20px;;
+    }
+
+    .inputPhone:focus {
+        background-color: #e5e5e5;
+        color: #28313F;
+    }
 </style>
 
 <body>
-    <div id="create-body">
+    <button type="button" onclick="showWindow()">Show</button>
+    <form id="create-body">
+        <div class="cancelButton" onclick="cancel()">
+            <svg width="30" height="30">
+              <circle cx="15" cy="15" r="15" style="fill:#d41c5c"/>
+              <polygon style="fill:#eeedee" points="22.41 10.41 19.59 7.59 15 12.17 10.41 7.59 7.59 10.41 12.17 15 7.59 19.59 10.41 22.41 15 17.83 19.59 22.41 22.41 19.59 17.83 15 22.41 10.41"/>
+            </svg>
+
+        </div>
         <div class="item">
             <label>Process Variable</label>
             <input type="text">
@@ -141,21 +175,22 @@
             <label>Value</label>
             <div class="sitem-container">
                 <div class="sitem">
-                    <input type="text" style="width: 130px; margin-right: 20px;">
+                    <input type="text" pattern="[0-9]" title="Number" style="width: 130px; margin-right: 20px;">
                 </div>
                 <div class="sitem">
                     <select style="width: 70px; margin-right: 40px;">
-                        <option>0s</option>
-                        <option>5s</option>
-                        <option>10s</option>
-                        <option>30s</option>
-                        <option>60s</option>
+                        <option selected="selected">&#61</option>
+                        <option>&#60</option>
+                        <option>&#62</option>
+                        <option>&#8800</option>
+                        <option>&#8804</option>
+                        <option>&#8805</option>
                     </select>
                 </div>
                 <div class="sitem">
                     <select style="width: 70px; margin-right: 20px;">
                         <option>0s</option>
-                        <option>5s</option>
+                        <option selected="selected">5s</option>
                         <option>10s</option>
                         <option>30s</option>
                         <option>60s</option>
@@ -163,7 +198,7 @@
                 </div>
                 <div class="sitem">
                     <select style="width: 70px; margin-right: 0px;">
-                        <option>1m</option>
+                        <option selected="selected">No</option>
                         <option>5m</option>
                         <option>10m</option>
                         <option>30m</option>
@@ -180,106 +215,16 @@
         <div class="item" style="margin-top: 60px">
             <div class="sitem-container">
                 <label>Message List</label>
-                <div class="addButton" type="button">
+                <div class="addButton" type="button" onclick="addPhone()">
                     <svg width="26" height="26">
-                        <defs>
-                            <style>
-                                .cls-1 {
-                                    fill: #29abe2;
-                                }
-
-                                .cls-2 {
-                                    fill: #eee;
-                                }
-                            </style>
-                        </defs>
-                        <circle class="cls-1" cx="13" cy="13" r="13" />
-                        <polygon class="cls-2"
+                        <circle style="fill:#29abe2" cx="13" cy="13" r="13" />
+                        <polygon  style="fill:#eee"
                             points="20.8 11 15 11 15 5.2 11 5.2 11 11 5.2 11 5.2 15 11 15 11 20.8 15 20.8 15 15 20.8 15 20.8 11" />
                     </svg>
                 </div>
             </div>
 
-            <div class="list">
-                <div class="listItem">
-                    <div class="phoneIcon">
-                        <svg width="22" height="30">
-                            <path style="fill:#eeeeee"
-                                d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" />
-                        </svg>
-                    </div>
-                    <div class="phoneNumber">0428788841</div>
-                    <div class="phoneDelete">
-                        <svg width="25" height="25">
-                            <circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a" />
-                            <rect x="5" y="10.5" width="15" height="4" style="fill:#eee" />
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="listItem">
-                    <div class="phoneIcon">
-                        <svg width="22" height="30">
-                            <path style="fill:#eeeeee"
-                                d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" />
-                        </svg>
-                    </div>
-                    <div class="phoneNumber">0428788841</div>
-                    <div class="phoneDelete">
-                        <svg width="25" height="25">
-                            <circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a" />
-                            <rect x="5" y="10.5" width="15" height="4" style="fill:#eee" />
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="listItem">
-                    <div class="phoneIcon">
-                        <svg width="22" height="30">
-                            <path style="fill:#eeeeee"
-                                d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" />
-                        </svg>
-                    </div>
-                    <div class="phoneNumber">0428788841</div>
-                    <div class="phoneDelete">
-                        <svg width="25" height="25">
-                            <circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a" />
-                            <rect x="5" y="10.5" width="15" height="4" style="fill:#eee" />
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="listItem">
-                    <div class="phoneIcon">
-                        <svg width="22" height="30">
-                            <path style="fill:#eeeeee"
-                                d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" />
-                        </svg>
-                    </div>
-                    <div class="phoneNumber">0428788841</div>
-                    <div class="phoneDelete">
-                        <svg width="25" height="25">
-                            <circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a" />
-                            <rect x="5" y="10.5" width="15" height="4" style="fill:#eee" />
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="listItem">
-                    <div class="phoneIcon">
-                        <svg width="22" height="30">
-                            <path style="fill:#eeeeee"
-                                d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" />
-                        </svg>
-                    </div>
-                    <div class="phoneNumber">0428788841</div>
-                    <div class="phoneDelete">
-                        <svg width="25" height="25">
-                            <circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a" />
-                            <rect x="5" y="10.5" width="15" height="4" style="fill:#eee" />
-                        </svg>
-                    </div>
-                </div>
+            <div id="list">
 
                 <div class="listItem">
                     <div class="phoneIcon">
@@ -298,14 +243,74 @@
                 </div>
             </div>
 
-            <button type="button" class="createButton">Create</button>
+            <button type="button" class="createButton" onclick="create()">Create</button>
 
         </div>
-
-    </div>
+    </form>
 </body>
 <script>
 
+const SVG_PHONE = '<svg width="22" height="30"><path style="fill:#eeeeee" d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" /></svg>';
+
+function showWindow() {
+    let id = document.getElementById('create-body');
+    id.style.display = 'block';
+    id.style.opacity = '1';
+    id.style.transform = 'translateY(10px)';
+}
+
+function cancel() {
+    console.log('cancel');
+    let id = document.getElementById('create-body');
+    id.style.display = 'none';
+    id.style.opacity = '0';
+}
+
+function create() {
+    console.log('create');
+}
+
+function addPhone() {
+    console.log('add');
+    const messageList = document.getElementById('list');
+
+    const messageListItemElem = document.createElement('div');
+    messageListItemElem.classList.add('listItem');
+    
+    const phoneIconElem = document.createElement('div');
+    phoneIconElem.classList.add('phoneIcon');
+    phoneIconElem.innerHTML = SVG_PHONE;
+
+    const phoneInputElem = document.createElement('input');
+    phoneInputElem.classList.add('inputPhone');
+    phoneInputElem.setAttribute('type', 'tel');
+    phoneInputElem.setAttribute('pattern', '[0-9]{10,}');
+    phoneInputElem.setAttribute('placeholder', '01046821357')
+    phoneInputElem.addEventListener('focusout', () => {
+        let value = phoneInputElem.value;
+        // console.log(Number.isInteger(value));
+        if(!value) {
+            messageListItemElem.remove();        
+        }
+        console.log(value);
+    });
+    // phoneInputElem.addEventListener('keypress', (event) => {
+    //     if(event.key == "Enter") {
+    //         event.preventDefault();
+    //         phoneInputElem.dispatchEvent(new Event('focusout'));
+    //         console.log(event.key);
+    //     }
+    // });
+
+    const phoneDeleteElem = document.createElement('div');
+    phoneDeleteElem.classList.add('phoneDelete');
+
+    messageListItemElem.appendChild(phoneIconElem);
+    messageListItemElem.appendChild(phoneInputElem);
+    messageListItemElem.appendChild(phoneDeleteElem);
+
+    messageList.insertBefore(messageListItemElem, messageList.firstChild);
+}
 </script>
 
 </html>
