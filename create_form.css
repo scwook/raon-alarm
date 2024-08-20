@@ -1,0 +1,154 @@
+#config-dialog-body {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(34,40,49,0.8);
+    background-color: rgba(0,0,0,0.6);
+    z-index: 200;
+    top: 0px;
+    left: 0px;
+}
+
+#config-form-container {
+    /* display: block; */
+    position: relative;
+    /* display: flex; */
+    /* flex-direction: column; */
+    width: 500px;
+    height: 800px;
+    background-color: #3C434C;
+    border-radius: 10px;
+    /* box-shadow: 0px 0px 20px 5px #111111; */
+    transition: all .4s;
+    /* opacity: 0; */
+}
+
+.configFormItem {
+    display: flex;
+    flex-direction: column;
+    margin: 20px 40px 20px 40px;
+    /* background-color: #222831; */
+    gap: 10px;
+}
+
+.configFormItem label {
+    color: #eee;
+    font-size: 24px;
+}
+
+.configFormItem input {
+    font-size: 21px;
+    height: 50px;
+    border-radius: 8px;
+    background-color: #e5e5e5;
+    outline: none;
+    padding: 10px;
+    border: 0px;
+}
+
+.configFormItemChild {
+    display: flex;
+    align-items: center;
+
+    /* justify-content: space-between; */
+    /* background-color: #e5e5e5; */
+}
+
+.configFormChildItem {
+    height: 50px;
+}
+
+.configFormChildItem select {
+    height: 100%;
+    font-size: 21px;
+    border-radius: 8px;
+    outline: none;
+    border: 0px;
+    background-color: #e5e5e5;
+    padding: 10px;
+}
+
+.configMessageUserAddButton {
+    width: 26;
+    height: 26px;
+    margin-left: 20px;
+}
+
+#config-message-user-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 300px;
+    overflow: scroll;
+}
+
+.configMessageUserListContainer {
+    display: flex;
+    margin-top: 10px;
+    width: 100%;
+    height: 60px;
+    padding: 15px 30px 15px 30px;
+    border-radius: 8px;
+    background-color: #28313F;
+}
+
+.configMessagePhoneIcon {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    width: 20px;
+    height: 30px;
+    flex: 1;
+}
+
+.configMessagePhoneNumber {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex: 2;
+    color: #eeeeee;
+    font-size: 20px;
+}
+
+.configMessagePhoneDelete {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    flex: 1
+}
+
+.configSetButton {
+    width: 200px;
+    height: 60px;
+    border: 0px;
+    margin-top: 60px;
+    border-radius: 8px;
+    background-color: #29ABE2;
+    color: #eeeeee;
+    font-size: 24px;
+}
+
+.configFormCancelButton {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    top: -15px;
+    right: -15px;
+}
+
+.configMessageUserListContainer input {
+    height: 30px;
+    font-size: 20px;
+    background-color: #28313F;
+    transition: .4s;
+    color: #eeeeee;
+    font-size: 20px;;
+}
+
+.configMessageUserListContainer input:focus {
+    background-color: #e5e5e5;
+    color: #28313F;
+}

@@ -3,6 +3,7 @@
 <meta charset="UTF-8">
 
 <link rel="stylesheet" type="text/css" href="index.css">
+<link rel="stylesheet" type="text/css" href="create_form.css">
 
 <body>
     <div id="header">
@@ -18,7 +19,7 @@
         </div>
         <div id="title">COntrol Message Alarm</div>
         <div id="search">
-            <div id="new-alarm">+</div>
+            <div id="new-alarm" onclick="showAlarmConfigurationDialog('create', null)">+</div>
             <div id="search-bar">
                 <input type="text" id="search-input" placeholder="Search">
                 <div type="button" id="search-button">
@@ -149,6 +150,95 @@
             </div>
         </div>
     </div>
+
+    <!-- New Alarm Form -->
+    <div id="config-dialog-body">
+        <form id="config-form-container">
+            <div class="configFormCancelButton" onclick="closeAlarmConfigurationDialog()">
+                <svg width="30" height="30">
+                    <circle cx="15" cy="15" r="15" style="fill:#d41c5c" />
+                    <polygon style="fill:#eeedee"
+                        points="22.41 10.41 19.59 7.59 15 12.17 10.41 7.59 7.59 10.41 12.17 15 7.59 19.59 10.41 22.41 15 17.83 19.59 22.41 22.41 19.59 17.83 15 22.41 10.41" />
+                </svg>
+
+            </div>
+            <div class="configFormItem">
+                <label>Process Variable</label>
+                <input id="config-pvname" type="text" name="pvname">
+            </div>
+
+            <div class="configFormItem">
+                <label>Value</label>
+                <div class="configFormItemChild">
+                    <div class="configFormChildItem">
+                        <input id="config-value" type="text" pattern="[0-9]" title="Number" name="value"
+                            style="width: 130px; margin-right: 20px;">
+                    </div>
+                    <div class="configFormChildItem">
+                        <select id="config-condition" name="condition" style="width: 70px; margin-right: 40px;">
+                            <option value="0" selected="selected">&#61</option>
+                            <option value="1">&#60</option>
+                            <option value="2">&#62</option>
+                            <option value="3">&#8800</option>
+                            <option value="4">&#8804</option>
+                            <option value="5">&#8805</option>
+                        </select>
+                    </div>
+                    <div class="configFormChildItem">
+                        <select id="config-delay" name="delay" style="width: 70px; margin-right: 20px;">
+                            <option value="0">0s</option>
+                            <option value="5" selected="selected">5s</option>
+                            <option value="10">10s</option>
+                            <option value="30">30s</option>
+                            <option value="60">60s</option>
+                        </select>
+                    </div>
+                    <div class="configFormChildItem">
+                        <select id="config-repetation" name="repetation" style="width: 70px; margin-right: 0px;">
+                            <option value="0" selected="selected">No</option>
+                            <option value="5">5m</option>
+                            <option value="10">10m</option>
+                            <option value="30">30m</option>
+                            <option value="60">60m</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="configFormItem" style="margin-top: 60px">
+                <div class="configFormItemChild">
+                    <label>Message List</label>
+                    <div class="configMessageUserAddButton" type="button" onclick="addMessageUser()">
+                        <svg width="26" height="26">
+                            <circle style="fill:#29abe2" cx="13" cy="13" r="13" />
+                            <polygon style="fill:#eee"
+                                points="20.8 11 15 11 15 5.2 11 5.2 11 11 5.2 11 5.2 15 11 15 11 20.8 15 20.8 15 15 20.8 15 20.8 11" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div id="config-message-user-list">
+                    <div class="configMessageUserListContainer">
+                        <div class="configMessagePhoneIcon">
+                            <svg width="22" height="30">
+                                <path style="fill:#eeeeee"
+                                    d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" />
+                            </svg>
+                        </div>
+                        <div class="configMessagePhoneNumber">0428788841</div>
+                        <div class="configMessagePhoneDelete">
+                            <svg width="25" height="25">
+                                <circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a" />
+                                <rect x="5" y="10.5" width="15" height="4" style="fill:#eee" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="config-set-button" type="button" class="configSetButton"></button>
+            </div>
+        </form>
+    </div>
 </body>
 <script>
 
@@ -159,8 +249,8 @@
     const SVG_DELETE = '<svg width="22" height="30"><path class="icon-fill" d="M.62,5.96l2.39,22.66c.02.77.65,1.38,1.42,1.38h12.44c.77,0,1.4-.61,1.42-1.38l2.39-22.66H.62ZM7.27,22.39c0,.44-.36.8-.8.8h-.12c-.44,0-.8-.36-.8-.8v-10.58c0-.44.36-.8.8-.8h.12c.44,0,.8.36.8.8v10.58ZM11.5,22.39c0,.44-.36.8-.8.8h-.12c-.44,0-.8-.36-.8-.8v-10.58c0-.44.36-.8.8-.8h.12c.44,0,.8.36.8.8v10.58ZM15.74,22.39c0,.44-.36.8-.8.8h-.12c-.44,0-.8-.36-.8-.8v-10.58c0-.44.36-.8.8-.8h.12c.44,0,.8.36.8.8v10.58Z" /><path class="icon-fill" d="M19.29,1.7h-6.95c0-.94-.76-1.7-1.7-1.7s-1.7.76-1.7,1.7H2C.9,1.7,0,2.6,0,3.7v.84h21.29v-.84c0-1.1-.9-2-2-2Z" /></svg>';
     const SVG_PHONE_DELETE = '<svg width="25" height="25"><circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a"/><rect x="5" y="10.5" width="15" height="4" style="fill:#eee" /></svg>';
     const SVG_PHONE_ACTIVATION = '<svg width="20" height="20"><path class="cls-12" d="M9.44,15.9c-.59,0-1.12-.29-1.44-.78l-3.59-4.56c-.34-.43-.27-1.06.17-1.4.43-.34,1.06-.27,1.4.17l3.4,4.32,4.51-9c.25-.49.85-.69,1.34-.45.49.25.69.85.45,1.34l-4.74,9.45c-.34.59-.89.91-1.51.91Z" style="fill: #eee;"/></svg>';
-    
-    // getAlarmData();
+
+    getAlarmData();
 
     function getAlarmData() {
         var xhttp = new XMLHttpRequest();
@@ -222,8 +312,8 @@
         activationInput.classList.add('activationCheckBox');
         activationInput.setAttribute('type', 'checkbox');
         activationInput.addEventListener('change', () => {
-                setAlarmActivation(activationInput);
-            });
+            setAlarmActivation(activationInput);
+        });
 
         const activationToggle = document.createElement('span');
         activationToggle.classList.add('activationToggelButton');
@@ -266,6 +356,9 @@
         const editElem = document.createElement('div');
         editElem.classList.add('alarmEdit');
         editElem.innerHTML = SVG_EDIT;
+        editElem.addEventListener('click', () => {
+            showAlarmConfigurationDialog('update', data);
+        });
 
         const deleteElem = document.createElement('div');
         deleteElem.classList.add('alarmDelete');
@@ -408,6 +501,116 @@
                 return 'Error';
         }
     }
+
+    function addMessageUser() {
+        const messageList = document.getElementById('config-message-user-list');
+
+        const messageListItemElem = document.createElement('div');
+        messageListItemElem.classList.add('configMessageUserListContainer');
+
+        const phoneIconElem = document.createElement('div');
+        phoneIconElem.classList.add('configMessagePhoneIcon');
+        phoneIconElem.innerHTML = SVG_PHONE;
+
+        const phoneInputElem = document.createElement('input');
+        phoneInputElem.classList.add('configMessageInputPhone');
+        phoneInputElem.setAttribute('name', 'phone');
+        phoneInputElem.setAttribute('type', 'tel');
+        phoneInputElem.setAttribute('pattern', '[0-9]{10,}');
+        phoneInputElem.setAttribute('placeholder', '01046821357');
+        phoneInputElem.addEventListener('focusout', () => {
+            let value = phoneInputElem.value;
+            // console.log(Number.isInteger(value));
+            if (!value) {
+                messageListItemElem.remove();
+            }
+        });
+        // phoneInputElem.addEventListener('keypress', (event) => {
+        //     if(event.key == "Enter") {
+        //         event.preventDefault();
+        //         phoneInputElem.dispatchEvent(new Event('focusout'));
+        //         console.log(event.key);
+        //     }
+        // });
+
+        const phoneDeleteElem = document.createElement('div');
+        phoneDeleteElem.classList.add('configMessagePhoneDelete');
+
+        messageListItemElem.appendChild(phoneIconElem);
+        messageListItemElem.appendChild(phoneInputElem);
+        messageListItemElem.appendChild(phoneDeleteElem);
+
+        messageList.insertBefore(messageListItemElem, messageList.firstChild);
+    }
+
+
+    function showAlarmConfigurationDialog(target, data) {
+
+        switch (target) {
+            case 'create':
+                var searchInputId = document.getElementById('search-input');
+                document.getElementById('config-pvname').value = searchInputId.value;
+
+                var createButtonID = document.getElementById('config-set-button');
+                createButtonID.innerText = 'Create';
+                createButtonID.addEventListener('click', () => {
+                    let formData = new FormData(document.getElementById('config-form-container'));
+                    // console.log(formData);
+                    createNewAlarmInfo(formData);
+                });
+                break;
+
+            case 'update':
+                console.log(data);
+                // document.getElementById('config-pvname').value = data['pvname'];
+                // document.getElementById('config-value').value = data['value'];
+                // docuemnt.getElementById('config-delay').value = data['delay'];
+                // docuemnt.getElementById('config-repetation').value = data['repetation'];
+
+                var createButtonID = document.getElementById('config-set-button');
+                createButtonID.innerText = 'Update';
+                createButtonID.addEventListener('click', () => {
+                    let formData = new FormData(document.getElementById('config-form-container'));
+                    updateAlarmInfo(formData);
+                });
+
+                break;
+
+        }
+
+        let id = document.getElementById('config-dialog-body');
+        id.style.display = 'flex';
+    }
+
+    function closeAlarmConfigurationDialog() {
+        let id = document.getElementById('config-dialog-body');
+        id.style.display = 'none';
+    }
+
+    function createNewAlarmInfo(data) {
+        const dicData = {};
+        const phoneArray = [];
+
+        for (let [key, value] of data.entries()) {
+            if (key == 'phone') {
+                phoneArray.push(value);
+            }
+            else {
+                dicData[key] = value;
+            }
+            // console.log(`${key}: ${value}`);
+        }
+
+        dicData['phone'] = phoneArray;
+    }
+
+    function updateAlarmInfo(data) {
+        for (let [key, value] of data.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+    }
+
+
 </script>
 
 </html>

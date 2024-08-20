@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Page Title</title>
+</head>
+
+<body>
+    <form id="myForm">
+        <div>
+            <input type="text" name="username" value="JohnDoe">
+            <input type="password" name="password" value="12345">
+            <input type="submit" value="Submit">
+        </div>
+
+    </form>
+
+    <div id="aaa"></div>
+</body>
+<script>
+    const form = document.getElementById('myForm');
+
+    // FormData 객체 생성
+    const formData = new FormData(form);
+
+    // 폼 데이터 출력
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+</script>
+
+</html>
