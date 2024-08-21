@@ -13,7 +13,8 @@ connection = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, d
 def getDbConnection():
     return connection
 
-def getAlarmData():
+# Retrive all alarm list with sms infomation
+def getAlarmDataAll():
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
             query='SELECT * FROM alarm_info'
@@ -27,7 +28,22 @@ def getAlarmData():
                 x['sms'] = cursor.fetchall()
 
             return result
+        
+# Retrive only one alarm info for pvName with sms information
+def getAlarmInfoFromPV(pvName):
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
+            query='SELECT * FROM alarm_info WHERE pvname LIKE "%s"' % (pvName)
+            cursor.execute(query)
+            result = cursor.fetchall()
 
+            for x in result:
+                pvname = x['pvname']
+                query = 'SELECT * FROM sms_info WHERE pvname="%s"' % (pvname)
+                cursor.execute(query)
+                x['sms'] = cursor.fetchall()
+            
+            return result
 
 def getSMSList(pvName):
     # conn = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8')
@@ -40,14 +56,7 @@ def getSMSList(pvName):
             
             return result
 
-def getAlarmInfo(pvName):
-    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
-        with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
-            query='SELECT * FROM alarm_info WHERE pvname LIKE ' + "'" + pvName + "'"
-            cursor.execute(query)
-            result = cursor.fetchone()
 
-            return result
 
 def getAlarmList():
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
@@ -115,6 +124,12 @@ def updateAlarmFieldInt(pvName, field, intValue):
             cursor.execute(query)
             conn.commit()
 
+def updateSMSFieldInt(phone, pvName, field, value):
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor() as cursor:
+            query='UPDATE sms_info SET %s="%d" WHERE phone="%s" AND pvname="%s"' % (field, value, phone, pvName)
+            cursor.execute(query)
+            conn.commit()
 
 def deleteSMSListFromPhone(phone):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
@@ -145,7 +160,7 @@ def insertSMSInfo(phone, pvName):
             conn.commit()
 
     # conn.close()
-getAlarmData()
+# getAlarmData()
 
 # testData = ('scwook:ai2', 'update', "12.1E-7", 1, 'alarm', 1, 10, 20)
 # updateAlarmInfo(testData)

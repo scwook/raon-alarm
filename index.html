@@ -5,6 +5,10 @@
 <link rel="stylesheet" type="text/css" href="index.css">
 <link rel="stylesheet" type="text/css" href="create_form.css">
 
+<script src="server.js"></script>
+<script src="page.js"></script>
+
+
 <body>
     <div id="header">
         <div id="raon-logo">
@@ -22,7 +26,7 @@
             <div id="new-alarm" onclick="showAlarmConfigurationDialog('create', null)">+</div>
             <div id="search-bar">
                 <input type="text" id="search-input" placeholder="Search">
-                <div type="button" id="search-button">
+                <div type="button" id="search-button" onclick="searchAlarmData()">
                     <svg width="22" height="22">
                         <path style="fill:#b3b3b3"
                             d="M21.71,20.29l-5.91-5.91c2.77-3.48,2.55-8.57-.66-11.78-1.67-1.67-3.9-2.6-6.27-2.6S4.27.92,2.6,2.6C.92,4.27,0,6.5,0,8.86s.92,4.59,2.6,6.27c1.73,1.73,4,2.59,6.27,2.59,1.96,0,3.91-.65,5.52-1.93l5.91,5.91c.2.2.45.29.71.29s.51-.1.71-.29c.39-.39.39-1.02,0-1.41ZM4.01,13.72c-1.3-1.3-2.01-3.02-2.01-4.85s.71-3.56,2.01-4.85,3.02-2.01,4.85-2.01,3.56.71,4.85,2.01c2.68,2.68,2.68,7.03,0,9.71-2.68,2.67-7.03,2.68-9.71,0Z" />
@@ -172,10 +176,10 @@
                 <div class="configFormItemChild">
                     <div class="configFormChildItem">
                         <input id="config-value" type="text" pattern="[0-9]" title="Number" name="value"
-                            style="width: 130px; margin-right: 20px;">
+                            style="width: 120px; margin-right: 20px;">
                     </div>
                     <div class="configFormChildItem">
-                        <select id="config-condition" name="condition" style="width: 70px; margin-right: 40px;">
+                        <select id="config-condition" name="condition" style="width: 70px; margin-right: 30px;">
                             <option value="0" selected="selected">&#61</option>
                             <option value="1">&#60</option>
                             <option value="2">&#62</option>
@@ -185,7 +189,7 @@
                         </select>
                     </div>
                     <div class="configFormChildItem">
-                        <select id="config-delay" name="delay" style="width: 70px; margin-right: 20px;">
+                        <select id="config-delay" name="delay" style="width: 80px; margin-right: 20px;">
                             <option value="0">0s</option>
                             <option value="5" selected="selected">5s</option>
                             <option value="10">10s</option>
@@ -194,7 +198,7 @@
                         </select>
                     </div>
                     <div class="configFormChildItem">
-                        <select id="config-repetation" name="repetation" style="width: 70px; margin-right: 0px;">
+                        <select id="config-repetation" name="repetation" style="width: 80px; margin-right: 0px;">
                             <option value="0" selected="selected">No</option>
                             <option value="5">5m</option>
                             <option value="10">10m</option>
@@ -208,7 +212,7 @@
             <div class="configFormItem" style="margin-top: 60px">
                 <div class="configFormItemChild">
                     <label>Message List</label>
-                    <div class="configMessageUserAddButton" type="button" onclick="addMessageUser()">
+                    <div class="configMessageUserAddButton" type="button" onclick="createMessageUser()">
                         <svg width="26" height="26">
                             <circle style="fill:#29abe2" cx="13" cy="13" r="13" />
                             <polygon style="fill:#eee"
@@ -242,373 +246,7 @@
 </body>
 <script>
 
-    const SVG_ALARM_STAT = '<svg width="40" height="35"><path class="icon-alarm" d="M17.44,1.5L.41,31c-1.15,2,.29,4.5,2.6,4.5h34.06c2.31,0,3.75-2.5,2.6-4.5L22.63,1.5c-1.15-2-4.04-2-5.2,0Z" /><circle class="icon-fill" cx="20.04" cy="27.82" r="2.54" /><path class="icon-fill" d="M20.04,9.18c-1.4,0-2.54,1.14-2.54,2.54l1.02,12.19h3.05l1.02-12.19c0-1.4-1.14-2.54-2.54-2.54Z" /></svg>';
-    const SVG_NORMAL_STAT = '<svg width="40" height="40"><circle class="icon-normal" cx="20" cy="20" r="20" /><path class="icon-fill" d="M19.11,29.82h0c-1.06,0-2.04-.54-2.62-1.41l-5.71-7.26c-.68-.87-.53-2.12.33-2.81.87-.68,2.13-.53,2.81.33l5.03,6.39,6.91-13.79c.49-.99,1.7-1.39,2.68-.89.99.49,1.39,1.7.89,2.68l-7.61,15.19c-.56.97-1.6,1.57-2.71,1.57Z" /></svg>';
-    const SVG_PHONE = '<svg width="22" height="30"><path class="icon-fill" d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" /></svg>';
-    const SVG_EDIT = '<svg width="19" height="30"><path class="icon-fill" d="M0,25.01v4.42c0,.44.48.72.86.5l3.83-2.21c.17-.1.32-.24.42-.42L16.39,7.75l-4.95-2.86L.15,24.44c-.1.17-.15.37-.15.57Z" /><path class="icon-fill" d="M17.34.38c-1.37-.79-3.12-.32-3.9,1.05l-1.43,2.48,4.95,2.86,1.43-2.48c.79-1.37.32-3.12-1.05-3.9Z" /></svg>';
-    const SVG_DELETE = '<svg width="22" height="30"><path class="icon-fill" d="M.62,5.96l2.39,22.66c.02.77.65,1.38,1.42,1.38h12.44c.77,0,1.4-.61,1.42-1.38l2.39-22.66H.62ZM7.27,22.39c0,.44-.36.8-.8.8h-.12c-.44,0-.8-.36-.8-.8v-10.58c0-.44.36-.8.8-.8h.12c.44,0,.8.36.8.8v10.58ZM11.5,22.39c0,.44-.36.8-.8.8h-.12c-.44,0-.8-.36-.8-.8v-10.58c0-.44.36-.8.8-.8h.12c.44,0,.8.36.8.8v10.58ZM15.74,22.39c0,.44-.36.8-.8.8h-.12c-.44,0-.8-.36-.8-.8v-10.58c0-.44.36-.8.8-.8h.12c.44,0,.8.36.8.8v10.58Z" /><path class="icon-fill" d="M19.29,1.7h-6.95c0-.94-.76-1.7-1.7-1.7s-1.7.76-1.7,1.7H2C.9,1.7,0,2.6,0,3.7v.84h21.29v-.84c0-1.1-.9-2-2-2Z" /></svg>';
-    const SVG_PHONE_DELETE = '<svg width="25" height="25"><circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a"/><rect x="5" y="10.5" width="15" height="4" style="fill:#eee" /></svg>';
-    const SVG_PHONE_ACTIVATION = '<svg width="20" height="20"><path class="cls-12" d="M9.44,15.9c-.59,0-1.12-.29-1.44-.78l-3.59-4.56c-.34-.43-.27-1.06.17-1.4.43-.34,1.06-.27,1.4.17l3.4,4.32,4.51-9c.25-.49.85-.69,1.34-.45.49.25.69.85.45,1.34l-4.74,9.45c-.34.59-.89.91-1.51.91Z" style="fill: #eee;"/></svg>';
-
-    getAlarmData();
-
-    function getAlarmData() {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                var jsonValue = JSON.parse(this.responseText);
-                for (let x in jsonValue) {
-                    createAlarmData(jsonValue[x]);
-                }
-            }
-            // else {
-            // 	alert('Status Error : ' + this.status);
-            // }
-
-        };
-
-        var serverAddr = "http://192.168.131.161:8000/getAlarmData";
-        xhttp.open("GET", serverAddr, false);
-        xhttp.send();
-    }
-
-    function getSMSListFromPV(pvname) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                var jsonValue = JSON.parse(this.responseText);
-                // console.log(jsonValue);
-                for (let x in jsonValue) {
-                }
-            }
-            // else {
-            // 	alert('Status Error : ' + this.status);
-            // }
-
-        };
-
-        var serverAddr = "http://192.168.131.161:8000/get";
-        xhttp.open("GET", serverAddr, false);
-        xhttp.send();
-    }
-
-    function createAlarmData(data) {
-        let alarmListContainer = document.getElementById('alarm-list-container');
-
-        const alarmItemContainer = document.createElement('div');
-        alarmItemContainer.classList.add('alarmItem');
-
-        // Alarm Infomation
-        const alarmInfoContainer = document.createElement('div');
-        alarmInfoContainer.classList.add('alarmInfo');
-
-        const activationElem = document.createElement('div');
-        activationElem.classList.add('alarmActivation');
-
-        const activationContainerElem = document.createElement('label');
-        activationContainerElem.classList.add('activationContainer');
-
-        const activationInput = document.createElement('input');
-        activationInput.classList.add('activationCheckBox');
-        activationInput.setAttribute('type', 'checkbox');
-        activationInput.addEventListener('change', () => {
-            setAlarmActivation(activationInput);
-        });
-
-        const activationToggle = document.createElement('span');
-        activationToggle.classList.add('activationToggelButton');
-
-        activationContainerElem.appendChild(activationInput);
-        activationContainerElem.appendChild(activationToggle);
-        activationElem.appendChild(activationContainerElem);
-
-        const pvnameElem = document.createElement('div');
-        pvnameElem.classList.add('alarmPVName');
-        pvnameElem.innerText = data['pvname'];
-
-        const valueElem = document.createElement('div');
-        valueElem.classList.add('alarmValue')
-        valueElem.innerText = data['value'];
-
-        const conditionElem = document.createElement('div');
-        conditionElem.classList.add('alarmCondition');
-        conditionElem.innerHTML = convertContition(data['operator'])
-
-        const statusElem = document.createElement('div');
-        statusElem.classList.add('alarmStatus');
-        statusElem.innerHTML = alarmStateCheck(data['state']);
-
-        const delayElem = document.createElement('div');
-        delayElem.classList.add('alarmDelay');
-        delayElem.innerText = data['delay'] + 'sec';
-
-        const repetationElem = document.createElement('div');
-        repetationElem.classList.add('alarmRepetation');
-        repetationElem.innerText = data['repetation'] + 'min';
-
-        const phoneElem = document.createElement('div');
-        phoneElem.classList.add('alarmPhone');
-        phoneElem.innerHTML = SVG_PHONE;
-        phoneElem.addEventListener('click', () => {
-            displaySMSList(alarmItemContainer);
-        });
-
-        const editElem = document.createElement('div');
-        editElem.classList.add('alarmEdit');
-        editElem.innerHTML = SVG_EDIT;
-        editElem.addEventListener('click', () => {
-            showAlarmConfigurationDialog('update', data);
-        });
-
-        const deleteElem = document.createElement('div');
-        deleteElem.classList.add('alarmDelete');
-        deleteElem.innerHTML = SVG_DELETE;
-        deleteElem.addEventListener('click', () => {
-            deleteAlarmItem(alarmItemContainer);
-        });
-
-        alarmInfoContainer.appendChild(activationElem);
-        alarmInfoContainer.appendChild(pvnameElem);
-        alarmInfoContainer.appendChild(valueElem);
-        alarmInfoContainer.appendChild(conditionElem);
-        alarmInfoContainer.appendChild(statusElem);
-        alarmInfoContainer.appendChild(delayElem);
-        alarmInfoContainer.appendChild(repetationElem);
-        alarmInfoContainer.appendChild(phoneElem);
-        alarmInfoContainer.appendChild(editElem);
-        alarmInfoContainer.appendChild(deleteElem);
-
-        alarmItemContainer.appendChild(alarmInfoContainer);
-
-        // SMS Information
-        // console.log(data);
-        for (let sms of data['sms']) {
-            const smsInfoContainer = document.createElement('div');
-            smsInfoContainer.classList.add('smsInfo');
-            smsInfoContainer.style.display = 'none';
-
-            const smsActivationElem = document.createElement('div');
-            smsActivationElem.classList.add('smsActivation');
-
-            const smsActivationContainerElem = document.createElement('label');
-            smsActivationContainerElem.classList.add('smsActivationContainer');
-
-            const smsActivationInput = document.createElement('input');
-            smsActivationInput.classList.add('smsActivationCheckBox');
-            smsActivationInput.setAttribute('type', 'checkbox');
-            smsActivationInput.addEventListener('change', () => {
-                setSMSActivation(smsActivationInput);
-            });
-
-            const smsActivationCheck = document.createElement('span');
-            smsActivationCheck.classList.add('smsActivationCheckButton');
-            smsActivationCheck.innerHTML = SVG_PHONE_ACTIVATION;
-
-
-            smsActivationContainerElem.appendChild(smsActivationInput);
-            smsActivationContainerElem.appendChild(smsActivationCheck);
-            smsActivationElem.appendChild(smsActivationContainerElem);
-
-
-            const smsPhoneNumberElem = document.createElement('div');
-            smsPhoneNumberElem.classList.add('smsPhoneNumber');
-
-            smsPhoneNumberElem.innerText = sms['phone']
-
-            const smsDeleteElem = document.createElement('div');
-            smsDeleteElem.classList.add('smsDelete');
-            smsDeleteElem.innerHTML = SVG_PHONE_DELETE;
-
-            smsInfoContainer.appendChild(smsActivationElem);
-            smsInfoContainer.appendChild(smsPhoneNumberElem);
-            smsInfoContainer.appendChild(smsDeleteElem);
-
-            alarmItemContainer.appendChild(smsInfoContainer);
-        }
-
-        alarmListContainer.appendChild(alarmItemContainer);
-
-    }
-
-    function addAlarmItem() {
-
-    }
-
-    function deleteAlarmItem(elem) {
-        console.log(elem);
-        // elem.remove();
-    }
-
-    function setAlarmActivation(elem) {
-        let isChecked = elem.checked;
-        console.log(isChecked);
-    }
-
-    function setSMSActivation(elem) {
-        let isChecked = elem.checked;
-        console.log(isChecked);
-    }
-
-    function displaySMSList(container) {
-        const smsNodes = container.getElementsByClassName('smsInfo');
-        console.log(smsNodes);
-
-        for (let i = 0; i < smsNodes.length; i++) {
-            let id = smsNodes[i];
-            console.log(id.style.display);
-            if (id.style.display == 'none') {
-                id.style.display = "flex";
-            }
-            else {
-                id.style.display = "none";
-            }
-        }
-    }
-
-    function convertContition(operator) {
-        switch (operator) {
-            case 0:
-                return '&#61';
-
-            case 1:
-                return '&#60';
-
-            case 2:
-                return '&#62';
-
-            case 3:
-                return '&#8800';
-
-            case 4:
-                return '&#8804';
-
-            case 5:
-                return '&#8805';
-
-            default:
-                return 'Error';
-        }
-    }
-
-    function alarmStateCheck(state) {
-        switch (state) {
-            case 'alarm':
-                return SVG_ALARM_STAT;
-            case 'normal':
-                return SVG_NORMAL_STAT;
-
-            default:
-                return 'Error';
-        }
-    }
-
-    function addMessageUser() {
-        const messageList = document.getElementById('config-message-user-list');
-
-        const messageListItemElem = document.createElement('div');
-        messageListItemElem.classList.add('configMessageUserListContainer');
-
-        const phoneIconElem = document.createElement('div');
-        phoneIconElem.classList.add('configMessagePhoneIcon');
-        phoneIconElem.innerHTML = SVG_PHONE;
-
-        const phoneInputElem = document.createElement('input');
-        phoneInputElem.classList.add('configMessageInputPhone');
-        phoneInputElem.setAttribute('name', 'phone');
-        phoneInputElem.setAttribute('type', 'tel');
-        phoneInputElem.setAttribute('pattern', '[0-9]{10,}');
-        phoneInputElem.setAttribute('placeholder', '01046821357');
-        phoneInputElem.addEventListener('focusout', () => {
-            let value = phoneInputElem.value;
-            // console.log(Number.isInteger(value));
-            if (!value) {
-                messageListItemElem.remove();
-            }
-        });
-        // phoneInputElem.addEventListener('keypress', (event) => {
-        //     if(event.key == "Enter") {
-        //         event.preventDefault();
-        //         phoneInputElem.dispatchEvent(new Event('focusout'));
-        //         console.log(event.key);
-        //     }
-        // });
-
-        const phoneDeleteElem = document.createElement('div');
-        phoneDeleteElem.classList.add('configMessagePhoneDelete');
-
-        messageListItemElem.appendChild(phoneIconElem);
-        messageListItemElem.appendChild(phoneInputElem);
-        messageListItemElem.appendChild(phoneDeleteElem);
-
-        messageList.insertBefore(messageListItemElem, messageList.firstChild);
-    }
-
-
-    function showAlarmConfigurationDialog(target, data) {
-
-        switch (target) {
-            case 'create':
-                var searchInputId = document.getElementById('search-input');
-                document.getElementById('config-pvname').value = searchInputId.value;
-
-                var createButtonID = document.getElementById('config-set-button');
-                createButtonID.innerText = 'Create';
-                createButtonID.addEventListener('click', () => {
-                    let formData = new FormData(document.getElementById('config-form-container'));
-                    // console.log(formData);
-                    createNewAlarmInfo(formData);
-                });
-                break;
-
-            case 'update':
-                console.log(data);
-                // document.getElementById('config-pvname').value = data['pvname'];
-                // document.getElementById('config-value').value = data['value'];
-                // docuemnt.getElementById('config-delay').value = data['delay'];
-                // docuemnt.getElementById('config-repetation').value = data['repetation'];
-
-                var createButtonID = document.getElementById('config-set-button');
-                createButtonID.innerText = 'Update';
-                createButtonID.addEventListener('click', () => {
-                    let formData = new FormData(document.getElementById('config-form-container'));
-                    updateAlarmInfo(formData);
-                });
-
-                break;
-
-        }
-
-        let id = document.getElementById('config-dialog-body');
-        id.style.display = 'flex';
-    }
-
-    function closeAlarmConfigurationDialog() {
-        let id = document.getElementById('config-dialog-body');
-        id.style.display = 'none';
-    }
-
-    function createNewAlarmInfo(data) {
-        const dicData = {};
-        const phoneArray = [];
-
-        for (let [key, value] of data.entries()) {
-            if (key == 'phone') {
-                phoneArray.push(value);
-            }
-            else {
-                dicData[key] = value;
-            }
-            // console.log(`${key}: ${value}`);
-        }
-
-        dicData['phone'] = phoneArray;
-    }
-
-    function updateAlarmInfo(data) {
-        for (let [key, value] of data.entries()) {
-            console.log(`${key}: ${value}`);
-        }
-    }
+    getAlarmDataAll();
 
 
 </script>

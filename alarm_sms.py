@@ -47,6 +47,35 @@ def test():
     print(formData)
     return "OK"
 
+@app.route('/getAlarmInfoFromPV/<pvname>', methods=['GET'])
+def getAlarmInfoFromPV(pvname):
+    result = sql.getAlarmInfoFromPV(pvname)
+
+    return json.dumps(result, ensure_ascii=False) 
+
+@app.route('/alarmInfoUpdate', methods=['POST'])
+def setAlarmInfoUpdate():
+    jsonData = request.get_json()
+    pvname = jsonData['pvname']
+    field = jsonData['field']
+    value = jsonData['value']
+
+    sql.updateAlarmFieldInt(pvname, field, value)
+
+    return 'OK'
+
+@app.route('/smsInfoUpdate', methods=['POST'])
+def setSMSInfoUpdate():
+    jsonData = request.get_json()
+    phone = jsonData['phone']
+    pvname = jsonData['pvname']
+    field = jsonData['field']
+    value = jsonData['value']
+
+    sql.updateSMSFieldInt(phone, pvname, field, value)
+
+    return 'OK'
+
 @app.route('/get', methods=['GET'])
 def getData():
     result = sql.getAlarmList()
@@ -63,9 +92,9 @@ def clearAlarm():
 
     return "OK"
 
-@app.route('/getAlarmData', methods=['GET'])
-def getAlarmData():
-    result = sql.getAlarmData()
+@app.route('/getAlarmDataAll', methods=['GET'])
+def getAlarmDataAll():
+    result = sql.getAlarmDataAll()
 
     return json.dumps(result, ensure_ascii=False)
 
