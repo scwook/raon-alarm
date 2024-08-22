@@ -8,7 +8,7 @@ const SVG_PHONE_DELETE = '<svg width="25" height="25"><circle cx="12.5" cy="12.5
 const SVG_PHONE_ACTIVATION = '<svg width="20" height="20"><path class="cls-12" d="M9.44,15.9c-.59,0-1.12-.29-1.44-.78l-3.59-4.56c-.34-.43-.27-1.06.17-1.4.43-.34,1.06-.27,1.4.17l3.4,4.32,4.51-9c.25-.49.85-.69,1.34-.45.49.25.69.85.45,1.34l-4.74,9.45c-.34.59-.89.91-1.51.91Z" style="fill: #eee;"/></svg>';
 
 
-function createAlarmData(data) {
+function createAlarmInfo(data) {
     let alarmListContainer = document.getElementById('alarm-list-container');
 
     const alarmItemContainer = document.createElement('div');
@@ -81,7 +81,7 @@ function createAlarmData(data) {
     deleteElem.classList.add('alarmDelete');
     deleteElem.innerHTML = SVG_DELETE;
     deleteElem.addEventListener('click', () => {
-        deleteAlarmItem(alarmItemContainer);
+        deleteAlarmItem(alarmItemContainer, data['pvname']);
     });
 
     alarmInfoContainer.appendChild(activationElem);
@@ -149,10 +149,17 @@ function createAlarmData(data) {
 
 }
 
+function searchKeyDown(event) {
+    if (event.key == "Enter") {
+        event.preventDefault();
+        searchAlarmData()
+    }
+}
+
 function searchAlarmData() {
     const searchData = document.getElementById('search-input').value;
 
-    getAlarmDataFromPVName(searchData);
+    getAlarmListFromPVName(searchData);
 }
 
 
@@ -160,16 +167,16 @@ function addAlarmItem() {
 
 }
 
-function deleteAlarmItem(elem) {
-    console.log(elem);
-    // elem.remove();
+function deleteAlarmItem(elem, pvname) {
+    deleteAlarmInfo(pvname)
+    elem.remove();
 }
 
 function setAlarmActivation(elem, data) {
     let isChecked = elem.checked;
     let pvname = data['pvname'];
 
-    updateAlarmInfo(pvname, 'activation', Number(isChecked));
+    updateAlarmField(pvname, 'activation', Number(isChecked));
 }
 
 function setSMSActivation(elem, data) {
@@ -323,7 +330,7 @@ function showAlarmConfigurationDialog(target, data) {
             document.getElementById('config-repetation').value = "0";
 
             // Remove all child nodes which are message list 
-            const messageList = document.getElementById('config-message-user-list');
+            var messageList = document.getElementById('config-message-user-list');
             messageList.textContent = '';
 
             var createButtonID = document.getElementById('config-set-button');
@@ -331,6 +338,8 @@ function showAlarmConfigurationDialog(target, data) {
             createButtonID.addEventListener('click', () => {
                 let formData = new FormData(document.getElementById('config-form-container'));
                 const dictData = convertToDictionary(formData);
+
+                insertAlarmInfo(dictData);
             });
             break;
 
@@ -341,6 +350,10 @@ function showAlarmConfigurationDialog(target, data) {
             document.getElementById('config-delay').value = String(data['delay']);
             document.getElementById('config-repetation').value = String(data['repetation'] / 60);
 
+            // Remove all child nodes which are message list 
+            var messageList = document.getElementById('config-message-user-list');
+            messageList.textContent = '';
+
             for (let x of data['sms']) {
                 addMessageUser(x['phone']);
             }
@@ -350,6 +363,8 @@ function showAlarmConfigurationDialog(target, data) {
             createButtonID.addEventListener('click', () => {
                 let formData = new FormData(document.getElementById('config-form-container'));
                 const dictData = convertToDictionary(formData);
+
+                updateAlarmInfo(dictData);
             });
 
             break;

@@ -21,13 +21,13 @@ function getSMSListFromPV(pvname) {
     xhttp.send();
 }
 
-function getAlarmDataAll() {
+function getAlarmListAll() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             var jsonValue = JSON.parse(this.responseText);
             for (let x in jsonValue) {
-                createAlarmData(jsonValue[x]);
+                createAlarmInfo(jsonValue[x]);
             }
         }
         // else {
@@ -36,17 +36,31 @@ function getAlarmDataAll() {
 
     };
 
-    var serverAddr = "http://192.168.131.161:8000/getAlarmDataAll";
+    var serverAddr = "http://192.168.131.161:8000/getAlarmListAll";
     xhttp.open("GET", serverAddr, false);
     xhttp.send();
 }
 
-function getAlarmDataFromPVName(pvname) {
+function getAlarmListFromPVName(search) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             var jsonValue = JSON.parse(this.responseText);
-            console.log(jsonValue);
+
+            // Clear alarm list
+            let alarmListContainer = document.getElementById('alarm-list-container');
+            alarmListContainer.textContent = "";
+
+            if (jsonValue.length != 0) {
+                // Create new alarm list
+                for (let x in jsonValue) {
+                    createAlarmInfo(jsonValue[x]);
+                }
+            }
+            else {
+                getAlarmListFromPhone(search);
+            }
+
         }
         // else {
         // 	alert('Status Error : ' + this.status);
@@ -54,13 +68,60 @@ function getAlarmDataFromPVName(pvname) {
 
     };
 
-    const endPoint = serverAddr + ":" + serverPort + "/getAlarmInfoFromPV/" + pvname;
+    const endPoint = serverAddr + ":" + serverPort + "/getAlarmListFromPV/" + search;
     xhttp.open("GET", endPoint, false);
     xhttp.send();
 }
 
+function getAlarmListFromPhone(search) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var jsonValue = JSON.parse(this.responseText);
+            if (jsonValue.length != 0) {
+                // Create new alarm list
+                for (let x in jsonValue) {
+                    createAlarmInfo(jsonValue[x]);
+                }
+            }
+            else {
 
-function updateAlarmInfo(pvname, field, value) {
+            }
+
+        }
+        // else {
+        // 	alert('Status Error : ' + this.status);
+        // }
+
+    };
+
+    const endPoint = serverAddr + ":" + serverPort + "/getAlarmListFromPhone/" + search;
+    xhttp.open("GET", endPoint, false);
+    xhttp.send();
+}
+
+function updateAlarmInfo(data) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var jsonValue = JSON.parse(this.responseText);
+            console.log(this.responseText);
+        }
+
+        // else {
+        // 	alert('Status Error : ' + this.status);
+        // }
+    };
+
+
+    const endPoint = serverAddr + ":" + serverPort + "/updateAlarmInfo";
+    xhttp.open("POST", endPoint, true);
+    xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.send(JSON.stringify(data));
+}
+
+
+function updateAlarmField(pvname, field, value) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
@@ -75,7 +136,7 @@ function updateAlarmInfo(pvname, field, value) {
 
     var data = { 'pvname': pvname, 'field': field, 'value': value };
 
-    const endPoint = serverAddr + ":" + serverPort + "/alarmInfoUpdate";
+    const endPoint = serverAddr + ":" + serverPort + "/updateAlarmField";
     xhttp.open("POST", endPoint, true);
     xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.send(JSON.stringify(data));
@@ -100,4 +161,42 @@ function updateSMSInfo(phone, pvname, field, value) {
     xhttp.open("POST", endPoint, true);
     xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.send(JSON.stringify(data));
+}
+
+function insertAlarmInfo(data) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var jsonValue = JSON.parse(this.responseText);
+            console.log(this.responseText);
+        }
+
+        // else {
+        // 	alert('Status Error : ' + this.status);
+        // }
+    };
+
+
+    const endPoint = serverAddr + ":" + serverPort + "/insertAlarmInfo";
+    xhttp.open("POST", endPoint, true);
+    xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.send(JSON.stringify(data));
+}
+
+function deleteAlarmInfo(pvname) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            // var jsonValue = JSON.parse(this.responseText);
+            // console.log(jsonValue);
+        }
+        // else {
+        // 	alert('Status Error : ' + this.status);
+        // }
+
+    };
+
+    const endPoint = serverAddr + ":" + serverPort + "/deleteAlarmInfo/" + pvname;
+    xhttp.open("GET", endPoint, false);
+    xhttp.send();
 }

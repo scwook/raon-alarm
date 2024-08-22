@@ -138,8 +138,8 @@ def updateAlarmFieldStr(pvname, field, value):
     sql.updateAlarmFieldStr(pvname, field, value)
 
 def writeAlarmLog(pvname, log):
-    # conn = sql.getDbConnection()
-    sql.insertAlarmLog(pvname, log)
+    conn = sql.getDbConnection()
+    # sql.insertAlarmLog(pvname, log)
 
 def sendAlarmSMS():
     print('alarm send')

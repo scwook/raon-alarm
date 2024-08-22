@@ -47,20 +47,72 @@ def test():
     print(formData)
     return "OK"
 
-@app.route('/getAlarmInfoFromPV/<pvname>', methods=['GET'])
-def getAlarmInfoFromPV(pvname):
-    result = sql.getAlarmInfoFromPV(pvname)
+@app.route('/updateAlarmInfo', methods=['POST'])
+def updateAlarmInfo():
+    jsonData = request.get_json()
+    pvname = jsonData['pvname']
+    description = ""
+    value = jsonData['value']
+    operator = int(jsonData['condition'])
+    delay = int(jsonData['delay'])
+    repetation = int(jsonData['repetation']) * 60
+    sms = jsonData['phone']
+
+    recordData = {'pvname':pvname, 'description':description, 'value':value, 'operator':operator, 'dealy':delay, 'repetation':repetation, 'sms':sms}
+
+    sql.updateAlarmInfo(recordData)
+    return 'OK'
+
+@app.route('/insertAlarmInfo', methods=['POST'])
+def insertAlarmInfo():
+    jsonData = request.get_json()
+    pvname = jsonData['pvname']
+    description = ""
+    value = jsonData['value']
+    operator = int(jsonData['condition'])
+    state = 'normal'
+    activation = bool(1)
+    delay = int(jsonData['delay'])
+    repetation = int(jsonData['repetation']) * 60
+    sms = jsonData['phone']
+
+    recordData = {'pvname':pvname, 'description':description, 'value':value, 'operator':operator, 'state': state, 'activation': activation, 'dealy':delay, 'repetation':repetation, 'sms':sms}
+    # print(recordData)
+
+    sql.insertAlarmInfo(recordData)
+    return 'OK'
+
+@app.route('/getAlarmListFromPV/<pvname>', methods=['GET'])
+def getAlarmListFromPV(pvname):
+    sqlWildcardString = pvname.replace('*', '%')
+    result = sql.getAlarmListFromPV(sqlWildcardString)
+
+    return json.dumps(result, ensure_ascii=False)
+
+@app.route('/getAlarmListFromPhone/<phone>', methods=['GET'])
+def getAlarmListFromPhone(phone):
+    # sqlWildcardString = phone.replace('*', '%')
+    result = sql.getAlarmListFromPhone(phone)
 
     return json.dumps(result, ensure_ascii=False) 
 
-@app.route('/alarmInfoUpdate', methods=['POST'])
-def setAlarmInfoUpdate():
+@app.route('/updateAlarmField', methods=['POST'])
+def setUpdateAlarmField():
     jsonData = request.get_json()
     pvname = jsonData['pvname']
     field = jsonData['field']
     value = jsonData['value']
 
-    sql.updateAlarmFieldInt(pvname, field, value)
+    if field == 'pvname' or field == 'description' or field == 'value' or field == 'state':
+        sql.updateAlarmFieldStr(pvname, field, value)
+    elif field == 'operator' or field == 'repetation' or field == 'delay':
+        value = int(value)
+        sql.updateAlarmFieldInt(pvname, field, value)
+    elif field == 'activation':
+        value = bool(value)
+        sql.updateAlarmFieldInt(pvname, field, value)
+    else:
+        return 'Field name error'
 
     return 'OK'
 
@@ -92,12 +144,17 @@ def clearAlarm():
 
     return "OK"
 
-@app.route('/getAlarmDataAll', methods=['GET'])
-def getAlarmDataAll():
-    result = sql.getAlarmDataAll()
+@app.route('/getAlarmListAll', methods=['GET'])
+def getAlarmListAll():
+    result = sql.getAlarmListAll()
 
     return json.dumps(result, ensure_ascii=False)
 
+@app.route('/deleteAlarmInfo/<pvname>', methods=['GET'])
+def deleteAlarmInfo(pvname):
+    sql.deleteAlarmInfo(pvname)
+
+    return 'OK'
 
 if __name__ == "__main__":
     app.run(host=SERVER_ADDR, port="8000")
