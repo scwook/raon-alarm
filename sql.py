@@ -28,7 +28,17 @@ def getAlarmListAll():
                 x['sms'] = cursor.fetchall()
 
             return result
-        
+
+# Retrieve all alarm status
+def getAlarmStatusAll():
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
+            query='SELECT * FROM alarm_info'
+            cursor.execute(query)
+            result = cursor.fetchall()
+
+            return result
+
 # Retrieve only one alarm info for pvName with sms information
 def getAlarmListFromPV(pvName):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:

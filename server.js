@@ -1,6 +1,26 @@
 const serverAddr = "http://192.168.131.161";
 const serverPort = "8000";
 
+function getAlarmListAll() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var jsonValue = JSON.parse(this.responseText);
+            for (let x in jsonValue) {
+                createAlarmInfo(jsonValue[x]);
+            }
+        }
+        // else {
+        // 	alert('Status Error : ' + this.status);
+        // }
+
+    };
+
+    const endPoint = serverAddr + ":" + serverPort + "/getAlarmListAll";
+    xhttp.open("GET", endPoint, false);
+    xhttp.send();
+}
+
 function getSMSListFromPV(pvname) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
@@ -17,26 +37,6 @@ function getSMSListFromPV(pvname) {
     };
 
     var serverAddr = "http://192.168.131.161:8000/get";
-    xhttp.open("GET", serverAddr, false);
-    xhttp.send();
-}
-
-function getAlarmListAll() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            var jsonValue = JSON.parse(this.responseText);
-            for (let x in jsonValue) {
-                createAlarmInfo(jsonValue[x]);
-            }
-        }
-        // else {
-        // 	alert('Status Error : ' + this.status);
-        // }
-
-    };
-
-    var serverAddr = "http://192.168.131.161:8000/getAlarmListAll";
     xhttp.open("GET", serverAddr, false);
     xhttp.send();
 }
@@ -197,6 +197,24 @@ function deleteAlarmInfo(pvname) {
     };
 
     const endPoint = serverAddr + ":" + serverPort + "/deleteAlarmInfo/" + pvname;
+    xhttp.open("GET", endPoint, false);
+    xhttp.send();
+}
+
+function monitoringAlarmStatus() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var jsonValue = JSON.parse(this.responseText);
+            console.log(jsonValue);
+        }
+        // else {
+        // 	alert('Status Error : ' + this.status);
+        // }
+
+    };
+
+    const endPoint = serverAddr + ":" + serverPort + "/getAlarmStatusAll";
     xhttp.open("GET", endPoint, false);
     xhttp.send();
 }

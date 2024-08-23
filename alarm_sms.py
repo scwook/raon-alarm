@@ -150,6 +150,12 @@ def getAlarmListAll():
 
     return json.dumps(result, ensure_ascii=False)
 
+@app.route('/getAlarmStatusAll', methods=['GET'])
+def getAlarmStatusAll():
+    result = sql.getAlarmStatusAll()
+
+    return json.dumps(result, ensure_ascii=False)
+
 @app.route('/deleteAlarmInfo/<pvname>', methods=['GET'])
 def deleteAlarmInfo(pvname):
     sql.deleteAlarmInfo(pvname)
