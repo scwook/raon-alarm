@@ -149,17 +149,38 @@ function createAlarmInfo(data) {
 
 }
 
+function makeAlarmList() {
+    if(simulation) {
+        sim_getAlarmListAll()
+    }
+    else {
+        getAlarmListAll()
+    }
+}
+
 function searchKeyDown(event) {
     if (event.key == "Enter") {
-        event.preventDefault();
-        searchAlarmData()
+
+        if(simulation) {
+
+        }
+        else {
+            event.preventDefault();
+            searchAlarmData()
+        }
     }
 }
 
 function searchAlarmData() {
     const searchData = document.getElementById('search-input').value;
 
-    getAlarmListFromPVName(searchData);
+    if(simulation) {
+
+    }
+    else {
+        getAlarmListFromPVName(searchData);
+    } 
+        
 }
 
 
@@ -168,8 +189,14 @@ function addAlarmItem() {
 }
 
 function deleteAlarmItem(elem, pvname) {
-    deleteAlarmInfo(pvname)
-    elem.remove();
+    if(simulation) {
+
+    }
+    else {
+        deleteAlarmInfo(pvname)
+        elem.remove();
+    }
+   
 }
 
 function setAlarmActivation(elem, data) {
@@ -184,7 +211,12 @@ function setSMSActivation(elem, data) {
     let phone = data['phone'];
     let pvname = data['pvname'];
 
-    updateSMSInfo(phone, pvname, 'activation', Number(isChecked));
+    if(simulation) {
+
+    }
+    else {
+        updateSMSInfo(phone, pvname, 'activation', Number(isChecked));
+    }
 }
 
 function displaySMSList(container) {
