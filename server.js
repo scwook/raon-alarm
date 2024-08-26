@@ -37,7 +37,7 @@ function getSMSListFromPV(pvname) {
     };
 
     var serverAddr = "http://192.168.131.161:8000/get";
-    xhttp.open("GET", serverAddr, false);
+    xhttp.open("GET", serverAddr, true);
     xhttp.send();
 }
 
@@ -69,7 +69,7 @@ function getAlarmListFromPVName(search) {
     };
 
     const endPoint = serverAddr + ":" + serverPort + "/getAlarmListFromPV/" + search;
-    xhttp.open("GET", endPoint, false);
+    xhttp.open("GET", endPoint, true);
     xhttp.send();
 }
 
@@ -96,7 +96,7 @@ function getAlarmListFromPhone(search) {
     };
 
     const endPoint = serverAddr + ":" + serverPort + "/getAlarmListFromPhone/" + search;
-    xhttp.open("GET", endPoint, false);
+    xhttp.open("GET", endPoint, true);
     xhttp.send();
 }
 
@@ -137,6 +137,27 @@ function updateAlarmField(pvname, field, value) {
     var data = { 'pvname': pvname, 'field': field, 'value': value };
 
     const endPoint = serverAddr + ":" + serverPort + "/updateAlarmField";
+    xhttp.open("POST", endPoint, true);
+    xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.send(JSON.stringify(data));
+}
+
+function deleteSMSInfo(phone, pvname) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            // var jsonValue = JSON.parse(this.responseText);
+            console.log(this.responseText);
+        }
+
+        // else {
+        // 	alert('Status Error : ' + this.status);
+        // }
+    };
+
+    var data = { 'phone': phone, 'pvname': pvname};
+
+    const endPoint = serverAddr + ":" + serverPort + "/deleteSMSInfo";
     xhttp.open("POST", endPoint, true);
     xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.send(JSON.stringify(data));
@@ -197,16 +218,17 @@ function deleteAlarmInfo(pvname) {
     };
 
     const endPoint = serverAddr + ":" + serverPort + "/deleteAlarmInfo/" + pvname;
-    xhttp.open("GET", endPoint, false);
+    xhttp.open("GET", endPoint, true);
     xhttp.send();
 }
 
-function monitoringAlarmStatus() {
+function getAlarmStateAll() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             var jsonValue = JSON.parse(this.responseText);
-            console.log(jsonValue);
+            applyAlarmState(jsonValue);
+
         }
         // else {
         // 	alert('Status Error : ' + this.status);
@@ -214,7 +236,7 @@ function monitoringAlarmStatus() {
 
     };
 
-    const endPoint = serverAddr + ":" + serverPort + "/getAlarmStatusAll";
-    xhttp.open("GET", endPoint, false);
+    const endPoint = serverAddr + ":" + serverPort + "/getAlarmStateAll";
+    xhttp.open("GET", endPoint, true);
     xhttp.send();
 }

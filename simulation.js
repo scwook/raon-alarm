@@ -1,4 +1,4 @@
-const simulation = true;
+const simulation = false;
 
 let simData = [
     {
@@ -53,3 +53,9 @@ function sim_getAlarmListAll() {
         createAlarmInfo(simData[x]);
     }
 }
+
+function sim_getAlarmStateAll() {
+    applyAlarmState(simData);
+}
+
+

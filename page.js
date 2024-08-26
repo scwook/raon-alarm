@@ -137,6 +137,10 @@ function createAlarmInfo(data) {
         const smsDeleteElem = document.createElement('div');
         smsDeleteElem.classList.add('smsDelete');
         smsDeleteElem.innerHTML = SVG_PHONE_DELETE;
+        smsDeleteElem.addEventListener('click', () => {
+            smsInfoContainer.remove();
+            deleteSMSInfo(sms['phone'], data['pvname']);
+        });
 
         smsInfoContainer.appendChild(smsActivationElem);
         smsInfoContainer.appendChild(smsPhoneNumberElem);
@@ -146,15 +150,14 @@ function createAlarmInfo(data) {
     }
 
     alarmListContainer.appendChild(alarmItemContainer);
-
 }
 
 function makeAlarmList() {
     if(simulation) {
-        sim_getAlarmListAll()
+        sim_getAlarmListAll();
     }
     else {
-        getAlarmListAll()
+        getAlarmListAll();
     }
 }
 
@@ -166,7 +169,7 @@ function searchKeyDown(event) {
         }
         else {
             event.preventDefault();
-            searchAlarmData()
+            searchAlarmData();
         }
     }
 }
@@ -430,3 +433,46 @@ function convertToDictionary(formData) {
 
     return dictData;
 }
+
+function monitoringAlarmState() {
+    if(simulation) {
+        sim_getAlarmStateAll();
+    }
+    else {
+        getAlarmStateAll();
+    }
+}
+
+function applyAlarmState(data) {
+    const alarmListContainer = document.getElementById('alarm-list-container');
+    const alarmItem = alarmListContainer.getElementsByClassName('alarmItem');
+    let alarmCount = 0;
+    let normalCount = 0;
+
+    for(let x of alarmItem) {
+        const alarmInfo = x.querySelector('.alarmInfo');
+        const pvname = alarmInfo.querySelector('.alarmPVName').textContent;
+        const state = findAlarmState(data, pvname);
+
+        if(state == 'alarm') {
+            alarmCount += 1;
+        }
+        else if(state == 'normal') {
+            normalCount += 1;
+        }
+
+        alarmInfo.querySelector('.alarmStatus').innerHTML = alarmStateCheck(state);
+        document.getElementById('summary-alarm-text').innerText = alarmCount;   
+        document.getElementById('summary-normal-text').innerText = normalCount;
+    }
+}
+
+function findAlarmState(data, pvname) {
+    for(let x of data) {
+        if(x['pvname'] == pvname) {
+            return x['state'];
+        }
+    }
+
+    return null
+ }

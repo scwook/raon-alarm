@@ -30,7 +30,7 @@ def getAlarmListAll():
             return result
 
 # Retrieve all alarm status
-def getAlarmStatusAll():
+def getAlarmStateAll():
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
             query='SELECT * FROM alarm_info'

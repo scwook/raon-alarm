@@ -150,15 +150,24 @@ def getAlarmListAll():
 
     return json.dumps(result, ensure_ascii=False)
 
-@app.route('/getAlarmStatusAll', methods=['GET'])
-def getAlarmStatusAll():
-    result = sql.getAlarmStatusAll()
+@app.route('/getAlarmStateAll', methods=['GET'])
+def getAlarmStateAll():
+    result = sql.getAlarmStateAll()
 
     return json.dumps(result, ensure_ascii=False)
 
 @app.route('/deleteAlarmInfo/<pvname>', methods=['GET'])
 def deleteAlarmInfo(pvname):
     sql.deleteAlarmInfo(pvname)
+
+    return 'OK'
+
+@app.route('/deleteSMSInfo', methods=['POST'])
+def deleteSMSInfo():
+    jsonData = request.get_json()
+    phone = jsonData['phone']
+    pvname = jsonData['pvname']
+    sql.deleteSMSList(phone, pvname)
 
     return 'OK'
 
