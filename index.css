@@ -312,6 +312,13 @@ input:checked+.activationToggelButton::before {
     flex: 1;
 }
 
+.alarmClear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
 .icon-fill {
     fill: #eeeeee;
 }
