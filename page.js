@@ -90,7 +90,7 @@ function createAlarmInfo(data) {
     clearElem.classList.add('alarmClear');
     clearElem.innerHTML = SVG_CLEAR;
     clearElem.addEventListener('click', () => {
-
+        
     });
 
     alarmInfoContainer.appendChild(activationElem);
