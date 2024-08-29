@@ -1,10 +1,10 @@
 
-const SVG_ALARM_STAT = '<svg width="40" height="35"><path class="icon-alarm" d="M17.44,1.5L.41,31c-1.15,2,.29,4.5,2.6,4.5h34.06c2.31,0,3.75-2.5,2.6-4.5L22.63,1.5c-1.15-2-4.04-2-5.2,0Z" /><circle class="icon-fill" cx="20.04" cy="27.82" r="2.54" /><path class="icon-fill" d="M20.04,9.18c-1.4,0-2.54,1.14-2.54,2.54l1.02,12.19h3.05l1.02-12.19c0-1.4-1.14-2.54-2.54-2.54Z" /></svg>';
-const SVG_NORMAL_STAT = '<svg width="40" height="40"><circle class="icon-normal" cx="20" cy="20" r="20" /><path class="icon-fill" d="M19.11,29.82h0c-1.06,0-2.04-.54-2.62-1.41l-5.71-7.26c-.68-.87-.53-2.12.33-2.81.87-.68,2.13-.53,2.81.33l5.03,6.39,6.91-13.79c.49-.99,1.7-1.39,2.68-.89.99.49,1.39,1.7.89,2.68l-7.61,15.19c-.56.97-1.6,1.57-2.71,1.57Z" /></svg>';
-const SVG_PHONE = '<svg width="22" height="30"><path class="icon-fill" d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" /></svg>';
-const SVG_EDIT = '<svg width="19" height="30"><path class="icon-fill" d="M0,25.01v4.42c0,.44.48.72.86.5l3.83-2.21c.17-.1.32-.24.42-.42L16.39,7.75l-4.95-2.86L.15,24.44c-.1.17-.15.37-.15.57Z" /><path class="icon-fill" d="M17.34.38c-1.37-.79-3.12-.32-3.9,1.05l-1.43,2.48,4.95,2.86,1.43-2.48c.79-1.37.32-3.12-1.05-3.9Z" /></svg>';
-const SVG_DELETE = '<svg width="22" height="30"><path class="icon-fill" d="M.62,5.96l2.39,22.66c.02.77.65,1.38,1.42,1.38h12.44c.77,0,1.4-.61,1.42-1.38l2.39-22.66H.62ZM7.27,22.39c0,.44-.36.8-.8.8h-.12c-.44,0-.8-.36-.8-.8v-10.58c0-.44.36-.8.8-.8h.12c.44,0,.8.36.8.8v10.58ZM11.5,22.39c0,.44-.36.8-.8.8h-.12c-.44,0-.8-.36-.8-.8v-10.58c0-.44.36-.8.8-.8h.12c.44,0,.8.36.8.8v10.58ZM15.74,22.39c0,.44-.36.8-.8.8h-.12c-.44,0-.8-.36-.8-.8v-10.58c0-.44.36-.8.8-.8h.12c.44,0,.8.36.8.8v10.58Z" /><path class="icon-fill" d="M19.29,1.7h-6.95c0-.94-.76-1.7-1.7-1.7s-1.7.76-1.7,1.7H2C.9,1.7,0,2.6,0,3.7v.84h21.29v-.84c0-1.1-.9-2-2-2Z" /></svg>';
-const SVG_CLEAR = '<svg width="25" height="31"><path style="fill:#eee" d="M21.3,12.52l-3.26-.87,2.45-9.13c.29-1.07-.35-2.16-1.41-2.45-1.07-.29-2.16.35-2.45,1.41l-2.45,9.13-3.26-.87c-2.66-.71-5.4.87-6.11,3.53l-.05.18,20.01,5.36.05-.18c.71-2.66-.87-5.4-3.53-6.11Z"/><path style="fill:#eee" d="M22.43,20.33L5.87,15.89c-.96-.26-1.96.2-2.4,1.09L.11,23.79c-.29.59.03,1.29.66,1.46l5.62,1.51,3.17-6.24-.38,6.99,12.28,3.29c.59.16,1.19-.23,1.29-.83l1.19-7.29c.17-1.05-.48-2.07-1.51-2.34Z"/></svg>'
+const SVG_ALARM_STAT = '<svg width="40" height="35"><path style="fill:#d4145a" d="M17.44,1.5L.41,31c-1.15,2,.29,4.5,2.6,4.5h34.06c2.31,0,3.75-2.5,2.6-4.5L22.63,1.5c-1.15-2-4.04-2-5.2,0Z" /><circle style="fill:#eee" cx="20.04" cy="27.82" r="2.54" /><path style="fill:#eee" d="M20.04,9.18c-1.4,0-2.54,1.14-2.54,2.54l1.02,12.19h3.05l1.02-12.19c0-1.4-1.14-2.54-2.54-2.54Z" /></svg>';
+const SVG_NORMAL_STAT = '<svg width="40" height="40"><circle style="fill:#22b573" cx="20" cy="20" r="20" /><path style="fill:#eee" d="M19.11,29.82h0c-1.06,0-2.04-.54-2.62-1.41l-5.71-7.26c-.68-.87-.53-2.12.33-2.81.87-.68,2.13-.53,2.81.33l5.03,6.39,6.91-13.79c.49-.99,1.7-1.39,2.68-.89.99.49,1.39,1.7.89,2.68l-7.61,15.19c-.56.97-1.6,1.57-2.71,1.57Z" /></svg>';
+const SVG_PHONE = '<svg width="30" height="30"><path style="fill:#eee" d="M1.05,27.4l4.01,2.32c1,.58,2.28.23,2.85-.76l2.09-3.62c.58-1,.23-2.28-.76-2.85l-.9-.52c-1-.58-1.34-1.85-.76-2.85l5.22-9.04c.58-1,1.85-1.34,2.85-.76l.9.52c1,.58,2.28.23,2.85-.76l2.09-3.62c.58-1,.23-2.28-.76-2.85l-1.81-1.04-2.2-1.27c-.83-.48-1.89-.34-2.55.35C7.52,7.64,2.83,15.77.08,25.02c-.27.92.14,1.91.97,2.38Z"/></svg>';
+const SVG_EDIT = '<svg width="30" height="30"><path style="fill:#eee" d="M14.65.07h0c1.66,0,3,1.34,3,3v2h-6v-2C11.65,1.41,12.99.07,14.65.07Z" transform="translate(3.25 -6.98) rotate(30)"/><path style="fill:#eee" d="M9.8,4.96l-1,1.73L.13,21.71c-.11.19-.15.41-.13.62l.4,3.3c.08.66.77,1.07,1.39.8l3.06-1.31c.2-.09.37-.23.47-.42l8.67-15.01,1-1.73-5.2-3Z"/></svg>';
+const SVG_DELETE = '<svg width="30" height="30"><path style="fill:#eee" d="M20,2h-7c0-1.1-.9-2-2-2s-2,.9-2,2H2C.9,2,0,2.9,0,4h22c0-1.1-.9-2-2-2Z"/><path style="fill:#eee" d="M.98,6l2.39,22.62c.02.77.65,1.38,1.42,1.38h12.44c.77,0,1.4-.61,1.42-1.38l2.39-22.62H.98ZM8,22.19c0,.55-.45,1-1,1s-1-.45-1-1v-10c0-.55.45-1,1-1s1,.45,1,1v10ZM12,22.19c0,.55-.45,1-1,1s-1-.45-1-1v-10c0-.55.45-1,1-1s1,.45,1,1v10ZM16,22.19c0,.55-.45,1-1,1s-1-.45-1-1v-10c0-.55.45-1,1-1s1,.45,1,1v10Z"/></svg>';
+const SVG_CLEAR = '<svg width="30" height="30"><path style="fill:#eee" d="M23.11,12.58l-2.86-1.65,4.62-8c.54-.93.22-2.13-.71-2.67-.94-.54-2.13-.22-2.67.71l-4.62,8-2.85-1.65c-2.33-1.35-5.32-.55-6.67,1.79l-.09.16,17.54,10.13.09-.16c1.35-2.33.55-5.32-1.79-6.67Z"/><path style="fill:#eee" d="M22.21,20.23L7.7,11.85c-.84-.48-1.9-.31-2.54.42L.25,17.85c-.42.48-.3,1.23.25,1.55l4.93,2.84,4.57-5.09-2.12,6.5,10.76,6.21c.52.3,1.18.09,1.43-.46l2.97-6.58c.43-.95.07-2.07-.84-2.59Z"/></svg>';
 
 const SVG_PHONE_DELETE = '<svg width="25" height="25"><circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a"/><rect x="5" y="10.5" width="15" height="4" style="fill:#eee" /></svg>';
 const SVG_PHONE_ACTIVATION = '<svg width="20" height="20"><path class="cls-12" d="M9.44,15.9c-.59,0-1.12-.29-1.44-.78l-3.59-4.56c-.34-.43-.27-1.06.17-1.4.43-.34,1.06-.27,1.4.17l3.4,4.32,4.51-9c.25-.49.85-.69,1.34-.45.49.25.69.85.45,1.34l-4.74,9.45c-.34.59-.89.91-1.51.91Z" style="fill: #eee;"/></svg>';
@@ -90,7 +90,7 @@ function createAlarmInfo(data) {
     clearElem.classList.add('alarmClear');
     clearElem.innerHTML = SVG_CLEAR;
     clearElem.addEventListener('click', () => {
-        
+        clearAlarmItem(data['pvname']);
     });
 
     alarmInfoContainer.appendChild(activationElem);
@@ -208,6 +208,16 @@ function deleteAlarmItem(elem, pvname) {
     else {
         deleteAlarmInfo(pvname)
         elem.remove();
+    }
+   
+}
+
+function clearAlarmItem(pvname) {
+    if(simulation) {
+
+    }
+    else {
+        updateAlarmField(pvname, 'state', 'normal');
     }
    
 }
@@ -385,6 +395,8 @@ function showAlarmConfigurationDialog(target, data) {
                 const dictData = convertToDictionary(formData);
 
                 insertAlarmInfo(dictData);
+                document.getElementById('config-dialog-body').style.display = 'none';
+                
             });
             break;
 
@@ -410,6 +422,8 @@ function showAlarmConfigurationDialog(target, data) {
                 const dictData = convertToDictionary(formData);
 
                 updateAlarmInfo(dictData);
+                document.getElementById('config-dialog-body').style.display = 'none';
+
             });
 
             break;

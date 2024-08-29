@@ -111,7 +111,7 @@ body {
     justify-content: left;
     align-items: center;
     color:#eeeeee;
-    font-size: 60px;
+    font-size: 70px;
 }
 
 #alarm-list-title {
@@ -235,7 +235,7 @@ body {
 }
 
 input:checked+.activationToggelButton::before {
-    background-color: #22b573;
+    background-color: #29abe2;
     transform: translateX(40px);
 }
 
@@ -319,7 +319,7 @@ input:checked+.activationToggelButton::before {
     flex: 1;
 }
 
-.icon-fill {
+/* .icon-fill {
     fill: #eeeeee;
 }
 
@@ -329,7 +329,7 @@ input:checked+.activationToggelButton::before {
 
 .icon-normal {
     fill: #22b573;
-}
+} */
 
 .smsActivation {
     display: flex;

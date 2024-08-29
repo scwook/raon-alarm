@@ -6,6 +6,11 @@ function getAlarmListAll() {
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             var jsonValue = JSON.parse(this.responseText);
+
+            // Clear alarm list
+            let alarmListContainer = document.getElementById('alarm-list-container');
+            alarmListContainer.textContent = "";
+            
             for (let x in jsonValue) {
                 createAlarmInfo(jsonValue[x]);
             }
@@ -155,7 +160,7 @@ function deleteSMSInfo(phone, pvname) {
         // }
     };
 
-    var data = { 'phone': phone, 'pvname': pvname};
+    var data = { 'phone': phone, 'pvname': pvname };
 
     const endPoint = serverAddr + ":" + serverPort + "/deleteSMSInfo";
     xhttp.open("POST", endPoint, true);
@@ -188,8 +193,8 @@ function insertAlarmInfo(data) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-            var jsonValue = JSON.parse(this.responseText);
-            console.log(this.responseText);
+            // var jsonValue = JSON.parse(this.responseText);
+            // console.log(this.responseText);
         }
 
         // else {
