@@ -79,18 +79,18 @@ function createAlarmInfo(data) {
         showAlarmConfigurationDialog('update', data);
     });
 
-    const deleteElem = document.createElement('div');
-    deleteElem.classList.add('alarmDelete');
-    deleteElem.innerHTML = SVG_DELETE;
-    deleteElem.addEventListener('click', () => {
-        deleteAlarmItem(alarmItemContainer, data['pvname']);
-    });
-
     const clearElem = document.createElement('div');
     clearElem.classList.add('alarmClear');
     clearElem.innerHTML = SVG_CLEAR;
     clearElem.addEventListener('click', () => {
         clearAlarmItem(data['pvname']);
+    });
+
+    const deleteElem = document.createElement('div');
+    deleteElem.classList.add('alarmDelete');
+    deleteElem.innerHTML = SVG_DELETE;
+    deleteElem.addEventListener('click', () => {
+        deleteAlarmItem(alarmItemContainer, data['pvname']);
     });
 
     alarmInfoContainer.appendChild(activationElem);
@@ -102,8 +102,8 @@ function createAlarmInfo(data) {
     alarmInfoContainer.appendChild(repetationElem);
     alarmInfoContainer.appendChild(phoneElem);
     alarmInfoContainer.appendChild(editElem);
-    alarmInfoContainer.appendChild(deleteElem);
     alarmInfoContainer.appendChild(clearElem);
+    alarmInfoContainer.appendChild(deleteElem);
 
     alarmItemContainer.appendChild(alarmInfoContainer);
 
@@ -163,7 +163,7 @@ function createAlarmInfo(data) {
 }
 
 function makeAlarmList() {
-    if(simulation) {
+    if (simulation) {
         sim_getAlarmListAll();
     }
     else {
@@ -174,7 +174,7 @@ function makeAlarmList() {
 function searchKeyDown(event) {
     if (event.key == "Enter") {
 
-        if(simulation) {
+        if (simulation) {
 
         }
         else {
@@ -187,13 +187,13 @@ function searchKeyDown(event) {
 function searchAlarmData() {
     const searchData = document.getElementById('search-input').value;
 
-    if(simulation) {
+    if (simulation) {
 
     }
     else {
         getAlarmListFromPVName(searchData);
-    } 
-        
+    }
+
 }
 
 
@@ -202,24 +202,24 @@ function addAlarmItem() {
 }
 
 function deleteAlarmItem(elem, pvname) {
-    if(simulation) {
+    if (simulation) {
 
     }
     else {
         deleteAlarmInfo(pvname)
         elem.remove();
     }
-   
+
 }
 
 function clearAlarmItem(pvname) {
-    if(simulation) {
+    if (simulation) {
 
     }
     else {
         updateAlarmField(pvname, 'state', 'normal');
     }
-   
+
 }
 
 function setAlarmActivation(elem, data) {
@@ -234,7 +234,7 @@ function setSMSActivation(elem, data) {
     let phone = data['phone'];
     let pvname = data['pvname'];
 
-    if(simulation) {
+    if (simulation) {
 
     }
     else {
@@ -392,11 +392,25 @@ function showAlarmConfigurationDialog(target, data) {
             createButtonID.innerText = 'Create';
             createButtonID.addEventListener('click', () => {
                 let formData = new FormData(document.getElementById('config-form-container'));
-                const dictData = convertToDictionary(formData);
+                let formDataCheck = checkFromData(formData);
 
-                insertAlarmInfo(dictData);
-                document.getElementById('config-dialog-body').style.display = 'none';
-                
+                if (formDataCheck == "OK") {
+
+                    const dictData = convertToDictionary(formData);
+
+                    insertAlarmInfo(dictData);
+                    document.getElementById('config-dialog-body').style.display = 'none';
+                }
+                else if (formDataCheck == "EMPTY") {
+                    alert('The Process Variable or Value is required')
+                }
+                else if (formDataCheck == "VALUE") {
+                    alert('The input value must be a number')
+                }
+                else {
+                    alert('Check Input Data');
+                }
+
             });
             break;
 
@@ -419,11 +433,24 @@ function showAlarmConfigurationDialog(target, data) {
             createButtonID.innerText = 'Update';
             createButtonID.addEventListener('click', () => {
                 let formData = new FormData(document.getElementById('config-form-container'));
-                const dictData = convertToDictionary(formData);
+                let formDataCheck = checkFromData(formData);
 
-                updateAlarmInfo(dictData);
-                document.getElementById('config-dialog-body').style.display = 'none';
+                if (formDataCheck == "OK") {
 
+                    const dictData = convertToDictionary(formData);
+
+                    updateAlarmInfo(dictData);
+                    document.getElementById('config-dialog-body').style.display = 'none';
+                }
+                else if (formDataCheck == "EMPTY") {
+                    alert('The Process Variable or Value is required')
+                }
+                else if (formDataCheck == "VALUE") {
+                    alert('The input value must be a number')
+                }
+                else {
+                    alert('Check Input Data');
+                }
             });
 
             break;
@@ -437,6 +464,32 @@ function showAlarmConfigurationDialog(target, data) {
 function closeAlarmConfigurationDialog() {
     let id = document.getElementById('config-dialog-body');
     id.style.display = 'none';
+}
+
+function checkFromData(formData) {
+    for (let [key, value] of formData.entries()) {
+        switch (key) {
+            case 'pvname':
+                if (!value) {
+                    return 'EMPTY';
+                }
+                break;
+
+            case 'value':
+                if (!value) {
+                    return 'EMPTY';
+                }
+                else {
+                    if (!(parseFloat(value))) {
+                        return 'VALUE';
+                    }
+                }
+                break;
+        }
+    }
+
+    return 'OK';
+
 }
 
 function convertToDictionary(formData) {
@@ -459,7 +512,7 @@ function convertToDictionary(formData) {
 }
 
 function monitoringAlarmState() {
-    if(simulation) {
+    if (simulation) {
         sim_getAlarmStateAll();
     }
     else {
@@ -473,30 +526,30 @@ function applyAlarmState(data) {
     let alarmCount = 0;
     let normalCount = 0;
 
-    for(let x of alarmItem) {
+    for (let x of alarmItem) {
         const alarmInfo = x.querySelector('.alarmInfo');
         const pvname = alarmInfo.querySelector('.alarmPVName').textContent;
         const state = findAlarmState(data, pvname);
 
-        if(state == 'alarm') {
+        if (state == 'alarm') {
             alarmCount += 1;
         }
-        else if(state == 'normal') {
+        else if (state == 'normal') {
             normalCount += 1;
         }
 
         alarmInfo.querySelector('.alarmStatus').innerHTML = alarmStateCheck(state);
-        document.getElementById('summary-alarm-text').innerText = alarmCount;   
+        document.getElementById('summary-alarm-text').innerText = alarmCount;
         document.getElementById('summary-normal-text').innerText = normalCount;
     }
 }
 
 function findAlarmState(data, pvname) {
-    for(let x of data) {
-        if(x['pvname'] == pvname) {
+    for (let x of data) {
+        if (x['pvname'] == pvname) {
             return x['state'];
         }
     }
 
     return null
- }
+}

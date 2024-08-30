@@ -109,8 +109,8 @@ function updateAlarmInfo(data) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-            var jsonValue = JSON.parse(this.responseText);
-            console.log(this.responseText);
+            // var jsonValue = JSON.parse(this.responseText);
+            // console.log(this.responseText);
         }
 
         // else {
