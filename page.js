@@ -457,8 +457,23 @@ function showAlarmConfigurationDialog(target, data) {
 
     }
 
-    let id = document.getElementById('config-dialog-body');
-    id.style.display = 'flex';
+    let configContainerId = document.getElementById('config-dialog-body');
+    configContainerId.style.display = 'flex';
+
+    let configFormId = document.getElementById('config-form-container');
+    configFormId.animate([
+        {
+            transform: "translateY(50px)",
+            opacity: 0
+        },
+        {
+            transform: "translate(0px)",
+            opacity: 1
+        }
+    ], {
+        duration: 400,
+        easing: "ease-out"
+    });
 }
 
 function closeAlarmConfigurationDialog() {
