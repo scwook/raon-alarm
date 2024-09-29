@@ -204,7 +204,7 @@ function addAlarmItem() {
 
 function deleteAlarmItem(elem, pvname) {
     if (simulation) {
-
+        
     }
     else {
         deleteAlarmInfo(pvname)
