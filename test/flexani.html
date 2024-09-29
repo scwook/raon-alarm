@@ -56,7 +56,7 @@
         <div style="flex-basis: 20rem;">Click me</div>
         <div></div>
         <div style="flex-basis: 30rem;"></div>
-        <div></div>
+        <!-- <div></div>
         <div style="flex-basis: 5rem;"></div>
         <div></div>
         <div style="flex-basis: 5rem;"></div>
@@ -74,11 +74,11 @@
         <div></div>
         <div></div>
         <div style="flex-basis: 20rem;"></div>
-        <div style="flex-basis: 5rem;"></div>
+        <div style="flex-basis: 5rem;"></div> -->
     </div>
 </body>
 <script>
-    "use strict";
+    // "use strict";
     const container = document.querySelector(".container");
     for (const item of container.children) {
         item.addEventListener("click", () => {
@@ -106,15 +106,16 @@
     function aminateFlexItems(oldFlexItemsInfo, newFlexItemsInfo) {
         for (const newFlexItemInfo of newFlexItemsInfo) {
             const oldFlexItemInfo = oldFlexItemsInfo.find((itemInfo) => itemInfo.element === newFlexItemInfo.element);
-            const translateX = oldFlexItemInfo.x - newFlexItemInfo.x;
+            // const translateX = oldFlexItemInfo.x - newFlexItemInfo.x;
             const translateY = oldFlexItemInfo.y - newFlexItemInfo.y;
-            const scaleX = oldFlexItemInfo.width / newFlexItemInfo.width;
-            const scaleY = oldFlexItemInfo.height / newFlexItemInfo.height;
+            console.log(translateY);
+            // const scaleX = oldFlexItemInfo.width / newFlexItemInfo.width;
+            // const scaleY = oldFlexItemInfo.height / newFlexItemInfo.height;
             newFlexItemInfo.element.animate([
                 {
-                    transform: `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`
-                },
-                { transform: "none" }
+                    // transform: `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`
+                    transform: `translateY(${translateY}px)`
+                }
             ], {
                 duration: 250,
                 easing: "ease-out"

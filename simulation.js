@@ -1,4 +1,4 @@
-const simulation = false;
+const simulation = true;
 
 let simData = [
     {

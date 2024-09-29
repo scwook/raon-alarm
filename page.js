@@ -148,7 +148,8 @@ function createAlarmInfo(data) {
         smsDeleteElem.classList.add('smsDelete');
         smsDeleteElem.innerHTML = SVG_PHONE_DELETE;
         smsDeleteElem.addEventListener('click', () => {
-            smsInfoContainer.remove();
+            // smsInfoContainer.remove();
+            removeFlexItem(alarmItemContainer, smsInfoContainer);
             deleteSMSInfo(sms['phone'], data['pvname']);
         });
 
@@ -567,4 +568,42 @@ function findAlarmState(data, pvname) {
     }
 
     return null
+}
+
+function removeFlexItem(container, item) {
+    const oldFlexItemsInfo = getFlexItemsInfo(container);
+    container.removeChild(item);
+    const newFlexItemsInfo = getFlexItemsInfo(container);
+    aminateFlexItems(oldFlexItemsInfo, newFlexItemsInfo);
+}
+function getFlexItemsInfo(container) {
+    return Array.from(container.children).map((item) => {
+        const rect = item.getBoundingClientRect();
+        return {
+            element: item,
+            x: rect.left,
+            y: rect.top,
+            width: rect.right - rect.left,
+            height: rect.bottom - rect.top
+        };
+    });
+}
+
+function aminateFlexItems(oldFlexItemsInfo, newFlexItemsInfo) {
+    for (const newFlexItemInfo of newFlexItemsInfo) {
+        const oldFlexItemInfo = oldFlexItemsInfo.find((itemInfo) => itemInfo.element === newFlexItemInfo.element);
+        const translateX = oldFlexItemInfo.x - newFlexItemInfo.x;
+        const translateY = oldFlexItemInfo.y - newFlexItemInfo.y;
+        const scaleX = oldFlexItemInfo.width / newFlexItemInfo.width;
+        const scaleY = oldFlexItemInfo.height / newFlexItemInfo.height;
+        newFlexItemInfo.element.animate([
+            {
+                transform: `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`
+            },
+            { transform: "none" }
+        ], {
+            duration: 250,
+            easing: "ease-out"
+        });
+    }
 }
