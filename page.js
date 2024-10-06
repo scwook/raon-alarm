@@ -90,7 +90,7 @@ function createAlarmInfo(data) {
     deleteElem.classList.add('alarmDelete');
     deleteElem.innerHTML = SVG_DELETE;
     deleteElem.addEventListener('click', () => {
-        deleteAlarmItem(alarmItemContainer, data['pvname']);
+        deleteAlarmItem(alarmListContainer, alarmItemContainer, data['pvname']);
     });
 
     alarmInfoContainer.appendChild(activationElem);
@@ -149,8 +149,14 @@ function createAlarmInfo(data) {
         smsDeleteElem.innerHTML = SVG_PHONE_DELETE;
         smsDeleteElem.addEventListener('click', () => {
             // smsInfoContainer.remove();
+
+            const oldFlexItemsInfo = getFlexItemsInfo(alarmListContainer);
             removeFlexItem(alarmItemContainer, smsInfoContainer);
+            const newFlexItemsInfo = getFlexItemsInfo(alarmListContainer);
+            aminateFlexItems(oldFlexItemsInfo, newFlexItemsInfo);
+
             deleteSMSInfo(sms['phone'], data['pvname']);
+
         });
 
         smsInfoContainer.appendChild(smsActivationElem);
@@ -202,13 +208,15 @@ function addAlarmItem() {
 
 }
 
-function deleteAlarmItem(elem, pvname) {
+function deleteAlarmItem(container, item, pvname) {
+    removeFlexItem(container, item);
+
     if (simulation) {
         
     }
     else {
         deleteAlarmInfo(pvname)
-        elem.remove();
+        // elem.remove();
     }
 
 }
@@ -314,7 +322,8 @@ function createMessageUser() {
         let value = phoneInputElem.value;
         // console.log(Number.isInteger(value));
         if (!value) {
-            messageListItemElem.remove();
+            removeFlexItem(messageList, messageListItemElem);
+            // messageListItemElem.remove();
         }
     });
     // phoneInputElem.addEventListener('keypress', (event) => {
@@ -355,7 +364,8 @@ function addMessageUser(data) {
     phoneInputElem.addEventListener('focusout', () => {
         let value = phoneInputElem.value;
         if (!value) {
-            messageListItemElem.remove();
+            removeFlexItem(messageList, messageListItemElem);
+            // messageListItemElem.remove();
         }
     });
 
@@ -363,7 +373,8 @@ function addMessageUser(data) {
     phoneDeleteElem.classList.add('configMessagePhoneDelete');
     phoneDeleteElem.innerHTML = SVG_PHONE_DELETE;
     phoneDeleteElem.addEventListener('click', () => {
-        messageListItemElem.remove();
+        removeFlexItem(messageList, messageListItemElem);
+        // messageListItemElem.remove();
     });
 
     messageListItemElem.appendChild(phoneIconElem);
@@ -592,13 +603,13 @@ function getFlexItemsInfo(container) {
 function aminateFlexItems(oldFlexItemsInfo, newFlexItemsInfo) {
     for (const newFlexItemInfo of newFlexItemsInfo) {
         const oldFlexItemInfo = oldFlexItemsInfo.find((itemInfo) => itemInfo.element === newFlexItemInfo.element);
-        const translateX = oldFlexItemInfo.x - newFlexItemInfo.x;
+        // const translateX = oldFlexItemInfo.x - newFlexItemInfo.x;
         const translateY = oldFlexItemInfo.y - newFlexItemInfo.y;
-        const scaleX = oldFlexItemInfo.width / newFlexItemInfo.width;
-        const scaleY = oldFlexItemInfo.height / newFlexItemInfo.height;
+        // const scaleX = oldFlexItemInfo.width / newFlexItemInfo.width;
+        // const scaleY = oldFlexItemInfo.height / newFlexItemInfo.height;
         newFlexItemInfo.element.animate([
             {
-                transform: `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`
+                transform: `translateY(${translateY}px`
             },
             { transform: "none" }
         ], {

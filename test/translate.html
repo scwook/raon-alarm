@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        div {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aa"></div>
+</body>
+<script>
+    let id = document.querySelector('.aa');
+    id.animate([
+        {
+            transform: "translateY(300px)"
+        },
+        { transform: "translateY(200px)" }
+    ], {
+        duration: 250,
+        easing: "ease-out"
+    });
+</script>
+
+</html>
