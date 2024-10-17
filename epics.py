@@ -1,18 +1,32 @@
 import threading
 import sql
 from pvaccess import *
+import time
 
 class ChannelMonitor:
     def __init__(self, info):
         self.alarmInfo = info
-        self.channel = Channel(info['pvname'], ProviderType.CA)
+        self.channel = Channel(info['pvname'], CA)
         self.valueType = None
 
     def checkValueType(self):
-        print(self.channel.isConnected())
+        # print(self.channel.isConnected())
         if self.channel.isConnected():
-            typeDefinitionDic = self.channel.getIntrospectionDict()
-            valueType = typeDefinitionDic['value']
+            # typeDefinitionDic = self.channel.getIntrospectionDict()
+            # valueType = str(typeDefinitionDic['value'])
+            valueType = None
+            value = dict(self.channel.get())['value']
+            if isinstance(value, float):
+                valueType = 'FLOAT'
+            elif isinstance(value, int):
+                valueType = 'INT'
+            elif isinstance(value, bool):
+                valueType = 'BOOLEAN'
+            else 
+                valueType = None
+
+
+            print(self.channel.get())
             self.valueType = valueType
             return valueType
         else:
@@ -20,7 +34,7 @@ class ChannelMonitor:
 
     def alarmMonitor(self, channelData):
         recordData = dict(channelData)
-
+        print('data', recordData)
         alarmState = self.alarmInfo['state']
         alarmActivation = self.alarmInfo['activation']
         # print(self.alarmInfo['pvname'], recordData['value'])
@@ -29,11 +43,10 @@ class ChannelMonitor:
             pvValue = recordData['value']
             alarmValue = self.alarmInfo['value']
             operator = int(self.alarmInfo['operator'])
-
             valueType = self.valueType
             if valueType == None:
                 valueType = self.checkValueType()
-            
+
             result = valueCompare(pvValue, alarmValue, operator, valueType)
             if result:
                 if alarmState == 'normal':
@@ -66,7 +79,7 @@ class ChannelMonitor:
 
 
 def valueCompare(referenceValue, comparisonValue, operator, valueType):
-    if valueType == 'DOUBLE' or valueType == 'FLOAT': 
+    if valueType == 'DOUBLE' or valueType == 'FLOAT':
         referenceValue = float(referenceValue)
         comparisonValue = float(comparisonValue)
 
@@ -78,6 +91,7 @@ def valueCompare(referenceValue, comparisonValue, operator, valueType):
         referenceValue = int(referenceValue)
         comparisonValue = int(comparisonValue)
 
+    print(referenceValue, comparisonValue)
 
     if operator == 0:
         return (referenceValue == comparisonValue)

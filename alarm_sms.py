@@ -7,14 +7,15 @@ from flask import request
 from flask_cors import CORS
 
 # SERVER_ADDR = 'localhost'
-SERVER_ADDR = '192.168.131.161'
+# SERVER_ADDR = '192.168.131.161'
+SERVER_ADDR = '192.168.150.219'
+
 
 app = Flask(__name__)
 CORS(app)
 
 # conn = sql.getDbConnection()
 alarmList = sql.getAlarmList()
-
 channelList = list()
 monitoringList = list()
 
@@ -23,15 +24,14 @@ for x in alarmList:
 
 for y in channelList:
     y.channel.subscribe(y.alarmInfo['pvname'], y.alarmMonitor)
-    # y.channel.startMonitor()
+    y.channel.startMonitor('field(value)')
 
-channelList[0].channel.startMonitor()
+# channelList[0].channel.startMonitor()
 
 # channelList[0].channel.subscribe(channelList[0].alarmInfo['pvname'], channelList[0].alarmMonitor)
 # channelList[1].channel.subscribe(channelList[1].alarmInfo['pvname'], channelList[1].alarmMonitor)
 
 # channelList[0].channel.startMonitor()
-
 # time.sleep(10)
 
 # pv = 'scwook:ai1'

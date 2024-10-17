@@ -1,4 +1,5 @@
-const serverAddr = "http://192.168.131.161";
+// const serverAddr = "http://192.168.131.161";
+const serverAddr = "http://192.168.150.219";
 const serverPort = "8000";
 
 function getAlarmListAll() {
@@ -26,25 +27,25 @@ function getAlarmListAll() {
     xhttp.send();
 }
 
-function getSMSListFromPV(pvname) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            var jsonValue = JSON.parse(this.responseText);
-            // console.log(jsonValue);
-            for (let x in jsonValue) {
-            }
-        }
-        // else {
-        // 	alert('Status Error : ' + this.status);
-        // }
+// function getSMSListFromPV(pvname) {
+//     var xhttp = new XMLHttpRequest();
+//     xhttp.onreadystatechange = function () {
+//         if (this.readyState == 4 && this.status == 200) {
+//             var jsonValue = JSON.parse(this.responseText);
+//             // console.log(jsonValue);
+//             for (let x in jsonValue) {
+//             }
+//         }
+//         // else {
+//         // 	alert('Status Error : ' + this.status);
+//         // }
 
-    };
+//     };
 
-    var serverAddr = "http://192.168.131.161:8000/get";
-    xhttp.open("GET", serverAddr, true);
-    xhttp.send();
-}
+//     var serverAddr = "http://192.168.131.161:8000/get";
+//     xhttp.open("GET", serverAddr, true);
+//     xhttp.send();
+// }
 
 function getAlarmListFromPVName(search) {
     var xhttp = new XMLHttpRequest();
