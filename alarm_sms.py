@@ -66,7 +66,7 @@ def updateAlarmInfo():
 @app.route('/insertAlarmInfo', methods=['POST'])
 def insertAlarmInfo():
     jsonData = request.get_json()
-    pvname = jsonData['pvname']
+    pvname = jsonData['pvname'].strip()
     description = ""
     value = jsonData['value']
     operator = int(jsonData['condition'])
@@ -94,7 +94,7 @@ def getAlarmListFromPhone(phone):
     # sqlWildcardString = phone.replace('*', '%')
     result = sql.getAlarmListFromPhone(phone)
 
-    return json.dumps(result, ensure_ascii=False) 
+    return json.dumps(result, ensure_ascii=False)
 
 @app.route('/updateAlarmField', methods=['POST'])
 def setUpdateAlarmField():

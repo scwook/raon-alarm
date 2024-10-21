@@ -9,43 +9,45 @@ class ChannelMonitor:
         self.channel = Channel(info['pvname'], CA)
         self.valueType = None
 
-    def checkValueType(self):
+    def checkValueType(self, data):
         # print(self.channel.isConnected())
+        valueType = None
+
         if self.channel.isConnected():
             # typeDefinitionDic = self.channel.getIntrospectionDict()
+            # print(self.channel.get('field(value)'))
             # valueType = str(typeDefinitionDic['value'])
-            valueType = None
-            value = dict(self.channel.get())['value']
+            value = data['value']
             if isinstance(value, float):
                 valueType = 'FLOAT'
             elif isinstance(value, int):
                 valueType = 'INT'
             elif isinstance(value, bool):
                 valueType = 'BOOLEAN'
-            else 
-                valueType = None
+            else:
+                if isinstance(value, dict):
+                    valueType = 'ENUM'
+                else:
+                    valueType = None
 
+        self.valueType = valueType
 
-            print(self.channel.get())
-            self.valueType = valueType
-            return valueType
-        else:
-            return None
+        print('value type', valueType)
+        return valueType
 
     def alarmMonitor(self, channelData):
         recordData = dict(channelData)
-        print('data', recordData)
-        alarmState = self.alarmInfo['state']
-        alarmActivation = self.alarmInfo['activation']
-        # print(self.alarmInfo['pvname'], recordData['value'])
-        
+        alarmInfo = sql.getAlarmListFromPV(self.channel.getName())[0]
+        print(alarmInfo)
+        alarmState = alarmInfo['state']
+        alarmActivation = alarmInfo['activation']
         if alarmActivation:
             pvValue = recordData['value']
-            alarmValue = self.alarmInfo['value']
-            operator = int(self.alarmInfo['operator'])
+            alarmValue = alarmInfo['value']
+            operator = int(alarmInfo['operator'])
             valueType = self.valueType
             if valueType == None:
-                valueType = self.checkValueType()
+                valueType = self.checkValueType(recordData)
 
             result = valueCompare(pvValue, alarmValue, operator, valueType)
             if result:
@@ -83,24 +85,35 @@ def valueCompare(referenceValue, comparisonValue, operator, valueType):
         referenceValue = float(referenceValue)
         comparisonValue = float(comparisonValue)
 
-    elif valueType == 'BOOLEAN':
-        referenceValue == bool(referenceValue)
-        comparisonValue == bool(comparisonValue)
-    
-    else:
+    elif valueType == 'INT':
         referenceValue = int(referenceValue)
         comparisonValue = int(comparisonValue)
 
-    print(referenceValue, comparisonValue)
+    elif valueType == 'BOOLEAN':
+        referenceValue == bool(referenceValue)
+        comparisonValue == bool(comparisonValue)
+    elif valueType == 'ENUM':
+        referenceValue = int(referenceValue['index'])
+        comparisonValue = int(comparisonValue)
+    
 
     if operator == 0:
         return (referenceValue == comparisonValue)
 
     elif operator == 1:
-        return (referenceValue > comparisonValue)
+        return (referenceValue < comparisonValue)
     
     elif operator == 2:
-        return (referenceValue < comparisonValue)
+        return (referenceValue > comparisonValue)
+    
+    elif operator == 3:
+        return (referenceValue != comparisonValue)
+    
+    elif operator == 4:
+        return (referenceValue <= comparisonValue)
+    
+    elif operator == 5:
+        return (referenceValue >= comparisonValue)
 
     else:
         return None
