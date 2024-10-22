@@ -82,8 +82,7 @@ def insertAlarmInfo():
     sms = jsonData['phone']
 
     recordData = {'pvname':pvname, 'description':description, 'value':value, 'operator':operator, 'state': state, 'activation': activation, 'dealy':delay, 'repetation':repetation, 'sms':sms}
-    # print(recordData)
-    print(recordData)
+
     result = sql.insertAlarmInfo(recordData)
 
     if result == 'OK':
