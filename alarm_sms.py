@@ -7,8 +7,8 @@ from flask import request
 from flask_cors import CORS
 
 # SERVER_ADDR = 'localhost'
-# SERVER_ADDR = '192.168.131.161'
-SERVER_ADDR = '192.168.150.219'
+SERVER_ADDR = '192.168.131.161'
+# SERVER_ADDR = '192.168.150.219'
 
 
 app = Flask(__name__)
@@ -20,34 +20,31 @@ channelList = list()
 monitoringList = list()
 
 for x in alarmList:
-    channelList.append(epics.ChannelMonitor(x))
+    channelList.append(epics.ChannelMonitor(x['pvname']))
 
 for y in channelList:
-    y.channel.subscribe(y.alarmInfo['pvname'], y.alarmMonitor)
+    y.channel.subscribe(y.pvname, y.alarmMonitor)
     y.channel.startMonitor('field(value)')
-
-# channelList[0].channel.startMonitor()
-
-# channelList[0].channel.subscribe(channelList[0].alarmInfo['pvname'], channelList[0].alarmMonitor)
-# channelList[1].channel.subscribe(channelList[1].alarmInfo['pvname'], channelList[1].alarmMonitor)
-
-# channelList[0].channel.startMonitor()
-# time.sleep(10)
-
-# pv = 'scwook:ai1'
-
-# for x in alarmList:
-#     if x['pvname'] == pv:
-#         x['activation'] = False
-#         print('%s activation False' % (x['pvname']))
 
 def restartMonitoring(pvname):
     for y in channelList:
-        print(y.alarmInfo['pvname'], pvname)
-        if y.alarmInfo['pvname'] == pvname:
+        if y.pvname == pvname:
             y.channel.stopMonitor()
             time.sleep(1)
             y.channel.startMonitor('field(value)')
+
+def deleteMonitoring(pvname):
+    for y in channelList:
+        if y.pvname == pvname:
+            if y.channel.isMonitorActive():
+                y.channel.stopMonitor()
+
+            if y.timer != None:
+                y.timer.cancel()
+
+            channelList.remove(y)
+            break
+
 
 @app.route('/', methods=['POST'])
 def test():
@@ -86,9 +83,16 @@ def insertAlarmInfo():
 
     recordData = {'pvname':pvname, 'description':description, 'value':value, 'operator':operator, 'state': state, 'activation': activation, 'dealy':delay, 'repetation':repetation, 'sms':sms}
     # print(recordData)
+    print(recordData)
+    result = sql.insertAlarmInfo(recordData)
 
-    sql.insertAlarmInfo(recordData)
-    return 'OK'
+    if result == 'OK':
+        channelClass = epics.ChannelMonitor(pvname)
+        channelList.append(channelClass)
+        channelClass.channel.subscribe(pvname, channelClass.alarmMonitor)
+        channelClass.channel.startMonitor('field(value)')
+    
+    return result
 
 @app.route('/getAlarmListFromPV/<pvname>', methods=['GET'])
 def getAlarmListFromPV(pvname):
@@ -112,27 +116,28 @@ def setUpdateAlarmField():
     value = jsonData['value']
 
     if field == 'pvname':
-        sql.updateAlarmFieldStr(pvname, field, value)
+        result = sql.updateAlarmFieldStr(pvname, field, value)
 
     elif field == 'description' or field == 'value':
-        sql.updateAlarmFieldStr(pvname, field, value)
+        result = sql.updateAlarmFieldStr(pvname, field, value)
 
     elif field == 'state':
-        sql.updateAlarmFieldStr(pvname, field, value)
-        restartMonitoring(pvname)
+        result = sql.updateAlarmFieldStr(pvname, field, value)
+        if result == 'OK':
+            restartMonitoring(pvname)
 
     elif field == 'operator' or field == 'repetation' or field == 'delay':
         value = int(value)
-        sql.updateAlarmFieldInt(pvname, field, value)
+        result = sql.updateAlarmFieldInt(pvname, field, value)
 
     elif field == 'activation':
         value = bool(value)
-        sql.updateAlarmFieldInt(pvname, field, value)
+        result = sql.updateAlarmFieldInt(pvname, field, value)
         
     else:
         return 'Field name error'
 
-    return 'OK'
+    return result
 
 @app.route('/smsInfoUpdate', methods=['POST'])
 def setSMSInfoUpdate():
@@ -176,9 +181,12 @@ def getAlarmStateAll():
 
 @app.route('/deleteAlarmInfo/<pvname>', methods=['GET'])
 def deleteAlarmInfo(pvname):
-    sql.deleteAlarmInfo(pvname)
+    result  = sql.deleteAlarmInfo(pvname)
+    
+    if result == 'OK':
+        deleteMonitoring(pvname)
 
-    return 'OK'
+    return result
 
 @app.route('/deleteSMSInfo', methods=['POST'])
 def deleteSMSInfo():

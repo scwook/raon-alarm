@@ -4,10 +4,13 @@ from pvaccess import *
 import time
 
 class ChannelMonitor:
-    def __init__(self, info):
-        self.alarmInfo = info
-        self.channel = Channel(info['pvname'], CA)
+    def __init__(self, pvname):
+        # self.alarmInfo = info
+        # self.channel = Channel(info['pvname'], CA)
+        self.pvname = pvname
+        self.channel = Channel(pvname, CA)
         self.valueType = None
+        self.timer = None
 
     def checkValueType(self, data):
         # print(self.channel.isConnected())
@@ -37,8 +40,8 @@ class ChannelMonitor:
 
     def alarmMonitor(self, channelData):
         recordData = dict(channelData)
+        print(channelData)
         alarmInfo = sql.getAlarmListFromPV(self.channel.getName())[0]
-        print(alarmInfo)
         alarmState = alarmInfo['state']
         alarmActivation = alarmInfo['activation']
         if alarmActivation:
@@ -55,16 +58,16 @@ class ChannelMonitor:
                     print('stop monitoring and start timer')
 
                     self.channel.stopMonitor()
-                    delayTime = int(self.alarmInfo['delay'])
+                    delayTime = int(alarmInfo['delay'])
 
-                    timer = threading.Timer(delayTime, alarmDelay, args=[self])
+                    timer = threading.Timer(delayTime, alarmDelay, args=[alarmInfo, self])
                     timer.start()
 
                 elif alarmState == 'alarm':
-                    repeatTime = int(self.alarmInfo['repetation'])
+                    repeatTime = int(alarmInfo['repetation'])
                     if repeatTime != 0:
                         self.channel.stopMonitor()
-                        timer = threading.Timer(repeatTime, alarmRepeat, args=[repeatTime, self])
+                        timer = threading.Timer(repeatTime, alarmRepeat, args=[repeatTime, alarmInfo, self])
                         timer.start()
                     
                     else:
@@ -77,8 +80,6 @@ class ChannelMonitor:
                 print('No alarm')
         else:
             print('alarm activation false')
-
-
 
 def valueCompare(referenceValue, comparisonValue, operator, valueType):
     if valueType == 'DOUBLE' or valueType == 'FLOAT':
@@ -95,7 +96,6 @@ def valueCompare(referenceValue, comparisonValue, operator, valueType):
     elif valueType == 'ENUM':
         referenceValue = int(referenceValue['index'])
         comparisonValue = int(comparisonValue)
-    
 
     if operator == 0:
         return (referenceValue == comparisonValue)
@@ -118,45 +118,44 @@ def valueCompare(referenceValue, comparisonValue, operator, valueType):
     else:
         return None
 
-def alarmDelay(channelClass):
+def alarmDelay(alarmInfo, channelClass):
     pvValue = channelClass.channel.get().toDict()['value']
-    alarmValue = channelClass.alarmInfo['value']
-    operator = int(channelClass.alarmInfo['operator'])
-    alarmActivation = channelClass.alarmInfo['activation']
-
+    alarmValue = alarmInfo['value']
+    operator = int(alarmInfo['operator'])
+    alarmActivation = alarmInfo['activation']
     valueType = channelClass.valueType
     result = valueCompare(pvValue, alarmValue, operator, valueType)
 
     if result and alarmActivation:
-        channelClass.alarmInfo['state'] = 'alarm'
-        pvName = channelClass.alarmInfo['pvname']
+        # channelClass.alarmInfo['state'] = 'alarm'
+        pvName = alarmInfo['pvname']
         alarmLog = 'alarm raised'
         
         updateAlarmFieldStr(pvName, 'state', 'alarm')
         writeAlarmLog(pvName, alarmLog)
         sendAlarmSMS()
-        print('     ', channelClass.alarmInfo['pvname'], 'alarm raised')
+        print('     ', alarmInfo['pvname'], 'alarm raised')
     else:
         print('     overtime alarm')
 
     channelClass.channel.startMonitor()
     print('     restart monitoring')
 
-def alarmRepeat(repeatTime, channelClass):
-    alarmState = channelClass.alarmInfo['state']
-    alarmActivation = channelClass.alarmInfo['activation']
+def alarmRepeat(repeatTime, alarmInfo, channelClass):
+    alarmState = alarmInfo['state']
+    alarmActivation = alarmInfo['activation']
 
-    timer = threading.Timer(repeatTime, alarmRepeat, args=[repeatTime, channelClass])
-    timer.start()
+    channelClass.timer = threading.Timer(repeatTime, alarmRepeat, args=[repeatTime, alarmInfo, channelClass])
+    channelClass.timer.start()
 
     if alarmState == 'alarm' and alarmActivation:
-        pvName = channelClass.alarmInfo['pvname']
+        pvName = alarmInfo['pvname']
         alarmLog = 'alarm raised'
         
         # writeAlarmLog(pvName, alarmLog)
         sendAlarmSMS()
     else:
-        timer.cancel()
+        channelClass.timer.cancel()
         channelClass.channel.startMonitor()
         print('     stop alarm repeat and start monitoring')
 

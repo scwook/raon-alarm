@@ -1,5 +1,5 @@
-// const serverAddr = "http://192.168.131.161";
-const serverAddr = "http://192.168.150.219";
+const serverAddr = "http://192.168.131.161";
+// const serverAddr = "http://192.168.150.219";
 const serverPort = "8000";
 
 function getAlarmListAll() {
@@ -194,6 +194,7 @@ function insertAlarmInfo(data) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
+            getAlarmListAll();
             // var jsonValue = JSON.parse(this.responseText);
             // console.log(this.responseText);
         }
