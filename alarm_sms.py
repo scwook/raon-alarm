@@ -41,6 +41,14 @@ for y in channelList:
 #         x['activation'] = False
 #         print('%s activation False' % (x['pvname']))
 
+def restartMonitoring(pvname):
+    for y in channelList:
+        print(y.alarmInfo['pvname'], pvname)
+        if y.alarmInfo['pvname'] == pvname:
+            y.channel.stopMonitor()
+            time.sleep(1)
+            y.channel.startMonitor('field(value)')
+
 @app.route('/', methods=['POST'])
 def test():
     formData = request.form
@@ -103,14 +111,24 @@ def setUpdateAlarmField():
     field = jsonData['field']
     value = jsonData['value']
 
-    if field == 'pvname' or field == 'description' or field == 'value' or field == 'state':
+    if field == 'pvname':
         sql.updateAlarmFieldStr(pvname, field, value)
+
+    elif field == 'description' or field == 'value':
+        sql.updateAlarmFieldStr(pvname, field, value)
+
+    elif field == 'state':
+        sql.updateAlarmFieldStr(pvname, field, value)
+        restartMonitoring(pvname)
+
     elif field == 'operator' or field == 'repetation' or field == 'delay':
         value = int(value)
         sql.updateAlarmFieldInt(pvname, field, value)
+
     elif field == 'activation':
         value = bool(value)
         sql.updateAlarmFieldInt(pvname, field, value)
+        
     else:
         return 'Field name error'
 
