@@ -35,15 +35,15 @@ class ChannelMonitor:
 
         self.valueType = valueType
 
-        print('value type', valueType)
+        # print('value type', valueType)
         return valueType
 
     def alarmMonitor(self, channelData):
         recordData = dict(channelData)
-        print(channelData)
         alarmInfo = sql.getAlarmListFromPV(self.channel.getName())[0]
         alarmState = alarmInfo['state']
         alarmActivation = alarmInfo['activation']
+
         if alarmActivation:
             pvValue = recordData['value']
             alarmValue = alarmInfo['value']

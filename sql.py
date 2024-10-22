@@ -197,35 +197,46 @@ def clearAlarm():
 def updateAlarmInfo(data):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-            pvname = data['pvname']
-            description = data['description']
-            value = data['value']
-            operator = data['operator']
-            repetation = data['repetation']
-            delay = data['dealy']
+            try:
+                pvname = data['pvname']
+                description = data['description']
+                value = data['value']
+                operator = data['operator']
+                repetation = data['repetation']
+                delay = data['dealy']
 
-            query = 'UPDATE alarm_info SET description="%s", value="%s", operator="%d", repetation="%d", delay="%d" WHERE pvname="%s"' % (description, value, operator, repetation, delay, pvname)
-            cursor.execute(query)
+                query = 'UPDATE alarm_info SET description="%s", value="%s", operator="%d", repetation="%d", delay="%d" WHERE pvname="%s"' % (description, value, operator, repetation, delay, pvname)
+                cursor.execute(query)
 
-            delete_query = 'DELETE FROM sms_info WHERE pvname="%s"' % (pvname)
-            cursor.execute(delete_query)
+                delete_query = 'DELETE FROM sms_info WHERE pvname="%s"' % (pvname)
+                cursor.execute(delete_query)
 
-            print(data['sms'])
-            for x in data['sms']:
-                sms_phone = x
-                sms_pvname = pvname
-                sms_activation = bool(1)
-                sms_query = 'INSERT into sms_info(phone, pvname, activation) values("%s", "%s", "%d")' %(sms_phone, sms_pvname, sms_activation)
-                cursor.execute(sms_query)
+                for x in data['sms']:
+                    sms_phone = x
+                    sms_pvname = pvname
+                    sms_activation = bool(1)
+                    sms_query = 'INSERT into sms_info(phone, pvname, activation) values("%s", "%s", "%d")' %(sms_phone, sms_pvname, sms_activation)
+                    cursor.execute(sms_query)
 
-            conn.commit()
+                conn.commit()
+                return 'OK'
+            
+            except pymysql.err.InternalError as e:
+                
+                return 'Error'
 
 def updateAlarmFieldInt(pvName, field, intValue):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
-        with conn.cursor() as cursor:        
-            query = 'UPDATE alarm_info SET %s="%d" WHERE pvname="%s"' % (field, intValue, pvName)
-            cursor.execute(query)
-            conn.commit()
+        with conn.cursor() as cursor:
+            try:            
+                query = 'UPDATE alarm_info SET %s="%d" WHERE pvname="%s"' % (field, intValue, pvName)
+                cursor.execute(query)
+                conn.commit()
+                return 'OK'
+            
+            except pymysql.err.InternalError as e:
+                
+                return 'Error'
 
 def updateSMSFieldInt(phone, pvName, field, value):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:

@@ -30,8 +30,23 @@ def restartMonitoring(pvname):
     for y in channelList:
         if y.pvname == pvname:
             y.channel.stopMonitor()
-            time.sleep(1)
+            # time.sleep(0.5)
             y.channel.startMonitor('field(value)')
+
+def stopMonitoring(pvname):
+    for y in channelList:
+        if y.pvname == pvname:
+            y.channel.stopMonitor()
+            print(pvname, "stop monitor")
+
+def startMonitoring(pvname):
+    for y in channelList:
+        if y.pvname == pvname:
+            if y.channel.isMonitorActive():
+                y.channel.stopMonitor()
+
+            y.channel.startMonitor('field(value)')
+            print(pvname, "start monitor")
 
 def deleteMonitoring(pvname):
     for y in channelList:
@@ -65,8 +80,9 @@ def updateAlarmInfo():
 
     recordData = {'pvname':pvname, 'description':description, 'value':value, 'operator':operator, 'dealy':delay, 'repetation':repetation, 'sms':sms}
 
-    sql.updateAlarmInfo(recordData)
-    return 'OK'
+    result = sql.updateAlarmInfo(recordData)
+
+    return result
 
 @app.route('/insertAlarmInfo', methods=['POST'])
 def insertAlarmInfo():
@@ -132,6 +148,11 @@ def setUpdateAlarmField():
     elif field == 'activation':
         value = bool(value)
         result = sql.updateAlarmFieldInt(pvname, field, value)
+        if result == 'OK':
+            if value:
+                startMonitoring(pvname)
+            else:
+                stopMonitoring(pvname)
         
     else:
         return 'Field name error'
