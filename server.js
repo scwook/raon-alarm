@@ -22,6 +22,11 @@ function getAlarmListAll() {
 
     };
 
+
+    xhttp.onerror = function () {
+
+    }
+
     const endPoint = serverAddr + ":" + serverPort + "/getAlarmListAll";
     xhttp.open("GET", endPoint, false);
     xhttp.send();
@@ -74,6 +79,10 @@ function getAlarmListFromPVName(search) {
 
     };
 
+    xhttp.onerror = function () {
+        alert('Server Connection Error');
+    }
+
     const endPoint = serverAddr + ":" + serverPort + "/getAlarmListFromPV/" + search;
     xhttp.open("GET", endPoint, true);
     xhttp.send();
@@ -101,6 +110,10 @@ function getAlarmListFromPhone(search) {
 
     };
 
+    xhttp.onerror = function () {
+        alert('Server Connection Error');
+    }
+
     const endPoint = serverAddr + ":" + serverPort + "/getAlarmListFromPhone/" + search;
     xhttp.open("GET", endPoint, true);
     xhttp.send();
@@ -120,6 +133,9 @@ function updateAlarmInfo(data) {
         // }
     };
 
+    xhttp.onerror = function () {
+        alert('Server Connection Error');
+    }
 
     const endPoint = serverAddr + ":" + serverPort + "/updateAlarmInfo";
     xhttp.open("POST", endPoint, true);
@@ -140,6 +156,10 @@ function updateAlarmField(pvname, field, value) {
         // 	alert('Status Error : ' + this.status);
         // }
     };
+
+    xhttp.onerror = function () {
+        alert('Server Connection Error');
+    }
 
     var data = { 'pvname': pvname, 'field': field, 'value': value };
 
@@ -162,6 +182,10 @@ function deleteSMSInfo(phone, pvname) {
         // }
     };
 
+    xhttp.onerror = function () {
+        alert('Server Connection Error');
+    }
+
     var data = { 'phone': phone, 'pvname': pvname };
 
     const endPoint = serverAddr + ":" + serverPort + "/deleteSMSInfo";
@@ -182,6 +206,11 @@ function updateSMSInfo(phone, pvname, field, value) {
         // 	alert('Status Error : ' + this.status);
         // }
     };
+
+
+    xhttp.onerror = function () {
+        alert('Server Connection Error');
+    }
 
     var data = { 'phone': phone, 'pvname': pvname, 'field': field, 'value': value };
 
@@ -205,6 +234,9 @@ function insertAlarmInfo(data) {
         // }
     };
 
+    xhttp.onerror = function () {
+        alert('Server Connection Error');
+    }
 
     const endPoint = serverAddr + ":" + serverPort + "/insertAlarmInfo";
     xhttp.open("POST", endPoint, true);
@@ -224,6 +256,10 @@ function deleteAlarmInfo(pvname) {
         // }
 
     };
+
+    xhttp.onerror = function () {
+        alert('Server Connection Error');
+    }
 
     const endPoint = serverAddr + ":" + serverPort + "/deleteAlarmInfo/" + pvname;
     xhttp.open("GET", endPoint, true);
