@@ -240,32 +240,9 @@
 <script>
 
     // getAlarmListAll();
-    // makeAlarmList();
+    makeAlarmList();
     setInterval(monitoringAlarmState, 2000);
     setInterval(monitoringConnectionState, 2000);
-    
-    // setInterval(test, 5000);
-
-    function test() {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            console.log('readState', this.readyState, 'status', this.status)
-
-            // if (this.readyState == 4 && this.status == 200) {
-                // var jsonValue = JSON.parse(this.responseText);
-
-            // }
-        };
-
-        xhttp.onerror = function () {
-            console.log('connection error')
-        }
-        
-
-        const endPoint = serverAddr + ":" + serverPort + "/getConnectionStateAll";
-        xhttp.open("GET", endPoint, true);
-        xhttp.send();
-    }
 </script>
 
 </html>

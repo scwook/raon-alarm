@@ -412,7 +412,8 @@ function showAlarmConfigurationDialog(target, data) {
                     const dictData = convertToDictionary(formData);
 
                     insertAlarmInfo(dictData);
-                    document.getElementById('config-dialog-body').style.display = 'none';
+                    // document.getElementById('config-dialog-body').style.display = 'none';
+                    closeAlarmConfigurationDialog();
                 }
                 else if (formDataCheck == "EMPTY") {
                     alert('The Process Variable or Value is required')
@@ -453,7 +454,8 @@ function showAlarmConfigurationDialog(target, data) {
                     const dictData = convertToDictionary(formData);
 
                     updateAlarmInfo(dictData);
-                    document.getElementById('config-dialog-body').style.display = 'none';
+                    // document.getElementById('config-dialog-body').style.display = 'none';
+                    closeAlarmConfigurationDialog();
                 }
                 else if (formDataCheck == "EMPTY") {
                     alert('The Process Variable or Value is required')
@@ -484,14 +486,34 @@ function showAlarmConfigurationDialog(target, data) {
             opacity: 1
         }
     ], {
-        duration: 400,
-        easing: "ease-out"
+        duration: 300,
+        easing: "ease-out",
+        fill: "forwards"
     });
 }
 
 function closeAlarmConfigurationDialog() {
-    let id = document.getElementById('config-dialog-body');
-    id.style.display = 'none';
+    let configContainerId = document.getElementById('config-dialog-body');
+    let configFormId = document.getElementById('config-form-container');
+
+    setTimeout(() => {
+        configContainerId.style.display = 'none';
+    }, 300);
+
+    configFormId.animate([
+        {
+            transform: "translateY(0px)",
+            opacity: 1
+        },
+        {
+            transform: "translateY(50px)",
+            opacity: 0
+        }
+    ], {
+        duration: 300,
+        easing: "ease-out",
+        fill: "forwards"
+    });
 }
 
 function checkFromData(formData) {
@@ -603,7 +625,7 @@ function applyConnectionState(data) {
         if (state) {
             textColor = '#eeeeee'
         }
-        else  {
+        else {
             textColor = '#aaaaaa'
         }
 
