@@ -25,6 +25,7 @@ for x in alarmList:
 for y in channelList:
     y.channel.subscribe(y.pvname, y.alarmMonitor)
     y.channel.startMonitor('field(value)')
+    # y.channel.setConnectionCallback(y.connectionMonitor)
 
 def restartMonitoring(pvname):
     for y in channelList:
@@ -60,6 +61,14 @@ def deleteMonitoring(pvname):
             channelList.remove(y)
             break
 
+def connectionStateAll():
+    stateList = list()
+    for y in channelList:
+        state = y.channel.isConnected()
+        pvname = y.pvname
+        stateList.append({'pvname':pvname, 'state':state})
+
+    return stateList
 
 @app.route('/', methods=['POST'])
 def test():
@@ -196,6 +205,12 @@ def getAlarmListAll():
 @app.route('/getAlarmStateAll', methods=['GET'])
 def getAlarmStateAll():
     result = sql.getAlarmStateAll()
+
+    return json.dumps(result, ensure_ascii=False)
+
+@app.route('/getConnectionStateAll', methods=['GET'])
+def getConnectionStateAll():
+    result = connectionStateAll()
 
     return json.dumps(result, ensure_ascii=False)
 

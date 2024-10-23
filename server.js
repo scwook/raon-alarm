@@ -248,3 +248,23 @@ function getAlarmStateAll() {
     xhttp.open("GET", endPoint, true);
     xhttp.send();
 }
+
+function getConnectionStateAll() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var jsonValue = JSON.parse(this.responseText);
+            applyConnectionState(jsonValue);
+            // console.log(jsonValue)
+
+        }
+        // else {
+        // 	alert('Status Error : ' + this.status);
+        // }
+
+    };
+
+    const endPoint = serverAddr + ":" + serverPort + "/getConnectionStateAll";
+    xhttp.open("GET", endPoint, true);
+    xhttp.send();
+}

@@ -212,7 +212,7 @@ function deleteAlarmItem(container, item, pvname) {
     removeFlexItem(container, item);
 
     if (simulation) {
-        
+
     }
     else {
         deleteAlarmInfo(pvname)
@@ -296,7 +296,8 @@ function alarmStateCheck(state) {
             return SVG_ALARM_STAT;
         case 'normal':
             return SVG_NORMAL_STAT;
-
+        case 'disconnect':
+            return 'Disconnect'
         default:
             return 'Error';
     }
@@ -547,6 +548,15 @@ function monitoringAlarmState() {
     }
 }
 
+function monitoringConnectionState() {
+    if (simulation) {
+
+    }
+    else {
+        getConnectionStateAll();
+    }
+}
+
 function applyAlarmState(data) {
     const alarmListContainer = document.getElementById('alarm-list-container');
     const alarmItem = alarmListContainer.getElementsByClassName('alarmItem');
@@ -572,6 +582,37 @@ function applyAlarmState(data) {
 }
 
 function findAlarmState(data, pvname) {
+    for (let x of data) {
+        if (x['pvname'] == pvname) {
+            return x['state'];
+        }
+    }
+
+    return null
+}
+
+function applyConnectionState(data) {
+    const alarmListContainer = document.getElementById('alarm-list-container');
+    const alarmItem = alarmListContainer.getElementsByClassName('alarmItem');
+
+    for (let x of alarmItem) {
+        const alarmInfo = x.querySelector('.alarmInfo');
+        const pvname = alarmInfo.querySelector('.alarmPVName').textContent;
+        const state = findConnectionState(data, pvname);
+        let textColor = '#123456';
+        if (state) {
+            textColor = '#eeeeee'
+        }
+        else  {
+            textColor = '#aaaaaa'
+        }
+
+        alarmInfo.querySelector('.alarmPVName').style.color = textColor;
+
+    }
+}
+
+function findConnectionState(data, pvname) {
     for (let x of data) {
         if (x['pvname'] == pvname) {
             return x['state'];

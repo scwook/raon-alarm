@@ -38,6 +38,10 @@ class ChannelMonitor:
         # print('value type', valueType)
         return valueType
 
+    # def connectionMonitor(self, isConnected):
+    #     if isConnected == False:
+    #         sql.updateAlarmFieldStr(self.pvname, 'state', 'disconnect')
+
     def alarmMonitor(self, channelData):
         recordData = dict(channelData)
         alarmInfo = sql.getAlarmListFromPV(self.channel.getName())[0]
