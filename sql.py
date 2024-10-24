@@ -20,6 +20,7 @@ def test(pvName):
 
                 return 'OK'
             except pymysql.Error as e:
+                
                 return e
 
 def getDbConnection():
@@ -131,9 +132,9 @@ def insertAlarmInfo(data):
                 conn.commit()
                 return 'OK'
             
-            except pymysql.err.InternalError as e:
+            except pymysql.err as e:
                 
-                return 'Error'
+                return e
 
 def getAlarmList():
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
@@ -175,9 +176,9 @@ def deleteAlarmInfo(pvName):
                 conn.commit()
 
                 return 'OK'
-            except pymysql.err.InternalError as e:
+            except pymysql.err as e:
                 
-                return 'Error'
+                return e
 
 # def updateAlarmRecord(data):
 #     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
@@ -196,9 +197,9 @@ def updateAlarmFieldStr(pvName, field, strValue):
                 conn.commit()
                 return 'OK'
             
-            except pymysql.err.InternalError as e:
-                print("aaaaaaaaaaadsfsdfsvfffff")
-                return 'Error'
+            except pymysql.err as e:
+
+                return e
             
 def clearAlarm():
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
@@ -234,9 +235,9 @@ def updateAlarmInfo(data):
                 conn.commit()
                 return 'OK'
             
-            except pymysql.err.InternalError as e:
+            except pymysql.err as e:
                 
-                return 'Error'
+                return e
 
 def updateAlarmFieldInt(pvName, field, intValue):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
@@ -247,9 +248,9 @@ def updateAlarmFieldInt(pvName, field, intValue):
                 conn.commit()
                 return 'OK'
             
-            except pymysql.err.InternalError as e:
+            except pymysql.err as e:
                 
-                return 'Error'
+                return e
 
 def updateSMSFieldInt(phone, pvName, field, value):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:

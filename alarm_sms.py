@@ -70,18 +70,18 @@ def connectionStateAll():
 
     return stateList
 
-def writeErrorLog(message, result):
+def writeErrorLog(message, error):
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    message = now + ' ' + message
-    result = now + ' ' + result
+    message = '\n' + now + ' ' + message
+    error = '\n' + now + ' ' + str(error)
 
     with open('error.log', 'a', encoding='utf-8') as file:
         file.write(message)
-        file.write(result)
+        file.write(error)
 
-result = sql.test("aaa")
-print(result)
-writeErrorLog("error", str(result))
+# result = sql.test("aaa")
+# print(result)
+# writeErrorLog("error", str(result))
 
 @app.route('/', methods=['POST'])
 def test():
