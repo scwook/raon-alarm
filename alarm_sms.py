@@ -1,4 +1,4 @@
-import time
+import datetime
 import sql
 import epics
 import json
@@ -7,8 +7,8 @@ from flask import request
 from flask_cors import CORS
 
 # SERVER_ADDR = 'localhost'
-SERVER_ADDR = '192.168.131.161'
-# SERVER_ADDR = '192.168.150.219'
+# SERVER_ADDR = '192.168.131.161'
+SERVER_ADDR = '192.168.150.219'
 
 
 app = Flask(__name__)
@@ -70,6 +70,19 @@ def connectionStateAll():
 
     return stateList
 
+def writeErrorLog(message, result):
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    message = now + ' ' + message
+    result = now + ' ' + result
+
+    with open('error.log', 'a', encoding='utf-8') as file:
+        file.write(message)
+        file.write(result)
+
+result = sql.test("aaa")
+print(result)
+writeErrorLog("error", str(result))
+
 @app.route('/', methods=['POST'])
 def test():
     formData = request.form
@@ -90,6 +103,12 @@ def updateAlarmInfo():
     recordData = {'pvname':pvname, 'description':description, 'value':value, 'operator':operator, 'dealy':delay, 'repetation':repetation, 'sms':sms}
 
     result = sql.updateAlarmInfo(recordData)
+
+    if result == 'OK':
+        sql.insertAlarmLog(pvname, 'Update alarm info: %s' % (jsonData))
+    else:
+        message = '(updateAlarmInfo) %s %' % (jsonData)
+        writeErrorLog(message, result)
 
     return result
 
@@ -115,7 +134,13 @@ def insertAlarmInfo():
         channelList.append(channelClass)
         channelClass.channel.subscribe(pvname, channelClass.alarmMonitor)
         channelClass.channel.startMonitor('field(value)')
-    
+
+        sql.insertAlarmLog(pvname, 'Create new alarm monitoring')
+
+    else:
+        message = '(insertAlarmInfo) %s %' % (jsonData)
+        writeErrorLog(message, result)
+
     return result
 
 @app.route('/getAlarmListFromPV/<pvname>', methods=['GET'])
@@ -141,6 +166,8 @@ def setUpdateAlarmField():
 
     if field == 'pvname':
         result = sql.updateAlarmFieldStr(pvname, field, value)
+        if result == 'OK':
+            sql.insertAlarmLog(pvname, 'Update PV name to %s' % (value))
 
     elif field == 'description' or field == 'value':
         result = sql.updateAlarmFieldStr(pvname, field, value)
@@ -149,10 +176,13 @@ def setUpdateAlarmField():
         result = sql.updateAlarmFieldStr(pvname, field, value)
         if result == 'OK':
             restartMonitoring(pvname)
+            sql.insertAlarmLog(pvname, 'Change alarm state to "%s"' % (value))
 
     elif field == 'operator' or field == 'repetation' or field == 'delay':
         value = int(value)
         result = sql.updateAlarmFieldInt(pvname, field, value)
+        if result == 'OK':
+            sql.insertAlarmLog(pvname, 'Change condition to %s' % (value))
 
     elif field == 'activation':
         value = bool(value)
@@ -162,9 +192,16 @@ def setUpdateAlarmField():
                 startMonitoring(pvname)
             else:
                 stopMonitoring(pvname)
-        
+
+            sql.insertAlarmLog(pvname, 'Change activation to %s' % (value))
+
     else:
-        return 'Field name error'
+        result = 'Field name error'
+
+    print(result)
+    if result != 'OK':
+        message = '(updateAlarmField) pvname:%s, field:%s, value:%s' % (pvname, field, value) 
+        writeErrorLog(message, result)
 
     return result
 
@@ -220,6 +257,9 @@ def deleteAlarmInfo(pvname):
     
     if result == 'OK':
         deleteMonitoring(pvname)
+        sql.insertAlarmLog(pvname, 'Delete alarm monitoring')
+    else:
+        writeErrorLog(result)
 
     return result
 

@@ -168,21 +168,8 @@ def updateAlarmFieldStr(pvname, field, value):
     sql.updateAlarmFieldStr(pvname, field, value)
 
 def writeAlarmLog(pvname, log):
-    conn = sql.getDbConnection()
-    # sql.insertAlarmLog(pvname, log)
+    # conn = sql.getDbConnection()
+    sql.insertAlarmLog(pvname, log)
 
 def sendAlarmSMS():
     print('alarm send')
-
-# channelList[1].channel.startMonitor()
-
-# current_time = int(time.time())
-# print('current time', current_time)
-# time.sleep(20)
-
-# print('unsubscribe channel1')
-# channelList[0].channel.unsubscribe(channelList[0].alarmInfo['pvname'])
-
-# current_time = int(time.time())
-# print('current time', current_time)
-

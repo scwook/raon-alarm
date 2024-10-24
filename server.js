@@ -1,5 +1,5 @@
-const serverAddr = "http://192.168.131.161";
-// const serverAddr = "http://192.168.150.219";
+// const serverAddr = "http://192.168.131.161";
+const serverAddr = "http://192.168.150.219";
 const serverPort = "8000";
 
 function getAlarmListAll() {

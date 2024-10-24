@@ -10,6 +10,18 @@ FROM_NUMBER = '0428788831'
 
 connection = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8')
 
+def test(pvName):
+    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+        with conn.cursor() as cursor:        
+            try:
+                query='DELETE FROM sms_info WHERE pname=' + "'" + pvName + "'"
+                cursor.execute(query)
+                conn.commit()
+
+                return 'OK'
+            except pymysql.Error as e:
+                return e
+
 def getDbConnection():
     return connection
 
@@ -144,6 +156,7 @@ def getAlarmLog(pvName):
 def insertAlarmLog(pvname, log):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
         with conn.cursor() as cursor:        
+            print(log)
             query='INSERT INTO alarm_log(pvname, log) values("%s", "%s")' % (pvname, log)
             cursor.execute(query)
             conn.commit()
@@ -184,7 +197,7 @@ def updateAlarmFieldStr(pvName, field, strValue):
                 return 'OK'
             
             except pymysql.err.InternalError as e:
-                
+                print("aaaaaaaaaaadsfsdfsvfffff")
                 return 'Error'
             
 def clearAlarm():
