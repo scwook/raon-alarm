@@ -10,22 +10,13 @@ from flask_cors import CORS
 # SERVER_ADDR = '192.168.131.161'
 SERVER_ADDR = '192.168.150.219'
 
-
 app = Flask(__name__)
 CORS(app)
 
 # conn = sql.getDbConnection()
-alarmList = sql.getAlarmList()
+# alarmList = sql.getAlarmList()
 channelList = list()
-monitoringList = list()
-
-for x in alarmList:
-    channelList.append(epics.ChannelMonitor(x['pvname']))
-
-for y in channelList:
-    y.channel.subscribe(y.pvname, y.alarmMonitor)
-    y.channel.startMonitor('field(value)')
-    # y.channel.setConnectionCallback(y.connectionMonitor)
+# monitoringList = list()
 
 def restartMonitoring(pvname):
     for y in channelList:
@@ -79,9 +70,6 @@ def writeErrorLog(message, error):
         file.write(message)
         file.write(error)
 
-# result = sql.test("aaa")
-# print(result)
-# writeErrorLog("error", str(result))
 
 @app.route('/', methods=['POST'])
 def test():
@@ -273,4 +261,11 @@ def deleteSMSInfo():
     return 'OK'
 
 if __name__ == "__main__":
+    for x in sql.getAlarmList():
+        channelList.append(epics.ChannelMonitor(x['pvname']))
+
+    for y in channelList:
+        y.channel.subscribe(y.pvname, y.alarmMonitor)
+        y.channel.startMonitor('field(value)')
+
     app.run(host=SERVER_ADDR, port="8000")

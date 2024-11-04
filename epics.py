@@ -35,7 +35,6 @@ class ChannelMonitor:
 
         self.valueType = valueType
 
-        # print('value type', valueType)
         return valueType
 
     # def connectionMonitor(self, isConnected):
@@ -164,11 +163,9 @@ def alarmRepeat(repeatTime, alarmInfo, channelClass):
         print('     stop alarm repeat and start monitoring')
 
 def updateAlarmFieldStr(pvname, field, value):
-    # conn = sql.getDbConnection()
     sql.updateAlarmFieldStr(pvname, field, value)
 
 def writeAlarmLog(pvname, log):
-    # conn = sql.getDbConnection()
     sql.insertAlarmLog(pvname, log)
 
 def sendAlarmSMS():
