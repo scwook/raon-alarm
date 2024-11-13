@@ -1,5 +1,6 @@
 import threading
 import sql
+import serial
 from pvaccess import *
 import time
 
@@ -156,7 +157,8 @@ def alarmRepeat(repeatTime, alarmInfo, channelClass):
         alarmLog = 'alarm raised'
         
         # writeAlarmLog(pvName, alarmLog)
-        sendAlarmSMS()
+        # sendAlarmSMS()
+        sendAlarmToMessageServer('alarm')
     else:
         channelClass.timer.cancel()
         channelClass.channel.startMonitor()
@@ -170,3 +172,8 @@ def writeAlarmLog(pvname, log):
 
 def sendAlarmSMS():
     print('alarm send')
+
+def sendAlarmToMessageServer(data):
+    PORT = 'loop://'
+    with serial.Serail(PORT, 19200, timeout=1) as ser:
+        ser.write_line(data)

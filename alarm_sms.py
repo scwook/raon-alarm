@@ -7,8 +7,8 @@ from flask import request
 from flask_cors import CORS
 
 # SERVER_ADDR = 'localhost'
-# SERVER_ADDR = '192.168.131.161'
-SERVER_ADDR = '192.168.150.219'
+SERVER_ADDR = '192.168.131.161'
+# SERVER_ADDR = '192.168.150.219'
 
 app = Flask(__name__)
 CORS(app)
@@ -261,11 +261,11 @@ def deleteSMSInfo():
     return 'OK'
 
 if __name__ == "__main__":
-    for x in sql.getAlarmList():
-        channelList.append(epics.ChannelMonitor(x['pvname']))
+    for alarmlist in sql.getAlarmList():
+        channelList.append(epics.ChannelMonitor(alarmlist['pvname']))
 
-    for y in channelList:
-        y.channel.subscribe(y.pvname, y.alarmMonitor)
-        y.channel.startMonitor('field(value)')
+    for channelMonitor in channelList:
+        channelMonitor.channel.subscribe(channelMonitor.pvname, channelMonitor.alarmMonitor)
+        channelMonitor.channel.startMonitor('field(value)')
 
     app.run(host=SERVER_ADDR, port="8000")
