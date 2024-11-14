@@ -1,7 +1,11 @@
 import datetime
+import time
 import sql
 import epics
 import json
+import serial
+import multiprocessing
+import queue
 from flask import Flask, jsonify
 from flask import request
 from flask_cors import CORS
@@ -260,12 +264,35 @@ def deleteSMSInfo():
 
     return 'OK'
 
+PORT = '/dev/tty.usbserial-FT96QAFW'
+ser = serial.serial_for_url(PORT, baudrate=115200, timeout=1)
+
+def sendMessage(q):
+    while True:
+        try:
+            data = q.get(block=False)
+            print(data)
+            ser.write(data.encode('utf-8') + b'\r\n')
+
+        except queue.Empty:
+            pass
+
+        time.sleep(0.1)    
+
 if __name__ == "__main__":
+    queue = multiprocessing.Queue()
+
     for alarmlist in sql.getAlarmList():
-        channelList.append(epics.ChannelMonitor(alarmlist['pvname']))
+        channelList.append(epics.ChannelMonitor(alarmlist['pvname'], queue))
 
     for channelMonitor in channelList:
         channelMonitor.channel.subscribe(channelMonitor.pvname, channelMonitor.alarmMonitor)
         channelMonitor.channel.startMonitor('field(value)')
+
+
+
+    process = multiprocessing.Process(target=sendMessage, args={queue})
+    process.start()
+    # process.join()
 
     app.run(host=SERVER_ADDR, port="8000")

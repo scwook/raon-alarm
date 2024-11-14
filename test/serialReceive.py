@@ -145,7 +145,8 @@ class ReaderThread(threading.Thread):
         while self.alive and self.serial.is_open:
             try:
                 # read all that is there or wait for one byte (blocking)
-                data = self.serial.read(self.serial.in_waiting or 1)
+                # data = self.serial.read(self.serial.in_waiting or 1)
+                data = self.serial.readline()
             except serial.SerialException as e:
                 # probably some I/O problem such as disconnected USB serial
                 # adapters -> exit
@@ -192,7 +193,7 @@ class ReaderThread(threading.Thread):
     # - -  context manager, returns protocol
 
     def __enter__(self):
-        """\
+        """
         Enter context handler. May raise RuntimeError in case the connection
         could not be created.
         """
@@ -226,7 +227,8 @@ if __name__ == '__main__':
 
         def handle_line(self, data):
             # sys.stdout.write('\n line received: {!r}\n'.format(data))
-            print(json.loads(data)['value'])
+            # print(json.loads(data)['value'])
+            print(data)
 
         def connection_lost(self, exc):
             if exc:
@@ -235,7 +237,7 @@ if __name__ == '__main__':
 
     ser = serial.serial_for_url(PORT, baudrate=115200, timeout=1)
     with ReaderThread(ser, PrintLines) as protocol:
-        protocol.write_line('hello')
+        # protocol.write_line('hello')
         while True:
             time.sleep(0.1)
             # sendMessage = input('send: ')

@@ -5,13 +5,14 @@ from pvaccess import *
 import time
 
 class ChannelMonitor:
-    def __init__(self, pvname):
+    def __init__(self, pvname, queue):
         # self.alarmInfo = info
         # self.channel = Channel(info['pvname'], CA)
         self.pvname = pvname
         self.channel = Channel(pvname, CA)
         self.valueType = None
         self.timer = None
+        self.messageQueue = queue
 
     def checkValueType(self, data):
         # print(self.channel.isConnected())
@@ -137,7 +138,8 @@ def alarmDelay(alarmInfo, channelClass):
         
         updateAlarmFieldStr(pvName, 'state', 'alarm')
         writeAlarmLog(pvName, alarmLog)
-        sendAlarmSMS()
+        channelClass.messageQueue.put('alarm')
+        
         print('     ', alarmInfo['pvname'], 'alarm raised')
     else:
         print('     overtime alarm')
@@ -158,7 +160,7 @@ def alarmRepeat(repeatTime, alarmInfo, channelClass):
         
         # writeAlarmLog(pvName, alarmLog)
         # sendAlarmSMS()
-        sendAlarmToMessageServer('alarm')
+        channelClass.messageQueue.put('alarm')
     else:
         channelClass.timer.cancel()
         channelClass.channel.startMonitor()
@@ -172,8 +174,3 @@ def writeAlarmLog(pvname, log):
 
 def sendAlarmSMS():
     print('alarm send')
-
-def sendAlarmToMessageServer(data):
-    PORT = 'loop://'
-    with serial.Serail(PORT, 19200, timeout=1) as ser:
-        ser.write_line(data)
