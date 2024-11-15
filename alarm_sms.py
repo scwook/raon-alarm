@@ -85,7 +85,7 @@ def test():
 def updateAlarmInfo():
     jsonData = request.get_json()
     pvname = jsonData['pvname']
-    description = ""
+    description = jsonData['desc']
     value = jsonData['value']
     operator = int(jsonData['condition'])
     delay = int(jsonData['delay'])
@@ -108,7 +108,7 @@ def updateAlarmInfo():
 def insertAlarmInfo():
     jsonData = request.get_json()
     pvname = jsonData['pvname'].strip()
-    description = ""
+    description = jsonData['desc']
     value = jsonData['value']
     operator = int(jsonData['condition'])
     state = 'normal'

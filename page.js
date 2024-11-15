@@ -391,8 +391,8 @@ function showAlarmConfigurationDialog(target, data) {
         case 'create':
             var searchInputId = document.getElementById('search-input');
             document.getElementById('config-pvname').value = searchInputId.value;
-
             document.getElementById('config-value').value = "";
+            document.getElementById('config-description').value = "";
             document.getElementById('config-condition').selectedIndex = 0;
             document.getElementById('config-delay').value = "5";
             document.getElementById('config-repetation').value = "0";
@@ -429,7 +429,9 @@ function showAlarmConfigurationDialog(target, data) {
             break;
 
         case 'update':
+            console.log(data);
             document.getElementById('config-pvname').value = data['pvname'];
+            document.getElementById('config-description').value = data['description'];
             document.getElementById('config-value').value = data['value'];
             document.getElementById('config-condition').selectedIndex = data['operator'];
             document.getElementById('config-delay').value = String(data['delay']);

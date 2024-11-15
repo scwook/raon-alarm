@@ -163,6 +163,10 @@
                 <label>Process Variable</label>
                 <input id="config-pvname" type="text" name="pvname">
             </div>
+            <div class="configFormItem">
+                <label>Description</label>
+                <input id="config-description" type="text" name="desc">
+            </div>
 
             <div class="configFormItem">
                 <label>Value</label>
@@ -202,7 +206,7 @@
                 </div>
             </div>
 
-            <div class="configFormItem" style="margin-top: 60px">
+            <div class="configFormItem" style="margin-top: 40px">
                 <div class="configFormItemChild">
                     <label>Message List</label>
                     <div class="configMessageUserAddButton" type="button" onclick="createMessageUser()">
@@ -231,8 +235,12 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="configFormItem">
 
                 <button id="config-set-button" type="button" class="configSetButton"></button>
+
             </div>
         </form>
     </div>
