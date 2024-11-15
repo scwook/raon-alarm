@@ -138,8 +138,10 @@ def alarmDelay(alarmInfo, channelClass):
         
         updateAlarmFieldStr(pvName, 'state', 'alarm')
         writeAlarmLog(pvName, alarmLog)
-        channelClass.messageQueue.put('alarm')
         
+        message = {"desc":"Description", "value":"1.6e-6", "list":["04212345678","04212345678","04212345678"]}
+        channelClass.messageQueue.put(str(message))
+
         print('     ', alarmInfo['pvname'], 'alarm raised')
     else:
         print('     overtime alarm')

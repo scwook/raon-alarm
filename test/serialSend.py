@@ -43,8 +43,3 @@ if __name__ == "__main__":
     process2.start()
     process3.start()
     queueProcess.start()
-
-    process1.join()
-    process2.join()
-    process3.join()
-    queueProcess.join()

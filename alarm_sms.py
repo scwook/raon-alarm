@@ -168,7 +168,7 @@ def setUpdateAlarmField():
         result = sql.updateAlarmFieldStr(pvname, field, value)
         if result == 'OK':
             restartMonitoring(pvname)
-            sql.insertAlarmLog(pvname, 'Change alarm state to "%s"' % (value))
+            sql.insertAlarmLog(pvname, 'Change alarm state to %s' % (value))
 
     elif field == 'operator' or field == 'repetation' or field == 'delay':
         value = int(value)
@@ -288,8 +288,6 @@ if __name__ == "__main__":
     for channelMonitor in channelList:
         channelMonitor.channel.subscribe(channelMonitor.pvname, channelMonitor.alarmMonitor)
         channelMonitor.channel.startMonitor('field(value)')
-
-
 
     process = multiprocessing.Process(target=sendMessage, args={queue})
     process.start()

@@ -227,8 +227,15 @@ if __name__ == '__main__':
 
         def handle_line(self, data):
             # sys.stdout.write('\n line received: {!r}\n'.format(data))
-            # print(json.loads(data)['value'])
             print(data)
+            dictData = eval(data)
+
+            desc = dictData['desc']
+            value = dictData['value']
+            smsList = dictData['list']
+            print(f'disc{desc}')
+            print(f'value{value}')
+            print(f'list{smsList}')
 
         def connection_lost(self, exc):
             if exc:
@@ -242,3 +249,10 @@ if __name__ == '__main__':
             time.sleep(0.1)
             # sendMessage = input('send: ')
             # protocol.write_line(sendMessage)
+
+"""
+Control Message Alarm
+[Web]발신
+KoBRA Beam Dump Vacuum
+Current Value: 1.6e-9
+"""
