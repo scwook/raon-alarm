@@ -233,9 +233,18 @@ if __name__ == '__main__':
             desc = dictData['desc']
             value = dictData['value']
             smsList = dictData['list']
-            print(f'disc{desc}')
-            print(f'value{value}')
-            print(f'list{smsList}')
+
+            for x in smsList:
+                if x['phone'].isdecimal():
+                    print(desc)
+                    print(value)
+                    print(x['phone'])
+                    print(x['pvname'])
+                    print(x['activation'])
+
+            # print(f'disc{desc}')
+            # print(f'value{value}')
+            # print(f'list{smsList}')
 
         def connection_lost(self, exc):
             if exc:
