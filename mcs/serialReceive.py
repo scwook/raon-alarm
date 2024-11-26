@@ -14,6 +14,7 @@ from __future__ import absolute_import
 import serial
 import threading
 import json
+import mcs
 
 class Protocol(object):
     """\
@@ -227,7 +228,7 @@ if __name__ == '__main__':
 
         def handle_line(self, data):
             # sys.stdout.write('\n line received: {!r}\n'.format(data))
-            print(data)
+            # print(data)
             dictData = eval(data)
 
             desc = dictData['desc']
@@ -236,15 +237,11 @@ if __name__ == '__main__':
 
             for x in smsList:
                 if x['phone'].isdecimal():
-                    print(desc)
-                    print(value)
-                    print(x['phone'])
-                    print(x['pvname'])
-                    print(x['activation'])
-
-            # print(f'disc{desc}')
-            # print(f'value{value}')
-            # print(f'list{smsList}')
+                    user = x['phone']
+                    pvname = x['pvname']
+                    message = pvname + '\r\n' + desc + '\r\n' + value
+                    print(message)
+                    mcs.test(user, message)
 
         def connection_lost(self, exc):
             if exc:
