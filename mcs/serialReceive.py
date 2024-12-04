@@ -15,6 +15,7 @@ import serial
 import threading
 import json
 import mcs
+import datetime
 
 class Protocol(object):
     """\
@@ -239,8 +240,9 @@ if __name__ == '__main__':
                 if x['phone'].isdecimal():
                     user = x['phone']
                     pvname = x['pvname']
-                    message = pvname + '\r\n' + desc + '\r\n' + value
-                    print(message)
+                    # message = pvname + '\r\n' + desc + '\r\n' + value
+                    message = pvname
+
                     mcs.test(user, message)
 
         def connection_lost(self, exc):

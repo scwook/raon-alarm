@@ -72,7 +72,8 @@ class ChannelMonitor:
                     repeatTime = int(alarmInfo['repetation'])
                     if repeatTime != 0:
                         self.channel.stopMonitor()
-                        timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeatTime, alarmInfo])
+                        print(time.strftime('%Y-%m-%d %H:%M:%S') + ': start repeat')
+                        timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeatTime])
                         timer.start()
                     
                     else:
@@ -87,6 +88,10 @@ class ChannelMonitor:
             print('alarm activation false')
 
     def alarmDelay(self, alarmInfo):
+        if self.channel.isConnected() == False:
+            print('channel disconnected')
+            return
+        
         pvValue = self.channel.get().toDict()['value']
         alarmValue = alarmInfo['value']
         operator = int(alarmInfo['operator'])
@@ -113,20 +118,31 @@ class ChannelMonitor:
         self.channel.startMonitor()
         print('     restart monitoring')
 
-    def alarmRepeat(self, repeatTime, alarmInfo):
+    def alarmRepeat(self, repeatTime):
+        if self.channel.isConnected() == False:
+            print('channel disconnected')
+            self.timer.cancel()
+            self.channel.startMonitor()
+            return
+
+        alarmInfo = sql.getAlarmListFromPV(self.channel.getName())[0]
+
         alarmState = alarmInfo['state']
         alarmActivation = alarmInfo['activation']
 
-        self.timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeatTime, alarmInfo])
+        print(time.strftime('%Y-%m-%d %H:%M:%S') + ': start repeat')
+        print('repeat time: %d' % repeatTime)
+        self.timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeatTime])
         self.timer.start()
 
         if alarmState == 'alarm' and alarmActivation:
             pvName = alarmInfo['pvname']
             alarmLog = 'alarm raised'
             
-            # writeAlarmLog(pvName, alarmLog)
+            self.writeAlarmLog(pvName, alarmLog)
             # sendAlarmSMS()
-            self.messageQueue.put('alarm')
+            message = {"desc":alarmInfo['description'], "value":alarmInfo['value'], "list":alarmInfo['sms']}
+            self.messageQueue.put(str(message))
         else:
             self.timer.cancel()
             self.channel.startMonitor()

@@ -403,33 +403,10 @@ function showAlarmConfigurationDialog(target, data) {
 
             var createButtonID = document.getElementById('config-set-button');
             createButtonID.innerText = 'Create';
-            createButtonID.addEventListener('click', () => {
-                let formData = new FormData(document.getElementById('config-form-container'));
-                let formDataCheck = checkFromData(formData);
-
-                if (formDataCheck == "OK") {
-
-                    const dictData = convertToDictionary(formData);
-
-                    insertAlarmInfo(dictData);
-                    // document.getElementById('config-dialog-body').style.display = 'none';
-                    closeAlarmConfigurationDialog();
-                }
-                else if (formDataCheck == "EMPTY") {
-                    alert('The Process Variable or Value is required')
-                }
-                else if (formDataCheck == "VALUE") {
-                    alert('The input value must be a number')
-                }
-                else {
-                    alert('Check Input Data');
-                }
-
-            });
+            createButtonID.addEventListener('click', createAlarm);
             break;
 
         case 'update':
-            console.log(data);
             document.getElementById('config-pvname').value = data['pvname'];
             document.getElementById('config-description').value = data['description'];
             document.getElementById('config-value').value = data['value'];
@@ -447,29 +424,7 @@ function showAlarmConfigurationDialog(target, data) {
 
             var createButtonID = document.getElementById('config-set-button');
             createButtonID.innerText = 'Update';
-            createButtonID.addEventListener('click', () => {
-                let formData = new FormData(document.getElementById('config-form-container'));
-                let formDataCheck = checkFromData(formData);
-
-                if (formDataCheck == "OK") {
-
-                    const dictData = convertToDictionary(formData);
-
-                    updateAlarmInfo(dictData);
-                    // document.getElementById('config-dialog-body').style.display = 'none';
-                    closeAlarmConfigurationDialog();
-                }
-                else if (formDataCheck == "EMPTY") {
-                    alert('The Process Variable or Value is required')
-                }
-                else if (formDataCheck == "VALUE") {
-                    alert('The input value must be a number')
-                }
-                else {
-                    alert('Check Input Data');
-                }
-            });
-
+            createButtonID.addEventListener('click', updateAlarm);
             break;
 
     }
@@ -494,9 +449,58 @@ function showAlarmConfigurationDialog(target, data) {
     });
 }
 
+function createAlarm() {
+    let formData = new FormData(document.getElementById('config-form-container'));
+    let formDataCheck = checkFromData(formData);
+
+    if (formDataCheck == "OK") {
+
+        const dictData = convertToDictionary(formData);
+
+        insertAlarmInfo(dictData);
+        // document.getElementById('config-dialog-body').style.display = 'none';
+        closeAlarmConfigurationDialog();
+    }
+    else if (formDataCheck == "EMPTY") {
+        alert('The Process Variable or Value is required')
+    }
+    else if (formDataCheck == "VALUE") {
+        alert('The input value must be a number')
+    }
+    else {
+        alert('Check Input Data');
+    }
+}
+
+function updateAlarm() {
+    let formData = new FormData(document.getElementById('config-form-container'));
+    let formDataCheck = checkFromData(formData);
+
+    if (formDataCheck == "OK") {
+
+        const dictData = convertToDictionary(formData);
+
+        updateAlarmInfo(dictData);
+        // document.getElementById('config-dialog-body').style.display = 'none';
+        closeAlarmConfigurationDialog();
+    }
+    else if (formDataCheck == "EMPTY") {
+        alert('The Process Variable or Value is required')
+    }
+    else if (formDataCheck == "VALUE") {
+        alert('The input value must be a number')
+    }
+    else {
+        alert('Check Input Data');
+    }
+}
+
 function closeAlarmConfigurationDialog() {
     let configContainerId = document.getElementById('config-dialog-body');
     let configFormId = document.getElementById('config-form-container');
+    let createButtonId = document.getElementById('config-set-button');
+    createButtonId.removeEventListener('click', createAlarm);
+    createButtonId.removeEventListener('click', updateAlarm);
 
     setTimeout(() => {
         configContainerId.style.display = 'none';

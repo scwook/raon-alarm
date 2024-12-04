@@ -6,6 +6,8 @@ import json
 import serial
 import multiprocessing
 import queue
+import logging
+
 from flask import Flask, jsonify
 from flask import request
 from flask_cors import CORS
@@ -16,6 +18,9 @@ SERVER_ADDR = '192.168.131.161'
 
 app = Flask(__name__)
 CORS(app)
+
+log=logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 # conn = sql.getDbConnection()
 # alarmList = sql.getAlarmList()
@@ -95,7 +100,6 @@ def updateAlarmInfo():
     recordData = {'pvname':pvname, 'description':description, 'value':value, 'operator':operator, 'dealy':delay, 'repetation':repetation, 'sms':sms}
 
     result = sql.updateAlarmInfo(recordData)
-
     if result == 'OK':
         sql.insertAlarmLog(pvname, 'Update alarm info: %s' % (jsonData))
     else:
