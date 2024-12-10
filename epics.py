@@ -48,48 +48,62 @@ class ChannelMonitor:
         alarmInfo = sql.getAlarmListFromPV(self.channel.getName())[0]
         alarmState = alarmInfo['state']
         alarmActivation = alarmInfo['activation']
+        pvNmae = alarmInfo['pvname']
 
-        if alarmActivation:
-            pvValue = recordData['value']
-            alarmValue = alarmInfo['value']
-            operator = int(alarmInfo['operator'])
-            valueType = self.valueType
-            if valueType == None:
-                valueType = self.checkValueType(recordData)
+        # in case of alarm activation value 0, not going to alarm sequence
+        if not alarmActivation:
+            printConsole(pvNmae, 'alarm activation fasle')
+            return
+        
+        valueType = self.valueType
+        
+        # check value type for type conversion and comapre value
+        if valueType == None:
+            valueType = self.checkValueType(recordData)
 
-            result = valueCompare(pvValue, alarmValue, operator, valueType)
-            if result:
-                if alarmState == 'normal':
-                    print('stop monitoring and start timer')
+        pvValue = recordData['value']
+        alarmValue = alarmInfo['value']
+        operator = int(alarmInfo['operator'])
 
-                    self.channel.stopMonitor()
-                    delayTime = int(alarmInfo['delay'])
+        # check alarm condition
+        result = valueCompare(pvValue, alarmValue, operator, valueType)
+ 
+        # just ignore when alarm conditions are not met
+        if not result:
+            printConsole(pvNmae, 'no alarm')
+            return
+        
+        # when alarm conditions are met, check current alarm state
+        if alarmState == 'normal':
+            printConsole(pvNmae, 'stop monitoring and start delay timer')
 
-                    timer = threading.Timer(delayTime, self.alarmDelay, args=[alarmInfo])
-                    timer.start()
+            self.channel.stopMonitor()
+            delayTime = int(alarmInfo['delay'])
 
-                elif alarmState == 'alarm':
-                    repeatTime = int(alarmInfo['repetation'])
-                    if repeatTime != 0:
-                        self.channel.stopMonitor()
-                        print(time.strftime('%Y-%m-%d %H:%M:%S') + ': start repeat')
-                        timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeatTime])
-                        timer.start()
-                    
-                    else:
-                        print('already alarm raise no repeat')
-                
-                else:
-                    print('alarm state error')
+            timer = threading.Timer(delayTime, self.alarmDelay, args=[alarmInfo])
+            timer.start()
 
-            else:
-                print('No alarm')
+        elif alarmState == 'alarm':
+            repeatTime = int(alarmInfo['repetation'])
+            if repeatTime == 0:
+                printConsole(pvNmae, 'already alarm raised no repeat')
+                return
+            
+            self.channel.stopMonitor()
+
+            printConsole(pvNmae, 'start repeat loop')
+            timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeatTime])
+            timer.start()
+            
         else:
-            print('alarm activation false')
+            printConsole(pvNmae, 'alarm state error')
 
     def alarmDelay(self, alarmInfo):
+        pvName = alarmInfo['pvname']
+
         if self.channel.isConnected() == False:
-            print('channel disconnected')
+            printConsole(pvName, 'channel disconnected')
+            self.channel.startMonitor()
             return
         
         pvValue = self.channel.get().toDict()['value']
@@ -101,7 +115,7 @@ class ChannelMonitor:
 
         if result and alarmActivation:
             # channelClass.alarmInfo['state'] = 'alarm'
-            pvName = alarmInfo['pvname']
+            # pvName = alarmInfo['pvname']
             alarmLog = 'alarm raised'
             
             self.updateAlarmFieldStr(pvName, 'state', 'alarm')
@@ -111,32 +125,31 @@ class ChannelMonitor:
             message = {"desc":alarmInfo['description'], "value":alarmInfo['value'], "list":alarmInfo['sms']}
             self.messageQueue.put(str(message))
 
-            print('     ', alarmInfo['pvname'], 'alarm raised')
+            printConsole(pvName, 'alarm raised')
         else:
-            print('     overtime alarm')
+            printConsole(pvName, 'alarm delay overtime')
 
         self.channel.startMonitor()
-        print('     restart monitoring')
+        printConsole(pvName, 'restart monitoring')
 
     def alarmRepeat(self, repeatTime):
+
         if self.channel.isConnected() == False:
-            print('channel disconnected')
-            self.timer.cancel()
+            printConsole(alarmInfo['pvname'], 'channel disconnected')
             self.channel.startMonitor()
             return
 
         alarmInfo = sql.getAlarmListFromPV(self.channel.getName())[0]
-
+        pvName = alarmInfo['pvname']
         alarmState = alarmInfo['state']
         alarmActivation = alarmInfo['activation']
 
-        print(time.strftime('%Y-%m-%d %H:%M:%S') + ': start repeat')
-        print('repeat time: %d' % repeatTime)
+        printConsole(pvName, 'start repeat')
         self.timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeatTime])
         self.timer.start()
 
         if alarmState == 'alarm' and alarmActivation:
-            pvName = alarmInfo['pvname']
+            # pvName = alarmInfo['pvname']
             alarmLog = 'alarm raised'
             
             self.writeAlarmLog(pvName, alarmLog)
@@ -146,7 +159,8 @@ class ChannelMonitor:
         else:
             self.timer.cancel()
             self.channel.startMonitor()
-            print('     stop alarm repeat and start monitoring')
+            # pvName = alarmInfo['pvname']
+            printConsole(pvName, 'stop alarm repeat and start monitoring')
 
     def updateAlarmFieldStr(self, pvname, field, value):
         sql.updateAlarmFieldStr(pvname, field, value)
@@ -193,3 +207,6 @@ def valueCompare(referenceValue, comparisonValue, operator, valueType):
 
     else:
         return None
+    
+def printConsole(pvName, message):
+    print(time.strftime('%Y-%m-%d %H:%M:%S') + ': ' + pvName + ' ' + message)

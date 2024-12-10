@@ -157,7 +157,6 @@ def getAlarmLog(pvName):
 def insertAlarmLog(pvname, log):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
         with conn.cursor() as cursor:        
-            print(log)
             query='INSERT INTO alarm_log(pvname, log) values("%s", "%s")' % (pvname, log)
             cursor.execute(query)
             conn.commit()
@@ -255,9 +254,15 @@ def updateAlarmFieldInt(pvName, field, intValue):
 def updateSMSFieldInt(phone, pvName, field, value):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
         with conn.cursor() as cursor:
-            query='UPDATE sms_info SET %s="%d" WHERE phone="%s" AND pvname="%s"' % (field, value, phone, pvName)
-            cursor.execute(query)
-            conn.commit()
+            try:
+                query='UPDATE sms_info SET %s="%d" WHERE phone="%s" AND pvname="%s"' % (field, value, phone, pvName)
+                cursor.execute(query)
+                conn.commit()
+                return 'OK'
+            
+            except pymysql.err as e:
+                
+                return e
 
 def deleteSMSListFromPhone(phone):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:

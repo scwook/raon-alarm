@@ -31,7 +31,10 @@ def restartMonitoring(pvname):
     for y in channelList:
         if y.pvname == pvname:
             y.channel.stopMonitor()
-            # time.sleep(0.5)
+
+            if y.timer:
+                y.timer.cancel()
+
             y.channel.startMonitor('field(value)')
 
 def stopMonitoring(pvname):
@@ -46,8 +49,10 @@ def startMonitoring(pvname):
             if y.channel.isMonitorActive():
                 y.channel.stopMonitor()
 
+            if y.timer:
+                y.timer.cancel()
+
             y.channel.startMonitor('field(value)')
-            print(pvname, "start monitor")
 
 def deleteMonitoring(pvname):
     for y in channelList:
@@ -194,7 +199,6 @@ def setUpdateAlarmField():
     else:
         result = 'Field name error'
 
-    print(result)
     if result != 'OK':
         message = '(updateAlarmField) pvname:%s, field:%s, value:%s' % (pvname, field, value) 
         writeErrorLog(message, result)
@@ -209,9 +213,15 @@ def setSMSInfoUpdate():
     field = jsonData['field']
     value = jsonData['value']
 
-    sql.updateSMSFieldInt(phone, pvname, field, value)
+    result = sql.updateSMSFieldInt(phone, pvname, field, value)
+    if result == 'OK':
+            return 'OK'
 
-    return 'OK'
+    else:
+        message = '(smsInfoUpdate) %s %' % (jsonData)
+        writeErrorLog(message, result)
+
+    return result
 
 @app.route('/get', methods=['GET'])
 def getData():
@@ -275,8 +285,8 @@ def sendMessage(q):
     while True:
         try:
             data = q.get(block=False)
-            print(data)
             ser.write(data.encode('utf-8') + b'\r\n')
+            print('sned data: ' + data)
 
         except queue.Empty:
             pass

@@ -545,7 +545,6 @@ function checkFromData(formData) {
     }
 
     return 'OK';
-
 }
 
 function convertToDictionary(formData) {
@@ -595,15 +594,25 @@ function applyAlarmState(data) {
         const alarmInfo = x.querySelector('.alarmInfo');
         const pvname = alarmInfo.querySelector('.alarmPVName').textContent;
         const state = findAlarmState(data, pvname);
+        const statusElem = alarmInfo.querySelector('.alarmStatus');
 
         if (state == 'alarm') {
+            // statusElem.classList.remove('animationBlink');
+            // void statusElem.offsetWidth;
+            // statusElem.classList.add('animationBlink');
+            statusElem.classList.toggle('animationBlink', true)
+
             alarmCount += 1;
         }
         else if (state == 'normal') {
+            // statusElem.classList.remove('animationBlink');
+            statusElem.classList.toggle('animationBlink', false)
+
+            // void statusElem.offsetWidth;
             normalCount += 1;
         }
 
-        alarmInfo.querySelector('.alarmStatus').innerHTML = alarmStateCheck(state);
+        statusElem.innerHTML = alarmStateCheck(state);
         document.getElementById('summary-alarm-text').innerText = alarmCount;
         document.getElementById('summary-normal-text').innerText = normalCount;
     }

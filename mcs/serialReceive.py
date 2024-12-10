@@ -237,7 +237,7 @@ if __name__ == '__main__':
             smsList = dictData['list']
 
             for x in smsList:
-                if x['phone'].isdecimal():
+                if x['phone'].isdecimal() and x['activation'] == 1:
                     user = x['phone']
                     pvname = x['pvname']
                     # message = pvname + '\r\n' + desc + '\r\n' + value
