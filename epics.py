@@ -134,8 +134,8 @@ class ChannelMonitor:
 
     def alarmRepeat(self, repeatTime):
 
-        if self.channel.isConnected() == False:
-            printConsole(alarmInfo['pvname'], 'channel disconnected')
+        if not self.channel.isConnected():
+            printConsole(self.pvname, 'channel disconnected')
             self.channel.startMonitor()
             return
 
@@ -147,6 +147,8 @@ class ChannelMonitor:
         printConsole(pvName, 'start repeat')
         self.timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeatTime])
         self.timer.start()
+        print('start', self.timer)
+        print('alive', self.timer.is_alive())
 
         if alarmState == 'alarm' and alarmActivation:
             # pvName = alarmInfo['pvname']
@@ -159,6 +161,9 @@ class ChannelMonitor:
         else:
             self.timer.cancel()
             self.channel.startMonitor()
+            print('stop', self.timer)
+            print('alive', self.timer.is_alive())
+
             # pvName = alarmInfo['pvname']
             printConsole(pvName, 'stop alarm repeat and start monitoring')
 

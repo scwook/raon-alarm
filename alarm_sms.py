@@ -32,10 +32,11 @@ def restartMonitoring(pvname):
         if y.pvname == pvname:
             y.channel.stopMonitor()
 
-            if y.timer:
+            if y.timer.is_alive():
                 y.timer.cancel()
 
             y.channel.startMonitor('field(value)')
+            break
 
 def stopMonitoring(pvname):
     for y in channelList:
@@ -49,10 +50,11 @@ def startMonitoring(pvname):
             if y.channel.isMonitorActive():
                 y.channel.stopMonitor()
 
-            if y.timer:
+            if y.timer.is_alive():
                 y.timer.cancel()
 
             y.channel.startMonitor('field(value)')
+            break
 
 def deleteMonitoring(pvname):
     for y in channelList:
@@ -65,6 +67,15 @@ def deleteMonitoring(pvname):
 
             channelList.remove(y)
             break
+
+def checkAlarmRepeat(pvname):
+    for y in channelList:
+        if y.pvname == pvname:
+            if not y.timer.is_alive():
+                alarmInfo = sql.getAlarmListFromPV(pvname)[0]
+                repeatTime = int(alarmInfo['repetation'])
+                y.alarmRepeat(repeatTime)
+        
 
 def connectionStateAll():
     stateList = list()
@@ -107,6 +118,8 @@ def updateAlarmInfo():
     result = sql.updateAlarmInfo(recordData)
     if result == 'OK':
         sql.insertAlarmLog(pvname, 'Update alarm info: %s' % (jsonData))
+        checkAlarmRepeat(pvname)
+
     else:
         message = '(updateAlarmInfo) %s %' % (jsonData)
         writeErrorLog(message, result)
