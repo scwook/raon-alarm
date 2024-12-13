@@ -291,31 +291,3 @@ def insertSMSInfo(phone, pvName):
             query='INSERT INTO sms_info(phone, pvname) values("%s", "%s")' % (phone, pvName)
             cursor.execute(query)
             conn.commit()
-
-
-# testData = ('scwook:ai2', 'update', "12.1E-7", 1, 'alarm', 1, 10, 20)
-# updateAlarmInfo(testData)
-
-    # smsList = []
-    # for x in alarmSMS:
-    #     toNumber = x[0]
-    #     smsMessage = 'test message'
-
-    #     smsList.append({'to':toNumber, 'from':FROM_NUMBER, 'text': smsMessage})
-        
-    # return smsList
-
-
-    # smsData = {'messages': smsList}
-    # print(smsData)
-# data = {
-#     'messages': [
-#         {
-#             'to': '01048792718',
-#             'from': '01048792718',
-#             'text': 'Message Test Value: 1.2E-9Torr'
-#         }
-#         # ...
-#         # 1만건까지 추가 가능
-#     ]
-# }

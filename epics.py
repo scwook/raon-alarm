@@ -39,10 +39,6 @@ class ChannelMonitor:
 
         return valueType
 
-    # def connectionMonitor(self, isConnected):
-    #     if isConnected == False:
-    #         sql.updateAlarmFieldStr(self.pvname, 'state', 'disconnect')
-
     def alarmMonitor(self, channelData):
         recordData = dict(channelData)
         alarmInfo = sql.getAlarmListFromPV(self.channel.getName())[0]
@@ -121,8 +117,9 @@ class ChannelMonitor:
             self.updateAlarmFieldStr(pvName, 'state', 'alarm')
             self.writeAlarmLog(pvName, alarmLog)
             
-            # message = {"desc":"Description", "value":"1.6e-6", "list":["04212345678","04212345678","04212345678"]}
-            message = {"desc":alarmInfo['description'], "value":alarmInfo['value'], "list":alarmInfo['sms']}
+            # message = {"desc":alarmInfo['description'], "value":alarmInfo['value'], "list":alarmInfo['sms']}
+            message = {"desc":alarmInfo['description'], "value":str(pvValue), "list":alarmInfo['sms']}
+
             self.messageQueue.put(str(message))
 
             printConsole(pvName, 'alarm raised')
@@ -141,14 +138,16 @@ class ChannelMonitor:
 
         alarmInfo = sql.getAlarmListFromPV(self.channel.getName())[0]
         pvName = alarmInfo['pvname']
+        pvValue = self.channel.get().toDict()['value']
         alarmState = alarmInfo['state']
         alarmActivation = alarmInfo['activation']
+        repeat = alarmInfo['repetation']
 
         printConsole(pvName, 'start repeat')
-        self.timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeatTime])
+        self.timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeat])
         self.timer.start()
-        print('start', self.timer)
-        print('alive', self.timer.is_alive())
+        # print('start', self.timer)
+        # print('alive', self.timer.is_alive())
 
         if alarmState == 'alarm' and alarmActivation:
             # pvName = alarmInfo['pvname']
@@ -156,7 +155,9 @@ class ChannelMonitor:
             
             self.writeAlarmLog(pvName, alarmLog)
             # sendAlarmSMS()
-            message = {"desc":alarmInfo['description'], "value":alarmInfo['value'], "list":alarmInfo['sms']}
+            # message = {"desc":alarmInfo['description'], "value":alarmInfo['value'], "list":alarmInfo['sms']}
+            message = {"desc":alarmInfo['description'], "value":str(pvValue), "list":alarmInfo['sms']}
+
             self.messageQueue.put(str(message))
         else:
             self.timer.cancel()

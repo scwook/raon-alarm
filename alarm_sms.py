@@ -32,7 +32,7 @@ def restartMonitoring(pvname):
         if y.pvname == pvname:
             y.channel.stopMonitor()
 
-            if y.timer.is_alive():
+            if not y.timer == None and y.timer.is_alive():
                 y.timer.cancel()
 
             y.channel.startMonitor('field(value)')
@@ -50,7 +50,7 @@ def startMonitoring(pvname):
             if y.channel.isMonitorActive():
                 y.channel.stopMonitor()
 
-            if y.timer.is_alive():
+            if not y.timer == None and y.timer.is_alive():
                 y.timer.cancel()
 
             y.channel.startMonitor('field(value)')
@@ -71,7 +71,7 @@ def deleteMonitoring(pvname):
 def checkAlarmRepeat(pvname):
     for y in channelList:
         if y.pvname == pvname:
-            if not y.timer.is_alive():
+            if not y.timer == None and not y.timer.is_alive():
                 alarmInfo = sql.getAlarmListFromPV(pvname)[0]
                 repeatTime = int(alarmInfo['repetation'])
                 y.alarmRepeat(repeatTime)

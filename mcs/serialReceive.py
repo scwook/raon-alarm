@@ -241,7 +241,7 @@ if __name__ == '__main__':
                     user = x['phone']
                     pvname = x['pvname']
                     # message = pvname + '\r\n' + desc + '\r\n' + value
-                    message = pvname
+                    message = pvname + ' ' + value
 
                     mcs.test(user, message)
 
