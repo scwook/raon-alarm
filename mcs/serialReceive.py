@@ -218,7 +218,7 @@ if __name__ == '__main__':
     import time
     import traceback
 
-    PORT = '/dev/tty.usbserial-1420'
+    PORT = '/dev/tty.usbserial-B000OUP2'
     # PORT = 'loop://'
 
     class PrintLines(LineReader):

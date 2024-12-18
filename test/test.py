@@ -1,16 +1,26 @@
-from flask import Flask, jsonify
-from flask import request
-from flask_cors import CORS
+import threading
+import asyncio
+import time
 
-SERVER_ADDR = '192.168.131.161'
-
-app = Flask(__name__)
-CORS(app)
-
-@app.route('/', methods=['GET'])
-def test():
-    return "OK"
-
-if __name__ == "__main__":
+def valueconversion(valueType, value):
+    if valueType == "DOUBLE":
+        return float(value)
+    elif valueType == "INT":
+        return int(value)
+    else:
+        return value
     
-    app.run(host=SERVER_ADDR, port="8000")
+def alarmDelay():
+    print('stop')
+    
+val = 12.5
+a = valueconversion("INT", val)
+print(type(a))
+print(a)
+
+timer = threading.Timer(5, alarmDelay)
+timer.start()
+
+time.sleep(5)
+print('time sleep')
+

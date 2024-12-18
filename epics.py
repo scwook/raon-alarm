@@ -47,10 +47,33 @@ class ChannelMonitor:
         pvNmae = alarmInfo['pvname']
 
         # in case of alarm activation value 0, not going to alarm sequence
-        if not alarmActivation:
-            printConsole(pvNmae, 'alarm activation fasle')
-            return
+        # if not alarmActivation:
+            # printConsole(pvNmae, 'alarm activation fasle')
+            # return
         
+        ###########################################
+        # If currently in alarm state, start repeat loop
+        #
+        if alarmState == 'alarm':
+            if not self.timer == None and self.timer.is_alive():
+                self.timer.cancel()
+        
+            repeatTime = int(alarmInfo['repetation'])
+            if repeatTime == 0:
+                printConsole(pvNmae, 'already alarm raised no repeat')
+                return
+            
+            self.channel.stopMonitor()
+
+            printConsole(pvNmae, 'start repeat loop')
+            self.timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeatTime])
+            self.timer.start()
+            return
+
+        ###########################################
+        # If currently in not alarm state, check alarm condition and start alarm loop
+        #
+
         valueType = self.valueType
         
         # check value type for type conversion and comapre value
@@ -69,30 +92,41 @@ class ChannelMonitor:
             printConsole(pvNmae, 'no alarm')
             return
         
+        printConsole(pvNmae, 'stop monitoring and start delay timer')
+
+        self.channel.stopMonitor()
+        delayTime = int(alarmInfo['delay'])
+
+        timer = threading.Timer(delayTime, self.alarmDelay, args=[alarmInfo])
+        timer.start()
+
         # when alarm conditions are met, check current alarm state
-        if alarmState == 'normal':
-            printConsole(pvNmae, 'stop monitoring and start delay timer')
+        # if alarmState == 'normal':
+        #     printConsole(pvNmae, 'stop monitoring and start delay timer')
 
-            self.channel.stopMonitor()
-            delayTime = int(alarmInfo['delay'])
+        #     self.channel.stopMonitor()
+        #     delayTime = int(alarmInfo['delay'])
 
-            timer = threading.Timer(delayTime, self.alarmDelay, args=[alarmInfo])
-            timer.start()
+        #     timer = threading.Timer(delayTime, self.alarmDelay, args=[alarmInfo])
+        #     timer.start()
 
-        elif alarmState == 'alarm':
-            repeatTime = int(alarmInfo['repetation'])
-            if repeatTime == 0:
-                printConsole(pvNmae, 'already alarm raised no repeat')
-                return
+        # elif alarmState == 'alarm':
+        #     if not self.timer == None and self.timer.is_alive():
+        #         self.timer.cancel()
+        
+        #     repeatTime = int(alarmInfo['repetation'])
+        #     if repeatTime == 0:
+        #         printConsole(pvNmae, 'already alarm raised no repeat')
+        #         return
             
-            self.channel.stopMonitor()
+        #     self.channel.stopMonitor()
 
-            printConsole(pvNmae, 'start repeat loop')
-            timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeatTime])
-            timer.start()
+        #     printConsole(pvNmae, 'start repeat loop')
+        #     self.timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeatTime])
+        #     self.timer.start()
             
-        else:
-            printConsole(pvNmae, 'alarm state error')
+        # else:
+        #     printConsole(pvNmae, 'alarm state error')
 
     def alarmDelay(self, alarmInfo):
         pvName = alarmInfo['pvname']
@@ -133,7 +167,7 @@ class ChannelMonitor:
 
         if not self.channel.isConnected():
             printConsole(self.pvname, 'channel disconnected')
-            self.channel.startMonitor()
+            # self.channel.startMonitor()
             return
 
         alarmInfo = sql.getAlarmListFromPV(self.channel.getName())[0]
@@ -159,11 +193,12 @@ class ChannelMonitor:
             message = {"desc":alarmInfo['description'], "value":str(pvValue), "list":alarmInfo['sms']}
 
             self.messageQueue.put(str(message))
-        else:
+
+        if alarmState == 'normal' or repeat == 0:
             self.timer.cancel()
             self.channel.startMonitor()
-            print('stop', self.timer)
-            print('alive', self.timer.is_alive())
+            # print('stop', self.timer)
+            # print('alive', self.timer.is_alive())
 
             # pvName = alarmInfo['pvname']
             printConsole(pvName, 'stop alarm repeat and start monitoring')

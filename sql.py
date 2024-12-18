@@ -1,10 +1,10 @@
 import pymysql
 
-DB_HOST = '192.168.131.162'
+DB_HOST = '192.168.131.194'
 # DB_HOST = 'localhost'
-DB_USER = 'scwook'
-DB_PASSWORD = 'qwer1234'
-DB_DATABASE = 'alarm_sms'
+DB_USER = 'coma'
+DB_PASSWORD = 'coma'
+DB_DATABASE = 'coma'
 
 FROM_NUMBER = '0428788831'
 

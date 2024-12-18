@@ -397,6 +397,9 @@ function showAlarmConfigurationDialog(target, data) {
             document.getElementById('config-delay').value = "5";
             document.getElementById('config-repetation').value = "0";
 
+            // Set editable
+            document.getElementById('config-pvname').readOnly = false;
+
             // Remove all child nodes which are message list 
             var messageList = document.getElementById('config-message-user-list');
             messageList.textContent = '';
@@ -414,6 +417,9 @@ function showAlarmConfigurationDialog(target, data) {
             document.getElementById('config-delay').value = String(data['delay']);
             document.getElementById('config-repetation').value = String(data['repetation'] / 60);
 
+            // Set readonly
+            document.getElementById('config-pvname').readOnly = true;
+            
             // Remove all child nodes which are message list 
             var messageList = document.getElementById('config-message-user-list');
             messageList.textContent = '';
@@ -479,7 +485,7 @@ function updateAlarm() {
     if (formDataCheck == "OK") {
 
         const dictData = convertToDictionary(formData);
-
+        console.log(dictData);
         updateAlarmInfo(dictData);
         // document.getElementById('config-dialog-body').style.display = 'none';
         closeAlarmConfigurationDialog();

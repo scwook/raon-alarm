@@ -31,9 +31,9 @@ def restartMonitoring(pvname):
     for y in channelList:
         if y.pvname == pvname:
             y.channel.stopMonitor()
-
-            if not y.timer == None and y.timer.is_alive():
-                y.timer.cancel()
+            
+            # if not y.timer == None and y.timer.is_alive():
+            #     y.timer.cancel()
 
             y.channel.startMonitor('field(value)')
             break
@@ -47,11 +47,11 @@ def stopMonitoring(pvname):
 def startMonitoring(pvname):
     for y in channelList:
         if y.pvname == pvname:
-            if y.channel.isMonitorActive():
+            if not y.channel.isMonitorActive():
                 y.channel.stopMonitor()
 
-            if not y.timer == None and y.timer.is_alive():
-                y.timer.cancel()
+            # if not y.timer == None and y.timer.is_alive():
+            #     y.timer.cancel()
 
             y.channel.startMonitor('field(value)')
             break
@@ -68,13 +68,28 @@ def deleteMonitoring(pvname):
             channelList.remove(y)
             break
 
-def checkAlarmRepeat(pvname):
-    for y in channelList:
-        if y.pvname == pvname:
-            if not y.timer == None and not y.timer.is_alive():
-                alarmInfo = sql.getAlarmListFromPV(pvname)[0]
-                repeatTime = int(alarmInfo['repetation'])
-                y.alarmRepeat(repeatTime)
+# def checkAlarmRepeat(pvname):
+#     for y in channelList:
+#         if y.pvname == pvname:
+#             if not y.timer == None and not y.timer.is_alive():
+#                 alarmInfo = sql.getAlarmListFromPV(pvname)[0]
+#                 repeatTime = int(alarmInfo['repetation'])
+#                 y.alarmRepeat(repeatTime)
+
+def checkInitState(ch):
+    pvname = ch.pvname
+    alarmInfo = sql.getAlarmListFromPV(pvname)[0]
+    alarmState = alarmInfo['state']
+    repeatTime = alarmInfo['repetation']
+
+    if alarmState == 'normal' :
+        ch.channel.startMonitor('field(value)')
+        print(pvname, ': start monitoring')
+
+    else:
+        repeatTime = alarmInfo['repetation']
+        ch.alarmRepeat(repeatTime)
+        print(pvname, ': start alarm repeat')
         
 
 def connectionStateAll():
@@ -118,7 +133,8 @@ def updateAlarmInfo():
     result = sql.updateAlarmInfo(recordData)
     if result == 'OK':
         sql.insertAlarmLog(pvname, 'Update alarm info: %s' % (jsonData))
-        checkAlarmRepeat(pvname)
+        # checkAlarmRepeat(pvname)
+        restartMonitoring(pvname)
 
     else:
         message = '(updateAlarmInfo) %s %' % (jsonData)
@@ -202,10 +218,10 @@ def setUpdateAlarmField():
         value = bool(value)
         result = sql.updateAlarmFieldInt(pvname, field, value)
         if result == 'OK':
-            if value:
-                startMonitoring(pvname)
-            else:
-                stopMonitoring(pvname)
+            # if value:
+            #     startMonitoring(pvname)
+            # else:
+            #     stopMonitoring(pvname)
 
             sql.insertAlarmLog(pvname, 'Change activation to %s' % (value))
 
@@ -307,16 +323,17 @@ def sendMessage(q):
         time.sleep(0.1)    
 
 if __name__ == "__main__":
-    queue = multiprocessing.Queue()
+    q = multiprocessing.Queue()
 
     for alarmlist in sql.getAlarmList():
-        channelList.append(epics.ChannelMonitor(alarmlist['pvname'], queue))
+        channelList.append(epics.ChannelMonitor(alarmlist['pvname'], q))
 
     for channelMonitor in channelList:
         channelMonitor.channel.subscribe(channelMonitor.pvname, channelMonitor.alarmMonitor)
+        # checkInitState(channelMonitor)
         channelMonitor.channel.startMonitor('field(value)')
 
-    process = multiprocessing.Process(target=sendMessage, args={queue})
+    process = multiprocessing.Process(target=sendMessage, args={q})
     process.start()
     # process.join()
 
