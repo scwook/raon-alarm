@@ -1,16 +1,22 @@
-import datetime
+# system library
+# import datetime
 import time
-import sql
-import epics
-import json
-import serial
 import multiprocessing
 import queue
 import logging
 
+# extenstion library
+import json
+import serial
+
 from flask import Flask, jsonify
 from flask import request
 from flask_cors import CORS
+
+# user library
+import sql
+import epics
+import clue
 
 # SERVER_ADDR = 'localhost'
 SERVER_ADDR = '192.168.131.161'
@@ -101,14 +107,14 @@ def connectionStateAll():
 
     return stateList
 
-def writeErrorLog(message, error):
-    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    message = '\n' + now + ' ' + message
-    error = '\n' + now + ' ' + str(error)
+# def writeErrorLog(message, error):
+#     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+#     message = '\n' + now + ' ' + message
+#     error = '\n' + now + ' ' + str(error)
 
-    with open('error.log', 'a', encoding='utf-8') as file:
-        file.write(message)
-        file.write(error)
+#     with open('error.log', 'a', encoding='utf-8') as file:
+#         file.write(message)
+#         file.write(error)
 
 
 @app.route('/', methods=['POST'])
@@ -138,7 +144,7 @@ def updateAlarmInfo():
 
     else:
         message = '(updateAlarmInfo) %s %' % (jsonData)
-        writeErrorLog(message, result)
+        clue.writeErrorLog(message, result)
 
     return result
 
@@ -169,7 +175,7 @@ def insertAlarmInfo():
 
     else:
         message = '(insertAlarmInfo) %s %' % (jsonData)
-        writeErrorLog(message, result)
+        clue.writeErrorLog(message, result)
 
     return result
 
@@ -230,7 +236,7 @@ def setUpdateAlarmField():
 
     if result != 'OK':
         message = '(updateAlarmField) pvname:%s, field:%s, value:%s' % (pvname, field, value) 
-        writeErrorLog(message, result)
+        clue.writeErrorLog(message, result)
 
     return result
 
@@ -248,7 +254,7 @@ def setSMSInfoUpdate():
 
     else:
         message = '(smsInfoUpdate) %s %' % (jsonData)
-        writeErrorLog(message, result)
+        clue.writeErrorLog(message, result)
 
     return result
 
@@ -294,7 +300,7 @@ def deleteAlarmInfo(pvname):
         deleteMonitoring(pvname)
         sql.insertAlarmLog(pvname, 'Delete alarm monitoring')
     else:
-        writeErrorLog(result)
+        clue.writeErrorLog(result)
 
     return result
 

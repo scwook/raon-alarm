@@ -13,9 +13,10 @@ from __future__ import absolute_import
 
 import serial
 import threading
-import json
+# import json
 import mcs
-import datetime
+# import datetime
+import clue
 
 class Protocol(object):
     """\
@@ -241,9 +242,14 @@ if __name__ == '__main__':
                     user = x['phone']
                     pvname = x['pvname']
                     # message = pvname + '\r\n' + desc + '\r\n' + value
-                    message = pvname + ' ' + value
+                    message = user + ' ' + pvname + ' ' + value
 
-                    mcs.test(user, message)
+                    result = mcs.test(user, message)
+
+                    if result:
+                        clue.writeMessageLog(message)
+                    else:
+                        clue.writeErrorLog(result)
 
         def connection_lost(self, exc):
             if exc:

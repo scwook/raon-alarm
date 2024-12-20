@@ -3,6 +3,7 @@ import sql
 import serial
 from pvaccess import *
 import time
+import clue
 
 class ChannelMonitor:
     def __init__(self, pvname, queue):
@@ -48,7 +49,7 @@ class ChannelMonitor:
 
         # in case of alarm activation value 0, not going to alarm sequence
         # if not alarmActivation:
-            # printConsole(pvNmae, 'alarm activation fasle')
+            # clue.printConsole(pvNmae, 'alarm activation fasle')
             # return
         
         ###########################################
@@ -60,12 +61,12 @@ class ChannelMonitor:
         
             repeatTime = int(alarmInfo['repetation'])
             if repeatTime == 0:
-                printConsole(pvNmae, 'already alarm raised no repeat')
+                clue.printConsole(pvNmae, 'already alarm raised no repeat')
                 return
             
             self.channel.stopMonitor()
 
-            printConsole(pvNmae, 'start repeat loop')
+            clue.printConsole(pvNmae, 'start repeat loop')
             self.timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeatTime])
             self.timer.start()
             return
@@ -89,10 +90,10 @@ class ChannelMonitor:
  
         # just ignore when alarm conditions are not met
         if not result:
-            printConsole(pvNmae, 'no alarm')
+            clue.printConsole(pvNmae, 'no alarm')
             return
         
-        printConsole(pvNmae, 'stop monitoring and start delay timer')
+        clue.printConsole(pvNmae, 'stop monitoring and start delay timer')
 
         self.channel.stopMonitor()
         delayTime = int(alarmInfo['delay'])
@@ -102,7 +103,7 @@ class ChannelMonitor:
 
         # when alarm conditions are met, check current alarm state
         # if alarmState == 'normal':
-        #     printConsole(pvNmae, 'stop monitoring and start delay timer')
+        #     clue.printConsole(pvNmae, 'stop monitoring and start delay timer')
 
         #     self.channel.stopMonitor()
         #     delayTime = int(alarmInfo['delay'])
@@ -116,23 +117,23 @@ class ChannelMonitor:
         
         #     repeatTime = int(alarmInfo['repetation'])
         #     if repeatTime == 0:
-        #         printConsole(pvNmae, 'already alarm raised no repeat')
+        #         clue.printConsole(pvNmae, 'already alarm raised no repeat')
         #         return
             
         #     self.channel.stopMonitor()
 
-        #     printConsole(pvNmae, 'start repeat loop')
+        #     clue.printConsole(pvNmae, 'start repeat loop')
         #     self.timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeatTime])
         #     self.timer.start()
             
         # else:
-        #     printConsole(pvNmae, 'alarm state error')
+        #     clue.printConsole(pvNmae, 'alarm state error')
 
     def alarmDelay(self, alarmInfo):
         pvName = alarmInfo['pvname']
 
         if self.channel.isConnected() == False:
-            printConsole(pvName, 'channel disconnected')
+            clue.printConsole(pvName, 'channel disconnected')
             self.channel.startMonitor()
             return
         
@@ -156,17 +157,17 @@ class ChannelMonitor:
 
             self.messageQueue.put(str(message))
 
-            printConsole(pvName, 'alarm raised')
+            clue.printConsole(pvName, 'alarm raised')
         else:
-            printConsole(pvName, 'alarm delay overtime')
+            clue.printConsole(pvName, 'alarm delay overtime')
 
         self.channel.startMonitor()
-        printConsole(pvName, 'restart monitoring')
+        clue.printConsole(pvName, 'restart monitoring')
 
     def alarmRepeat(self, repeatTime):
 
         if not self.channel.isConnected():
-            printConsole(self.pvname, 'channel disconnected')
+            clue.printConsole(self.pvname, 'channel disconnected')
             # self.channel.startMonitor()
             return
 
@@ -177,7 +178,7 @@ class ChannelMonitor:
         alarmActivation = alarmInfo['activation']
         repeat = alarmInfo['repetation']
 
-        printConsole(pvName, 'start repeat')
+        clue.printConsole(pvName, 'start repeat')
         self.timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeat])
         self.timer.start()
         # print('start', self.timer)
@@ -201,7 +202,7 @@ class ChannelMonitor:
             # print('alive', self.timer.is_alive())
 
             # pvName = alarmInfo['pvname']
-            printConsole(pvName, 'stop alarm repeat and start monitoring')
+            clue.printConsole(pvName, 'stop alarm repeat and start monitoring')
 
     def updateAlarmFieldStr(self, pvname, field, value):
         sql.updateAlarmFieldStr(pvname, field, value)
@@ -248,6 +249,3 @@ def valueCompare(referenceValue, comparisonValue, operator, valueType):
 
     else:
         return None
-    
-def printConsole(pvName, message):
-    print(time.strftime('%Y-%m-%d %H:%M:%S') + ': ' + pvName + ' ' + message)
