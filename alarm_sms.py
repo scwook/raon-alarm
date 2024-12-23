@@ -116,6 +116,21 @@ def connectionStateAll():
 #         file.write(message)
 #         file.write(error)
 
+def checkInvalidValue(data):
+    try:
+        int(data['condition'])
+        int(data['delay'])
+        int(data['repetation'])
+
+        for x in data['sms']:
+            int(x)
+
+        return 'OK'
+    except ValueError as e:
+        return e
+
+def checkPVName(pvname):
+    return 'OK'
 
 @app.route('/', methods=['POST'])
 def test():
@@ -126,6 +141,13 @@ def test():
 @app.route('/updateAlarmInfo', methods=['POST'])
 def updateAlarmInfo():
     jsonData = request.get_json()
+
+    result = checkInvalidValue(jsonData)
+    if not result == 'OK':
+        message = '(updateAlarmInfo) %s' % (jsonData)
+        clue.writeErrorLog(message, result)
+        return 'Invalid Value'
+
     pvname = jsonData['pvname']
     description = jsonData['desc']
     value = jsonData['value']
@@ -143,7 +165,7 @@ def updateAlarmInfo():
         restartMonitoring(pvname)
 
     else:
-        message = '(updateAlarmInfo) %s %' % (jsonData)
+        message = '(updateAlarmInfo) %s' % (jsonData)
         clue.writeErrorLog(message, result)
 
     return result
@@ -151,7 +173,19 @@ def updateAlarmInfo():
 @app.route('/insertAlarmInfo', methods=['POST'])
 def insertAlarmInfo():
     jsonData = request.get_json()
+
+    result = checkInvalidValue(jsonData)
+    if not result == 'OK':
+        message = '(insertAlarmInfo) %s' % (jsonData)
+        clue.writeErrorLog(message, result)
+        return 'Invalid Value'
+    
     pvname = jsonData['pvname'].strip()
+    result = checkPVName(pvname)
+
+    if not result == 'OK':
+        return 'Invalid PV'
+    
     description = jsonData['desc']
     value = jsonData['value']
     operator = int(jsonData['condition'])
@@ -174,7 +208,7 @@ def insertAlarmInfo():
         sql.insertAlarmLog(pvname, 'Create new alarm monitoring')
 
     else:
-        message = '(insertAlarmInfo) %s %' % (jsonData)
+        message = '(insertAlarmInfo) %s' % (jsonData)
         clue.writeErrorLog(message, result)
 
     return result

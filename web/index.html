@@ -2,6 +2,8 @@
 <html>
 <meta charset="UTF-8">
 
+<link rel="icon" href="favicon.svg">
+<link rel="stylesheet" type="text/css" href="color.css">
 <link rel="stylesheet" type="text/css" href="index.css">
 <link rel="stylesheet" type="text/css" href="create_form.css">
 
@@ -11,17 +13,17 @@
 
 <body>
     <div id="header">
-        <div id="raon-logo">
+        <div id="coma-logo">
             <svg width="120" height="28">
-                <path style="fill:#f2f2f2"
+                <path style="fill:var(--color-coma-logo)"
                     d="M13.7,23c-5.38,0-9.68-4.67-9.07-10.17.47-4.21,3.89-7.6,8.1-8.04,1.93-.2,3.76.2,5.31,1.05.96.52,2.15.31,2.85-.53h0c.94-1.11.6-2.8-.68-3.49C17.95.59,15.32-.01,12.53.22,5.85.77.47,6.25.03,12.94c-.53,7.97,5.81,14.62,13.67,14.62,2.35,0,4.56-.59,6.49-1.64,1.29-.69,1.63-2.38.69-3.5h0c-.7-.83-1.89-1.05-2.84-.53-1.29.7-2.77,1.1-4.34,1.1Z" />
-                <path style="fill:#f2f2f2"
+                <path id="coma-logo-up" style="fill:var(--color-coma-logo)"
                     d="M35.96,12.37l1.44-5.53.1-.18c.34-.6.99-.97,1.68-.97s1.33.37,1.68.97l.1.17,2.42,9.04.56-2.12c.31-.83,1.12-1.38,2-1.38h9.26c-.82-6.83-6.59-12.37-13.6-12.37s-12.78,5.54-13.6,12.37h7.97Z" />
-                <path style="fill:#f2f2f2"
+                <path id="coma-logo-down" style="fill:var(--color-coma-logo)"
                     d="M46.6,15.37l-1.44,5.52-.1.18c-.35.6-.99.97-1.68.97s-1.33-.37-1.68-.97l-.1-.17-2.42-9.03-.56,2.12c-.31.83-1.12,1.38-2,1.38h-8.75v11.09c0,.7.57,1.28,1.28,1.28h12.19c7.16,0,13.18-5.39,13.88-12.37h-8.63Z" />
-                <path style="fill:#f2f2f2"
+                <path style="fill:var(--color-coma-logo)"
                     d="M82.11.19h0c2.65,0,4.8,2.15,4.8,4.8v22.75h-5.36V9.1c0-.54,0-1.29.02-2.25.01-.97.02-1.71.02-2.23l-4.39,14.07c-.49,1.59-1.96,2.67-3.63,2.67h0c-1.67,0-3.14-1.08-3.63-2.67l-4.36-14.07c0,.52,0,1.27.02,2.23.01.97.02,1.72.02,2.25v18.63h-5.36V5.04c0-2.68,2.17-4.86,4.86-4.86h0c2.1,0,3.96,1.35,4.62,3.34l3.92,11.94,3.9-11.97c.64-1.98,2.49-3.31,4.56-3.31Z" />
-                <path style="fill:#f2f2f2"
+                <path style="fill:var(--color-coma-logo)"
                     d="M113.96,27.74h6.04L108.08,1.61C107.65.66,106.69,0,105.58,0s-2.07.66-2.5,1.61l-11.92,26.13h6.04l2.74-6.32h11.27l2.74,6.32ZM101.97,16.75l3.61-8.3,3.61,8.3h-7.22Z" />
             </svg>
         </div>
@@ -32,7 +34,7 @@
                 <input type="text" id="search-input" placeholder="Search" onkeydown="searchKeyDown(event)">
                 <div type="button" id="search-button" onclick="searchAlarmData()">
                     <svg width="22" height="22">
-                        <path style="fill:#b3b3b3"
+                        <path style="fill:var(--color-main-text)"
                             d="M21.71,20.29l-5.91-5.91c2.77-3.48,2.55-8.57-.66-11.78-1.67-1.67-3.9-2.6-6.27-2.6S4.27.92,2.6,2.6C.92,4.27,0,6.5,0,8.86s.92,4.59,2.6,6.27c1.73,1.73,4,2.59,6.27,2.59,1.96,0,3.91-.65,5.52-1.93l5.91,5.91c.2.2.45.29.71.29s.51-.1.71-.29c.39-.39.39-1.02,0-1.41ZM4.01,13.72c-1.3-1.3-2.01-3.02-2.01-4.85s.71-3.56,2.01-4.85,3.02-2.01,4.85-2.01,3.56.71,4.85,2.01c2.68,2.68,2.68,7.03,0,9.71-2.68,2.67-7.03,2.68-9.71,0Z" />
                     </svg>
                 </div>
@@ -42,8 +44,8 @@
     <div id="alarm-summary-container">
         <div id="summary-normal-icon">
             <svg width="60" height="60">
-                <circle style="fill:#22b573" cx="30" cy="30" r="30" />
-                <path style="fill:#eee"
+                <circle style="fill:var(--color-alarm-normal)" cx="30" cy="30" r="30" />
+                <path style="fill:var(--color-alarm-icon)"
                     d="M28.69,44.5c-1.57,0-3.04-.8-3.9-2.1l-8.39-10.67c-1.02-1.3-.8-3.19.5-4.21,1.3-1.02,3.19-.8,4.21.5l7.33,9.31,10.11-20.18c.74-1.48,2.54-2.08,4.03-1.34,1.48.74,2.08,2.54,1.34,4.03l-11.19,22.32c-.83,1.44-2.38,2.33-4.04,2.33Z" />
             </svg>
         </div>
@@ -51,10 +53,10 @@
 
         <div id="summary-alarm-icon">
             <svg width="60" height="60">
-                <path style="fill:#d4145a"
+                <path style="fill:var(--color-alarm-raise)"
                     d="M26.54,2L.54,47.02c-1.54,2.67.38,6,3.46,6h51.99c3.08,0,5-3.33,3.46-6L33.46,2c-1.54-2.67-5.39-2.67-6.93,0Z" />
-                <circle style="fill:#eee" cx="30" cy="41.07" r="3.5" />
-                <path style="fill:#eee"
+                <circle style="fill:var(--color-alarm-icon)" cx="30" cy="41.07" r="3.5" />
+                <path style="fill:var(--color-alarm-icon)"
                     d="M30,14.66c-1.99,0-3.6,1.61-3.6,3.6l1.44,17.26h4.31l1.44-17.26c0-1.99-1.61-3.6-3.6-3.6Z" />
             </svg>
 
@@ -76,6 +78,7 @@
         <div id="title-delete">Delete</div>
 
     </div>
+    <!-- This is example data for test -->
     <div id="alarm-list-container">
         <div class="alarmItem">
             <div class="alarmInfo">
@@ -118,8 +121,8 @@
             <div class="smsInfo">
                 <div class="smsActivation">
                     <svg width="20" height="20">
-                        <rect class="cls-11" width="20" height="20" rx="2" ry="2" style="fill:#22b573" />
-                        <path class="cls-12"
+                        <rect width="20" height="20" rx="2" ry="2" style="fill:#22b573" />
+                        <path
                             d="M9.44,15.9c-.59,0-1.12-.29-1.44-.78l-3.59-4.56c-.34-.43-.27-1.06.17-1.4.43-.34,1.06-.27,1.4.17l3.4,4.32,4.51-9c.25-.49.85-.69,1.34-.45.49.25.69.85.45,1.34l-4.74,9.45c-.34.59-.89.91-1.51.91Z"
                             style="fill: #eee;" />
                     </svg>
@@ -135,8 +138,8 @@
             <div class="smsInfo">
                 <div class="smsActivation">
                     <svg width="20" height="20">
-                        <rect class="cls-11" width="20" height="20" rx="2" ry="2" style="fill:#22b573" />
-                        <path class="cls-12"
+                        <rect width="20" height="20" rx="2" ry="2" style="fill:#22b573" />
+                        <path
                             d="M9.44,15.9c-.59,0-1.12-.29-1.44-.78l-3.59-4.56c-.34-.43-.27-1.06.17-1.4.43-.34,1.06-.27,1.4.17l3.4,4.32,4.51-9c.25-.49.85-.69,1.34-.45.49.25.69.85.45,1.34l-4.74,9.45c-.34.59-.89.91-1.51.91Z"
                             style="fill: #eee;" />
                     </svg>
@@ -157,8 +160,8 @@
         <form id="config-form-container">
             <div class="configFormCancelButton" onclick="closeAlarmConfigurationDialog()">
                 <svg width="30" height="30">
-                    <circle cx="15" cy="15" r="15" style="fill:#d41c5c" />
-                    <polygon style="fill:#eeedee"
+                    <circle cx="15" cy="15" r="15" style="fill:var(--color-form-close)" />
+                    <polygon style="fill:var(--color-form-icon)"
                         points="22.41 10.41 19.59 7.59 15 12.17 10.41 7.59 7.59 10.41 12.17 15 7.59 19.59 10.41 22.41 15 17.83 19.59 22.41 22.41 19.59 17.83 15 22.41 10.41" />
                 </svg>
 
@@ -216,8 +219,8 @@
                     <label>Message List</label>
                     <div class="configMessageUserAddButton" type="button" onclick="createMessageUser()">
                         <svg width="26" height="26">
-                            <circle style="fill:#29abe2" cx="13" cy="13" r="13" />
-                            <polygon style="fill:#eee"
+                            <circle style="fill:var(--color-form-add)" cx="13" cy="13" r="13" />
+                            <polygon style="fill:var(--color-form-icon)"
                                 points="20.8 11 15 11 15 5.2 11 5.2 11 11 5.2 11 5.2 15 11 15 11 20.8 15 20.8 15 15 20.8 15 20.8 11" />
                         </svg>
                     </div>
@@ -227,15 +230,15 @@
                     <div class="configMessageUserListContainer">
                         <div class="configMessagePhoneIcon">
                             <svg width="22" height="30">
-                                <path style="fill:#eeeeee"
+                                <path style="fill:var(--color-form-icon)"
                                     d="M7.66,22.73h0c-1.5-.91-2.01-2.84-1.13-4.36l4.88-8.46c.88-1.52,2.81-2.05,4.34-1.2h0s.52.3.52.3c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74L16.31.1c-1.54-.89-6.33,4.53-10.7,12.1C1.24,19.77-1.06,26.63.48,27.52l3.83,2.21c.96.55,2.19.23,2.74-.73l1.86-3.22c.55-.96.23-2.19-.73-2.74l-.52-.3Z" />
                             </svg>
                         </div>
                         <div class="configMessagePhoneNumber">0428788841</div>
                         <div class="configMessagePhoneDelete">
                             <svg width="25" height="25">
-                                <circle cx="12.5" cy="12.5" r="12.5" style="fill:#d4145a" />
-                                <rect x="5" y="10.5" width="15" height="4" style="fill:#eee" />
+                                <circle cx="12.5" cy="12.5" r="12.5" style="fill:var(--color-form-delete)" />
+                                <rect x="5" y="10.5" width="15" height="4" style="fill:var(--color-form-icon)" />
                             </svg>
                         </div>
                     </div>
@@ -256,6 +259,7 @@
     makeAlarmList();
     setInterval(monitoringAlarmState, 2000);
     setInterval(monitoringConnectionState, 2000);
+
 </script>
 
 </html>

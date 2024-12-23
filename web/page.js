@@ -318,14 +318,23 @@ function createMessageUser() {
     phoneInputElem.setAttribute('name', 'phone');
     phoneInputElem.setAttribute('type', 'tel');
     phoneInputElem.setAttribute('pattern', '[0-9]{10,}');
-    phoneInputElem.setAttribute('placeholder', '01046821357');
+    phoneInputElem.setAttribute('placeholder', 'ex) 01046821357');
     phoneInputElem.addEventListener('focusout', () => {
         let value = phoneInputElem.value;
-        // console.log(Number.isInteger(value));
+        let isInteger = Number.isInteger(Number(value));
+
         if (!value) {
             removeFlexItem(messageList, messageListItemElem);
+            return;
             // messageListItemElem.remove();
         }
+
+        if(!isInteger) {
+            alert('Invalid Phone Number');
+            removeFlexItem(messageList, messageListItemElem);
+            return;
+        }
+
     });
     // phoneInputElem.addEventListener('keypress', (event) => {
     //     if(event.key == "Enter") {
@@ -399,6 +408,7 @@ function showAlarmConfigurationDialog(target, data) {
 
             // Set editable
             document.getElementById('config-pvname').readOnly = false;
+            document.getElementById('config-pvname').style.color = '#000000';
 
             // Remove all child nodes which are message list 
             var messageList = document.getElementById('config-message-user-list');
@@ -419,6 +429,7 @@ function showAlarmConfigurationDialog(target, data) {
 
             // Set readonly
             document.getElementById('config-pvname').readOnly = true;
+            document.getElementById('config-pvname').style.color = 'var(--color-sub-text)';
             
             // Remove all child nodes which are message list 
             var messageList = document.getElementById('config-message-user-list');
@@ -553,6 +564,7 @@ function checkFromData(formData) {
     return 'OK';
 }
 
+
 function convertToDictionary(formData) {
     const dictData = {};
     const phoneArray = [];
@@ -642,15 +654,15 @@ function applyConnectionState(data) {
         const alarmInfo = x.querySelector('.alarmInfo');
         const pvname = alarmInfo.querySelector('.alarmPVName').textContent;
         const state = findConnectionState(data, pvname);
-        let textColor = '#123456';
+        let textColor = '--color-sub-text';
         if (state) {
-            textColor = '#eeeeee'
+            textColor = '--color-main-text';
         }
         else {
-            textColor = '#aaaaaa'
+            textColor = '--color-sub-text';
         }
 
-        alarmInfo.querySelector('.alarmPVName').style.color = textColor;
+        alarmInfo.querySelector('.alarmPVName').style.color = `var(${textColor})`;
 
     }
 }

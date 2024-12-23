@@ -1,0 +1,59 @@
+:root {
+    /* page background color */
+    --color-level0-bg: #222831;
+     
+    /* alarm list background color */
+    --color-level1-bg: #31363F;
+
+    /* main text color */
+    --color-main-text: #F2F2F2;
+
+    /* sub text color */
+    --color-sub-text: #999999;
+
+    /* coma logo color */
+    --color-coma-logo: #F2F2F2;
+
+     /* alarm okay backgrouond color */
+    --color-alarm-normal: #22B573;
+
+    /* alarm riase background color */
+    --color-alarm-raise: #D4145A;
+
+    /* alarm icon color */
+    --color-alarm-icon: #F2F2F2;
+
+    /* activation on color */
+    --color-alarm-on: #29ABE2;
+
+    /* activation off color */
+    --color-alarm-off: #999999;
+
+    /* Form Color */
+
+    /* form background color */
+    --color-form-bg: #3C434C;
+
+    /* form label color */
+    --color-form-text: #F2F2F2;
+
+    /* form message input background color */
+    --color-form-message: #31363F;
+
+    /* form update, create color */
+    --color-form-set: #29ABE2;
+
+    /* form close color */
+    --color-form-close: #D4145A;
+    
+    /* form message user add color */
+    --color-form-add: #29ABE2;
+
+    /* form message user delete color */
+    --color-form-delete: #D4145A;
+
+    /* form icon color */
+    --color-form-icon: #F2F2F2;
+    
+
+}

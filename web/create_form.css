@@ -19,7 +19,7 @@
     /* flex-direction: column; */
     width: 500px;
     height: 800px;
-    background-color: #3C434C;
+    background-color: var(--color-form-bg);
     border-radius: 10px;
     /* box-shadow: 0px 0px 20px 5px #111111; */
     transition: all .4s;
@@ -35,7 +35,7 @@
 }
 
 .configFormItem label {
-    color: #eee;
+    color: var(--color-form-text);
     font-size: 24px;
 }
 
@@ -43,7 +43,7 @@
     font-size: 21px;
     height: 50px;
     border-radius: 8px;
-    background-color: #e5e5e5;
+    background-color: var(--color-form-text);
     outline: none;
     padding: 10px;
     border: 0px;
@@ -67,7 +67,7 @@
     border-radius: 8px;
     outline: none;
     border: 0px;
-    background-color: #e5e5e5;
+    background-color: var(--color-form-text);
     padding: 10px;
 }
 
@@ -83,7 +83,7 @@
     width: 100%;
     height: 200px;
     overflow: auto;
-    scrollbar-color: #e5e5e5 #3C434C;
+    scrollbar-color: var(--color-form-text) var(--color-form-bg);
 }
 
 .configMessageUserListContainer {
@@ -93,7 +93,7 @@
     height: 60px;
     padding: 15px 30px 15px 30px;
     border-radius: 8px;
-    background-color: #28313F;
+    background-color: var(--color-form-message);
 }
 
 .configMessagePhoneIcon {
@@ -110,7 +110,7 @@
     align-items: center;
     justify-content: left;
     flex: 2;
-    color: #eeeeee;
+    color: var(--color-form-text);
     font-size: 20px;
 }
 
@@ -127,8 +127,8 @@
     border: 0px;
     margin-top: 60px;
     border-radius: 8px;
-    background-color: #29ABE2;
-    color: #eeeeee;
+    background-color: var(--color-form-set);
+    color: var(--color-form-text);
     font-size: 24px;
 }
 
@@ -143,13 +143,13 @@
 .configMessageUserListContainer input {
     height: 30px;
     font-size: 20px;
-    background-color: #28313F;
+    background-color: var(--color-form-message);
     transition: .4s;
-    color: #eeeeee;
+    color: var(--color-form-text);
     font-size: 20px;;
 }
 
 .configMessageUserListContainer input:focus {
-    background-color: #e5e5e5;
-    color: #28313F;
+    background-color: var(--color-form-text);
+    color: var(--color-form-message);
 }

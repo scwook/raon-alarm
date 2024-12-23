@@ -22,11 +22,6 @@ function getAlarmListAll() {
 
     };
 
-
-    xhttp.onerror = function () {
-
-    }
-
     const endPoint = serverAddr + ":" + serverPort + "/getAlarmListAll";
     xhttp.open("GET", endPoint, false);
     xhttp.send();
@@ -273,12 +268,20 @@ function getAlarmStateAll() {
             var jsonValue = JSON.parse(this.responseText);
             applyAlarmState(jsonValue);
 
+            document.getElementById('coma-logo-up').style="fill:#F2F2F2";
+            document.getElementById('coma-logo-down').style="fill:#F2F2F2";
+
         }
         // else {
         // 	alert('Status Error : ' + this.status);
         // }
 
     };
+
+    xhttp.onerror = function () {
+        document.getElementById('coma-logo-up').style="fill:#D4145A";
+        document.getElementById('coma-logo-down').style="fill:#D4145A";
+    }
 
     const endPoint = serverAddr + ":" + serverPort + "/getAlarmStateAll";
     xhttp.open("GET", endPoint, true);
