@@ -33,6 +33,9 @@ log.setLevel(logging.ERROR)
 channelList = list()
 # monitoringList = list()
 
+q = multiprocessing.Queue()
+
+
 def restartMonitoring(pvname):
     for y in channelList:
         if y.pvname == pvname:
@@ -122,7 +125,7 @@ def checkInvalidValue(data):
         int(data['delay'])
         int(data['repetation'])
 
-        for x in data['sms']:
+        for x in data['phone']:
             int(x)
 
         return 'OK'
@@ -130,7 +133,11 @@ def checkInvalidValue(data):
         return e
 
 def checkPVName(pvname):
-    return 'OK'
+    result = sql.getAlarmListFromPV(pvname)
+    if len(result):
+        return True
+
+    return False
 
 @app.route('/', methods=['POST'])
 def test():
@@ -174,17 +181,16 @@ def updateAlarmInfo():
 def insertAlarmInfo():
     jsonData = request.get_json()
 
+    pvname = jsonData['pvname'].strip()
+    result = checkPVName(pvname)
+    if result:
+        return 'Invalid PV'
+
     result = checkInvalidValue(jsonData)
     if not result == 'OK':
         message = '(insertAlarmInfo) %s' % (jsonData)
         clue.writeErrorLog(message, result)
         return 'Invalid Value'
-    
-    pvname = jsonData['pvname'].strip()
-    result = checkPVName(pvname)
-
-    if not result == 'OK':
-        return 'Invalid PV'
     
     description = jsonData['desc']
     value = jsonData['value']
@@ -200,7 +206,7 @@ def insertAlarmInfo():
     result = sql.insertAlarmInfo(recordData)
 
     if result == 'OK':
-        channelClass = epics.ChannelMonitor(pvname)
+        channelClass = epics.ChannelMonitor(pvname, q)
         channelList.append(channelClass)
         channelClass.channel.subscribe(pvname, channelClass.alarmMonitor)
         channelClass.channel.startMonitor('field(value)')
@@ -363,8 +369,6 @@ def sendMessage(q):
         time.sleep(0.1)    
 
 if __name__ == "__main__":
-    q = multiprocessing.Queue()
-
     for alarmlist in sql.getAlarmList():
         channelList.append(epics.ChannelMonitor(alarmlist['pvname'], q))
 

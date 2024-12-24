@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<style>
+    /* HOVER COLOR */
+
+    svg:hover #facebook,
+    svg:hover #instagram {
+        fill: #111;
+    }
+
+    /* GENERAL STYLES */
+
+    body {
+        background-color: #bad0b8;
+        background-image: -webkit-linear-gradient(right, #FC7864, #FDA366);
+        background-image: -moz-linear-gradient(right, #FC7864, #FDA366);
+        background-image: -o-linear-gradient(right, #FC7864, #FDA366);
+        background-image: -ms-linear-gradient(right, #FC7864, #FDA366);
+        background-image: linear-gradient(right, #FC7864, #FDA366);
+    }
+
+    article {
+        width: 100%;
+        margin: 60px auto;
+        text-align: center;
+        zoom: 2;
+    }
+
+    a {
+        outline: none;
+        border: 0;
+        text-decoration: none;
+    }
+
+    svg #facebook,
+    svg #instagram {
+        transition: 200ms;
+        transition-timing-function: ease-in-out;
+        -webkit-transition: 200ms;
+        -webkit-transition-timing-function: ease-in-out;
+    }
+
+    #ss {
+        transition: transform 0.2s;
+    }
+
+    #ss:hover {
+        transform: scale(1.3);
+    }
+
+</style>
+
+<body>
+    <article>
+        <svg x="0px" y="0px"
+            width="30px" height="30px" viewBox="0 0 30 30" enable-background="new 0 0 30 30" xml:space="preserve">
+            <path id="facebook" fill="#ffffff" d="M17.252,11.106V8.65c0-0.922,0.611-1.138,1.041-1.138h2.643V3.459l-3.639-0.015
+            c-4.041,0-4.961,3.023-4.961,4.961v2.701H10v4.178h2.336v11.823h4.916V15.284h3.316l0.428-4.178H17.252z" />
+        </svg>
+        </a>
+
+        <svg id="ss" width="30" height="30">
+            <path  style="fill:#ffffff" d="M20,2h-7c0-1.1-.9-2-2-2s-2,.9-2,2H2C.9,2,0,2.9,0,4h22c0-1.1-.9-2-2-2Z" />
+            <path  fill="#ffffff"
+                d="M.98,6l2.39,22.62c.02.77.65,1.38,1.42,1.38h12.44c.77,0,1.4-.61,1.42-1.38l2.39-22.62H.98ZM8,22.19c0,.55-.45,1-1,1s-1-.45-1-1v-10c0-.55.45-1,1-1s1,.45,1,1v10ZM12,22.19c0,.55-.45,1-1,1s-1-.45-1-1v-10c0-.55.45-1,1-1s1,.45,1,1v10ZM16,22.19c0,.55-.45,1-1,1s-1-.45-1-1v-10c0-.55.45-1,1-1s1,.45,1,1v10Z" />
+        </svg>
+        </a>
+
+
+        </a>
+    </article>
+</body>
+<script>
+    // const SVG_DELETE = '<svg id="test" width="30" height="30"><path style="fill:#eee" d="M20,2h-7c0-1.1-.9-2-2-2s-2,.9-2,2H2C.9,2,0,2.9,0,4h22c0-1.1-.9-2-2-2Z"/><path style="fill:#eee" d="M.98,6l2.39,22.62c.02.77.65,1.38,1.42,1.38h12.44c.77,0,1.4-.61,1.42-1.38l2.39-22.62H.98ZM8,22.19c0,.55-.45,1-1,1s-1-.45-1-1v-10c0-.55.45-1,1-1s1,.45,1,1v10ZM12,22.19c0,.55-.45,1-1,1s-1-.45-1-1v-10c0-.55.45-1,1-1s1,.45,1,1v10ZM16,22.19c0,.55-.45,1-1,1s-1-.45-1-1v-10c0-.55.45-1,1-1s1,.45,1,1v10Z"/></svg>';
+    // document.getElementById('aa').innerHTML = SVG_DELETE;
+</script>
+
+</html>

@@ -29,6 +29,13 @@
     /* activation off color */
     --color-alarm-off: #999999;
 
+    /* phone activation on color */
+    --color-phone-on: #29ABE2;
+
+    /* phone activation on color */
+    --color-phone-off: #999999;
+
+
     /* Form Color */
 
     /* form background color */

@@ -120,6 +120,10 @@ function updateAlarmInfo(data) {
         if (this.readyState == 4 && this.status == 200) {
             // var jsonValue = JSON.parse(this.responseText);
             getAlarmListAll()
+
+            if(this.responseText == 'Invalid Value') {
+                alert('Invalid Value: Check value or phone number')
+            }
             // console.log(this.responseText);
         }
 
@@ -220,8 +224,14 @@ function insertAlarmInfo(data) {
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             getAlarmListAll();
+            if(this.responseText == 'Invalid PV') {
+                alert('PV already exists');
+            }
             // var jsonValue = JSON.parse(this.responseText);
             // console.log(this.responseText);
+            if(this.responseText == 'Invalid Value') {
+                alert('Invalid Value: Check value or phone number')
+            }
         }
 
         // else {
