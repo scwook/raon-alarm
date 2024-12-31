@@ -654,12 +654,12 @@ function applyConnectionState(data) {
         const alarmInfo = x.querySelector('.alarmInfo');
         const pvname = alarmInfo.querySelector('.alarmPVName').textContent;
         const state = findConnectionState(data, pvname);
-        let textColor = '--color-sub-text';
+        let textColor = '--color-ioc-disconnection';
         if (state) {
-            textColor = '--color-main-text';
+            textColor = '--color-ioc-connection';
         }
         else {
-            textColor = '--color-sub-text';
+            textColor = '--color-ioc-disconnection';
         }
 
         alarmInfo.querySelector('.alarmPVName').style.color = `var(${textColor})`;

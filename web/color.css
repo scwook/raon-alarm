@@ -14,6 +14,12 @@
     /* coma logo color */
     --color-coma-logo: #F2F2F2;
 
+    /* sub text color */
+    --color-ioc-connection: #F2F2F2;
+
+    /* sub text color */
+    --color-ioc-disconnection: #999999;
+
      /* alarm okay backgrouond color */
     --color-alarm-normal: #22B573;
 

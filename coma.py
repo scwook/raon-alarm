@@ -356,17 +356,42 @@ def deleteSMSInfo():
 PORT = '/dev/tty.usbserial-FT96QAFW'
 ser = serial.serial_for_url(PORT, baudrate=115200, timeout=1)
 
+def waitConnection(q):
+    while not ser.is_open:
+        try:
+            ser.open()
+            clue.writeErrorLog('connection open')
+            clue.printConsole('serial', 'connection open')
+
+            # throw away queue data
+            while not q.empty():
+                data = q.get()
+                # print(data)
+
+        except serial.SerialException as e:
+            pass
+        
+        time.sleep(1)
+
 def sendMessage(q):
     while True:
         try:
             data = q.get(block=False)
-            ser.write(data.encode('utf-8') + b'\r\n')
-            print('sned data: ' + data)
+            if ser.is_open:
+                ser.write(data.encode('utf-8') + b'\r\n')
+                print('sned data: ' + data)
 
         except queue.Empty:
             pass
 
-        time.sleep(0.1)    
+        except serial.SerialException as e:
+            ser.close()
+            print(e)
+            clue.writeErrorLog('connection lost', str(e))
+            clue.printConsole('serial','connection lost')
+            waitConnection(q)
+
+        time.sleep(0.1)
 
 if __name__ == "__main__":
     for alarmlist in sql.getAlarmList():

@@ -234,7 +234,7 @@ input:checked+.activationToggelButton::before {
     display: flex;
     align-items: center;
     justify-content: left;
-    color: var(--color-sub-text);
+    color: var(--color-ioc-disconnection);
     font-size: 24px;
     flex: 3;
 }
