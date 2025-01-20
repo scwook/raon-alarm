@@ -12,6 +12,7 @@ Support threading with serial ports.
 from __future__ import absolute_import
 
 import serial
+import datetime
 import threading
 # import json
 import mcs
@@ -234,17 +235,24 @@ if __name__ == '__main__':
             dictData = eval(data)
 
             desc = dictData['desc']
-            value = dictData['value']
+            value = eval(dictData['value'])
             smsList = dictData['list']
+
+            if isinstance(value, dict):
+                value = str(value['index'])
+            else:
+                value = str(value)
 
             for x in smsList:
                 if x['phone'].isdecimal() and x['activation'] == 1:
                     user = x['phone']
                     pvname = x['pvname']
-                    # message = pvname + '\r\n' + desc + '\r\n' + value
-                    message = user + ' ' + pvname + ' ' + value
+                    message = pvname + '\r\n' + desc + '\r\n' + value
+                    # message = user + ' ' + pvname + ' ' + value
+                    result = mcs.sendMMS(user, message)
+                    # result = mcs.test(user, message)
 
-                    result = mcs.test(user, message)
+                    print(datetime.datetime.now(), pvname, value)
 
                     if result:
                         clue.writeMessageLog(message)

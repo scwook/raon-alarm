@@ -35,7 +35,6 @@ channelList = list()
 
 q = multiprocessing.Queue()
 
-
 def restartMonitoring(pvname):
     for y in channelList:
         if y.pvname == pvname:
