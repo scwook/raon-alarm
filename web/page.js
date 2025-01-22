@@ -63,7 +63,12 @@ function createAlarmInfo(data) {
 
     const repetationElem = document.createElement('div');
     repetationElem.classList.add('alarmRepetation');
-    repetationElem.innerText = String(data['repetation'] / 60) + 'm';
+    if (data['repetation'] == 0) {
+        repetationElem.innerText = 'No';
+    }
+    else {
+        repetationElem.innerText = String(data['repetation'] / 60) + 'm';
+    }
 
     const phoneElem = document.createElement('div');
     phoneElem.classList.add('alarmPhone');
