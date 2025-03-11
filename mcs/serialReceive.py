@@ -253,11 +253,15 @@ if __name__ == '__main__':
                     # result = mcs.test(user, message)
 
                     print(datetime.datetime.now(), pvname, value)
-
-                    if result:
-                        clue.writeMessageLog(message)
-                    else:
-                        clue.writeErrorLog(result)
+                    try:
+                        if result:
+                            clue.writeMessageLog(message)
+                        else:
+                            clue.writeErrorLog(result)
+                            
+                    except Exception as e:
+                        clue.writeErrorLog(e)
+                        break
 
         def connection_lost(self, exc):
             if exc:
