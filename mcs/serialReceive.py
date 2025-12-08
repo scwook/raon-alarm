@@ -220,7 +220,7 @@ if __name__ == '__main__':
     import time
     import traceback
 
-    PORT = '/dev/tty.usbserial-B000OUP2'
+    PORT = '/dev/ttyS1'
     # PORT = 'loop://'
 
     class PrintLines(LineReader):
@@ -249,19 +249,18 @@ if __name__ == '__main__':
                     pvname = x['pvname']
                     message = pvname + '\r\n' + desc + '\r\n' + value
                     # message = user + ' ' + pvname + ' ' + value
-                    result = mcs.sendMMS(user, message)
-                    # result = mcs.test(user, message)
+                    print(datetime.datetime.now(), pvname, value, desc)
 
-                    print(datetime.datetime.now(), pvname, value)
                     try:
+                        result = mcs.sendMMS(user, message)
+                        # result = mcs.test(user, message)
+                        print('result:', result)
                         if result:
                             clue.writeMessageLog(message)
                         else:
                             clue.writeErrorLog(result)
-                            
                     except Exception as e:
                         clue.writeErrorLog(e)
-                        break
 
         def connection_lost(self, exc):
             if exc:
