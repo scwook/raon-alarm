@@ -17,3 +17,8 @@
 - clue.py: Error or warning message print
 
 ### Web interface
+
+
+### Design and Manual
+- coma-design.ai: Web interface design file
+- coma-manual.ai: Web interface manual file
