@@ -19,7 +19,7 @@ import epics
 import clue
 
 # SERVER_ADDR = 'localhost'
-SERVER_ADDR = '192.168.131.161'
+SERVER_ADDR = '192.168.131.194'
 # SERVER_ADDR = '192.168.150.219'
 
 app = Flask(__name__)
@@ -34,6 +34,7 @@ channelList = list()
 # monitoringList = list()
 
 q = multiprocessing.Queue()
+
 
 def restartMonitoring(pvname):
     for y in channelList:
@@ -352,7 +353,7 @@ def deleteSMSInfo():
 
     return 'OK'
 
-PORT = '/dev/tty.usbserial-FT96QAFW'
+PORT = '/dev/ttyUSB0'
 ser = serial.serial_for_url(PORT, baudrate=115200, timeout=1)
 
 def waitConnection(q):
