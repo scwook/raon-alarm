@@ -161,6 +161,8 @@ def insertAlarmLog(pvname, log):
             cursor.execute(query)
             conn.commit()
 
+            return 'OK'
+
 
 def deleteAlarmInfo(pvName):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
@@ -267,27 +269,49 @@ def updateSMSFieldInt(phone, pvName, field, value):
 def deleteSMSListFromPhone(phone):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
         with conn.cursor() as cursor:
-            query='DELETE FROM sms_info WHERE phone=' + "'" + phone + "'"
-            cursor.execute(query)
-            conn.commit()
+            try:
+                query='DELETE FROM sms_info WHERE phone=' + "'" + phone + "'"
+                cursor.execute(query)
+                conn.commit()
+
+                return 'OK'
+            
+            except pymysql.err as e:
+                return e
 
 def deleteSMSListFromPVName(pvName):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
         with conn.cursor() as cursor:
-            query='DELETE FROM sms_info WHERE pvname=' + "'" + pvName + "'"
-            cursor.execute(query)
-            conn.commit()
+            try:
+                query='DELETE FROM sms_info WHERE pvname=' + "'" + pvName + "'"
+                cursor.execute(query)
+                conn.commit()
+
+            except pymysql.err as e:
+                return e
 
 def deleteSMSList(phone, pvName):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
         with conn.cursor() as cursor:
-            query='DELETE FROM sms_info WHERE phone=' + "'" + phone + "'" + ' AND pvname=' + "'" + pvName + "'"
-            cursor.execute(query)
-            conn.commit()
+            try:
+                query='DELETE FROM sms_info WHERE phone=' + "'" + phone + "'" + ' AND pvname=' + "'" + pvName + "'"
+                cursor.execute(query)
+                conn.commit()
+
+                return 'OK'
+
+            except pymysql.err as e:
+                return e
 
 def insertSMSInfo(phone, pvName):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
         with conn.cursor() as cursor:
-            query='INSERT INTO sms_info(phone, pvname) values("%s", "%s")' % (phone, pvName)
-            cursor.execute(query)
-            conn.commit()
+            try:
+                query='INSERT INTO sms_info(phone, pvname) values("%s", "%s")' % (phone, pvName)
+                cursor.execute(query)
+                conn.commit()
+
+                return 'OK'
+            
+            except pymysql.err as e:
+                return e

@@ -4,8 +4,6 @@ import time
 import multiprocessing
 import queue
 import logging
-import asyncio
-import threading
 
 # extenstion library
 import json
@@ -20,13 +18,8 @@ import sql
 import epics
 import clue
 
-# websocket librarys
-import websockets
-
 # SERVER_ADDR = 'localhost'
 SERVER_ADDR = '192.168.131.194'
-REST_PORT = 9009
-WEBSOCKET_PORT = 9010
 # SERVER_ADDR = '192.168.150.219'
 
 app = Flask(__name__)
@@ -34,9 +27,6 @@ CORS(app)
 
 log=logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
-
-connected_clients = set()
-main_loop = None
 
 # conn = sql.getDbConnection()
 # alarmList = sql.getAlarmList()
@@ -149,32 +139,6 @@ def checkPVName(pvname):
 
     return False
 
-# --------------------------
-# WebSocket Server
-# --------------------------
-async def ws_handler(ws):
-    connected_clients.add(ws)
-    try:
-        async for msg in ws:
-            print("WS Received:", msg)
-    finally:
-        connected_clients.remove(ws)
-
-async def ws_server():
-    async with websockets.serve(ws_handler, SERVER_ADDR, WEBSOCKET_PORT):
-        print("WebSocket server started on :", WEBSOCKET_PORT)
-        await asyncio.Future()  # forever
-
-async def ws_broadcast(message):
-    print("[WS Broadcast] sending:", message)
-    if connected_clients:
-        await asyncio.gather(*(client.send(json.dumps(message)) for client in connected_clients))
-    else:
-        print("No WebSocket clients connected")
-
-# --------------------------
-# Flask Server
-# --------------------------
 @app.route('/', methods=['POST'])
 def test():
     formData = request.form
@@ -206,10 +170,6 @@ def updateAlarmInfo():
         sql.insertAlarmLog(pvname, 'Update alarm info: %s' % (jsonData))
         # checkAlarmRepeat(pvname)
         restartMonitoring(pvname)
-
-        global main_loop
-        brocast_data = {**recordData, 'delay':jsonData['delay'], 'field':'update'}
-        main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
 
     else:
         message = '(updateAlarmInfo) %s' % (jsonData)
@@ -252,10 +212,6 @@ def insertAlarmInfo():
         channelClass.channel.startMonitor('field(value)')
 
         sql.insertAlarmLog(pvname, 'Create new alarm monitoring')
-
-        global main_loop
-        brocast_data = {**recordData, 'delay':jsonData['delay'], 'field':'create'}
-        main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
 
     else:
         message = '(insertAlarmInfo) %s' % (jsonData)
@@ -321,10 +277,6 @@ def setUpdateAlarmField():
     if result != 'OK':
         message = '(updateAlarmField) pvname:%s, field:%s, value:%s' % (pvname, field, value) 
         clue.writeErrorLog(message, result)
-    else:
-        global main_loop
-        brocast_data = {'pvname':pvname, 'field':field, 'value':value}
-        main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
 
     return result
 
@@ -337,14 +289,12 @@ def setSMSInfoUpdate():
     value = jsonData['value']
 
     result = sql.updateSMSFieldInt(phone, pvname, field, value)
-    
-    if result != 'OK':
+    if result == 'OK':
+            return 'OK'
+
+    else:
         message = '(smsInfoUpdate) %s %' % (jsonData)
         clue.writeErrorLog(message, result)
-    else:
-        global main_loop
-        brocast_data = {'phone': phone, 'pvname':pvname, 'field':field, 'value':value}
-        main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
 
     return result
 
@@ -389,10 +339,6 @@ def deleteAlarmInfo(pvname):
     if result == 'OK':
         deleteMonitoring(pvname)
         sql.insertAlarmLog(pvname, 'Delete alarm monitoring')
-
-        global main_loop
-        brocast_data = {'pvname':pvname, 'field':'delete'}
-        main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
     else:
         clue.writeErrorLog(result)
 
@@ -403,23 +349,10 @@ def deleteSMSInfo():
     jsonData = request.get_json()
     phone = jsonData['phone']
     pvname = jsonData['pvname']
-    result = sql.deleteSMSList(phone, pvname)
+    sql.deleteSMSList(phone, pvname)
 
-    if result == 'OK':
-        global main_loop
-        brocast_data = {'phone':phone, 'pvname':pvname, 'field':'delete'}
-        main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
-    else:
-        clue.writeErrorLog(result)
+    return 'OK'
 
-    return result
-
-def run_flask():
-    app.run(host=SERVER_ADDR, port=REST_PORT)
-
-# --------------------------
-# Serial Server
-# --------------------------
 PORT = '/dev/ttyUSB0'
 ser = serial.serial_for_url(PORT, baudrate=115200, timeout=1)
 
@@ -460,9 +393,6 @@ def sendMessage(q):
 
         time.sleep(0.1)
 
-# --------------------------
-# Main Loop
-# --------------------------
 if __name__ == "__main__":
     for alarmlist in sql.getAlarmList():
         channelList.append(epics.ChannelMonitor(alarmlist['pvname'], q))
@@ -476,14 +406,4 @@ if __name__ == "__main__":
     process.start()
     # process.join()
 
-    # app.run(host=SERVER_ADDR, port=REST_PORT)
-    
-    # crate main event loop
-    main_loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(main_loop)
-
-    # flask thread
-    threading.Thread(target=run_flask, daemon=True).start()
-
-    # asyncio WebSocket 서버 실행
-    main_loop.run_until_complete(ws_server())
+    app.run(host=SERVER_ADDR, port="8000")

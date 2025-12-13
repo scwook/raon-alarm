@@ -95,7 +95,8 @@ function createAlarmInfo(data) {
     deleteElem.classList.add('alarmDelete');
     deleteElem.innerHTML = SVG_DELETE;
     deleteElem.addEventListener('click', () => {
-        deleteAlarmItem(alarmListContainer, alarmItemContainer, data['pvname']);
+        // deleteAlarmItem(alarmListContainer, alarmItemContainer, data['pvname']);
+        deleteAlarmItem(data['pvname']);
     });
 
     alarmInfoContainer.appendChild(activationElem);
@@ -155,12 +156,12 @@ function createAlarmInfo(data) {
         smsDeleteElem.addEventListener('click', () => {
             // smsInfoContainer.remove();
 
-            const oldFlexItemsInfo = getFlexItemsInfo(alarmListContainer);
-            removeFlexItem(alarmItemContainer, smsInfoContainer);
-            const newFlexItemsInfo = getFlexItemsInfo(alarmListContainer);
-            aminateFlexItems(oldFlexItemsInfo, newFlexItemsInfo);
+            // const oldFlexItemsInfo = getFlexItemsInfo(alarmListContainer);
+            // removeFlexItem(alarmItemContainer, smsInfoContainer);
+            // const newFlexItemsInfo = getFlexItemsInfo(alarmListContainer);
+            // aminateFlexItems(oldFlexItemsInfo, newFlexItemsInfo);
 
-            deleteSMSInfo(sms['phone'], data['pvname']);
+            deleteSMSItem(sms['phone'], data['pvname']);
 
         });
 
@@ -213,8 +214,8 @@ function addAlarmItem() {
 
 }
 
-function deleteAlarmItem(container, item, pvname) {
-    removeFlexItem(container, item);
+function deleteAlarmItem(pvname) {
+    // removeFlexItem(container, item);
 
     if (simulation) {
 
@@ -224,6 +225,16 @@ function deleteAlarmItem(container, item, pvname) {
         // elem.remove();
     }
 
+}
+
+function deleteSMSItem(phone, pvname) {
+    if (simulation) {
+
+    }
+    else {
+        deleteSMSInfo(phone, pvname);
+        // elem.remove();
+    }
 }
 
 function clearAlarmItem(pvname) {
@@ -334,7 +345,7 @@ function createMessageUser() {
             // messageListItemElem.remove();
         }
 
-        if(!isInteger) {
+        if (!isInteger) {
             alert('Invalid Phone Number');
             removeFlexItem(messageList, messageListItemElem);
             return;
@@ -435,7 +446,7 @@ function showAlarmConfigurationDialog(target, data) {
             // Set readonly
             document.getElementById('config-pvname').readOnly = true;
             document.getElementById('config-pvname').style.color = 'var(--color-sub-text)';
-            
+
             // Remove all child nodes which are message list 
             var messageList = document.getElementById('config-message-user-list');
             messageList.textContent = '';
@@ -448,7 +459,6 @@ function showAlarmConfigurationDialog(target, data) {
             createButtonID.innerText = 'Update';
             createButtonID.addEventListener('click', updateAlarm);
             break;
-
     }
 
     let configContainerId = document.getElementById('config-dialog-body');
@@ -501,7 +511,7 @@ function updateAlarm() {
     if (formDataCheck == "OK") {
 
         const dictData = convertToDictionary(formData);
-        console.log(dictData);
+        // console.log(dictData);
         updateAlarmInfo(dictData);
         // document.getElementById('config-dialog-body').style.display = 'none';
         closeAlarmConfigurationDialog();
@@ -680,6 +690,124 @@ function findConnectionState(data, pvname) {
     }
 
     return null
+}
+
+function applyActivationState(data) {
+    const alarmListContainer = document.getElementById('alarm-list-container');
+    const alarmItem = alarmListContainer.getElementsByClassName('alarmItem');
+
+    // Search alarm list one by one
+    for (let x of alarmItem) {
+        const alarmInfo = x.querySelector('.alarmInfo');
+        const pvname = alarmInfo.querySelector('.alarmPVName').textContent;
+
+        // Find matching pvname in data
+        if (data['pvname'] == pvname) {
+
+            // In case of alarm activation 
+            if (!('phone' in data)) {
+
+                // Change activation
+                alarmInfo.querySelector('.activationCheckBox').checked = data['value'];
+            }
+            // In case of sms activation
+            else {
+                const smsInfo = x.getElementsByClassName('smsInfo');
+
+                // Find matching phone number in data
+                for (let y of smsInfo) {
+                    const phone = y.querySelector('.smsPhoneNumber').textContent;
+
+                    // Find matching phone number
+                    if (phone == data['phone']) {
+
+                        // Change activation 
+                        y.querySelector('.smsActivationCheckBox').checked = data['value'];
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+function applyDeleteAlarmInfo(data) {
+    const alarmListContainer = document.getElementById('alarm-list-container');
+    const alarmItem = alarmListContainer.getElementsByClassName('alarmItem');
+
+    // Find which alarmItem container was deleted
+    for (let x of alarmItem) {
+        const pvname = x.querySelector('.alarmPVName').textContent;
+
+        // If find it
+        if (data['pvname'] == pvname) {
+
+            // In case of entire container
+            if (!('phone' in data)) {
+
+                // Delete 
+                removeFlexItem(alarmListContainer, x);
+            }
+            // In case of sms list
+            else {
+                const smsInfo = x.getElementsByClassName('smsInfo');
+
+                for (let y of smsInfo) {
+                    const phone = y.querySelector('.smsPhoneNumber').textContent;
+
+                    // If a matching phon number is found
+                    if (phone == data['phone']) {
+                        const oldFlexItemsInfo = getFlexItemsInfo(alarmListContainer);
+                        // Delete
+                        removeFlexItem(x, y);
+                        const newFlexItemsInfo = getFlexItemsInfo(alarmListContainer);
+                        aminateFlexItems(oldFlexItemsInfo, newFlexItemsInfo);
+                    }
+                }
+            }
+        }
+    }
+}
+
+function applyCreateAlarmInfo(data) {
+    createAlarmInfo(data);
+}
+
+function applyUpdateAlarmInfo(data) {
+    const alarmListContainer = document.getElementById('alarm-list-container');
+    const alarmItem = alarmListContainer.getElementsByClassName('alarmItem');
+
+    // Search alarm list one by one
+    for (let x of alarmItem) {
+        const alarmInfo = x.querySelector('.alarmInfo');
+        const pvname = alarmInfo.querySelector('.alarmPVName').textContent;
+
+        // Find matching pvname in data
+        if (data['pvname'] == pvname) {
+                alarmInfo.querySelector('.alarmValue').innerText = data['value'];
+                alarmInfo.querySelector('.alarmCondition').innerHTML = convertContition(data['operator']);
+                alarmInfo.querySelector('.alarmDelay').innerText = data['delay'] + 's';
+                if(data['repetation'] == 0) {
+                    alarmInfo.querySelector('.alarmRepetation').innerText = 'No';
+                }
+                else {
+                    alarmInfo.querySelector('.alarmRepetation').innerText = String(data['repetation'] / 60) + 'm';
+                }
+
+                const smsInfo = x.getElementsByClassName('smsInfo');
+                // Find matching phone number in data
+                for (let y of smsInfo) {
+                    const phone = y.querySelector('.smsPhoneNumber').textContent;
+
+                    // Find matching phone number
+                    if (phone == data['phone']) {
+
+                        // Change activation 
+                        y.querySelector('.smsActivationCheckBox').checked = data['value'];
+                    }
+                }
+        }
+    }
 }
 
 function removeFlexItem(container, item) {
