@@ -139,7 +139,6 @@ function createAlarmInfo(data) {
         smsActivationCheck.classList.add('smsActivationCheckButton');
         smsActivationCheck.innerHTML = SVG_PHONE_ACTIVATION;
 
-
         smsActivationContainerElem.appendChild(smsActivationInput);
         smsActivationContainerElem.appendChild(smsActivationCheck);
         smsActivationElem.appendChild(smsActivationContainerElem);
@@ -513,6 +512,7 @@ function updateAlarm() {
         const dictData = convertToDictionary(formData);
         // console.log(dictData);
         updateAlarmInfo(dictData);
+
         // document.getElementById('config-dialog-body').style.display = 'none';
         closeAlarmConfigurationDialog();
     }
@@ -755,7 +755,7 @@ function applyDeleteAlarmInfo(data) {
                 for (let y of smsInfo) {
                     const phone = y.querySelector('.smsPhoneNumber').textContent;
 
-                    // If a matching phon number is found
+                    // If a matching phone number is found
                     if (phone == data['phone']) {
                         const oldFlexItemsInfo = getFlexItemsInfo(alarmListContainer);
                         // Delete
@@ -784,28 +784,93 @@ function applyUpdateAlarmInfo(data) {
 
         // Find matching pvname in data
         if (data['pvname'] == pvname) {
-                alarmInfo.querySelector('.alarmValue').innerText = data['value'];
-                alarmInfo.querySelector('.alarmCondition').innerHTML = convertContition(data['operator']);
-                alarmInfo.querySelector('.alarmDelay').innerText = data['delay'] + 's';
-                if(data['repetation'] == 0) {
-                    alarmInfo.querySelector('.alarmRepetation').innerText = 'No';
-                }
-                else {
-                    alarmInfo.querySelector('.alarmRepetation').innerText = String(data['repetation'] / 60) + 'm';
+            alarmInfo.querySelector('.alarmValue').innerText = data['value'];
+            alarmInfo.querySelector('.alarmCondition').innerHTML = convertContition(data['operator']);
+            alarmInfo.querySelector('.alarmDelay').innerText = data['delay'] + 's';
+            if (data['repetation'] == 0) {
+                alarmInfo.querySelector('.alarmRepetation').innerText = 'No';
+            }
+            else {
+                alarmInfo.querySelector('.alarmRepetation').innerText = String(data['repetation'] / 60) + 'm';
+            }
+
+            const smsList = x.querySelectorAll('.smsPhoneNumber');
+            const currentList = Array.from(x.querySelectorAll('.smsPhoneNumber')).map(el => el.textContent);
+
+            // const removeList = currentList.filter((v) => !data['sms'].includes(v));
+
+            // Find remove index of DOM
+            const removeIndex = currentList.reduce((acc, value, index) => {
+                if (!data['sms'].includes(value)) {
+                    acc.push(index);
                 }
 
-                const smsInfo = x.getElementsByClassName('smsInfo');
-                // Find matching phone number in data
-                for (let y of smsInfo) {
-                    const phone = y.querySelector('.smsPhoneNumber').textContent;
+                return acc;
+            }, []);
 
-                    // Find matching phone number
-                    if (phone == data['phone']) {
+            // Remove sms list
+            const smsInfo = x.getElementsByClassName('smsInfo');
+            for (let i of removeIndex) {
+                removeFlexItem(x, smsInfo[i]);
+            }
 
-                        // Change activation 
-                        y.querySelector('.smsActivationCheckBox').checked = data['value'];
-                    }
-                }
+            // Add sms list
+            const addList = data['sms'].filter(v => !currentList.includes(v)).map(n => ({
+                'phone': n,
+                'pvname': pvname,
+                'activation': 1
+            }));
+
+            for (let sms of addList) {
+                console.log(sms);
+                const smsInfoContainer = document.createElement('div');
+                smsInfoContainer.classList.add('smsInfo');
+                smsInfoContainer.style.display = 'none';
+
+                const smsActivationElem = document.createElement('div');
+                smsActivationElem.classList.add('smsActivation');
+
+                const smsActivationContainerElem = document.createElement('label');
+                smsActivationContainerElem.classList.add('smsActivationContainer');
+
+                const smsActivationInput = document.createElement('input');
+                smsActivationInput.classList.add('smsActivationCheckBox');
+                smsActivationInput.checked = sms['activation'];
+
+                smsActivationInput.setAttribute('type', 'checkbox');
+                smsActivationInput.addEventListener('change', () => {
+                    setSMSActivation(smsActivationInput, sms);
+                });
+
+                const smsActivationCheck = document.createElement('span');
+                smsActivationCheck.classList.add('smsActivationCheckButton');
+                smsActivationCheck.innerHTML = SVG_PHONE_ACTIVATION;
+
+                smsActivationContainerElem.appendChild(smsActivationInput);
+                smsActivationContainerElem.appendChild(smsActivationCheck);
+                smsActivationElem.appendChild(smsActivationContainerElem);
+
+
+                const smsPhoneNumberElem = document.createElement('div');
+                smsPhoneNumberElem.classList.add('smsPhoneNumber');
+
+                smsPhoneNumberElem.innerText = sms['phone']
+
+                const smsDeleteElem = document.createElement('div');
+                smsDeleteElem.classList.add('smsDelete');
+                smsDeleteElem.innerHTML = SVG_PHONE_DELETE;
+                smsDeleteElem.addEventListener('click', () => {
+
+                    deleteSMSItem(sms['phone'], data['pvname']);
+
+                });
+
+                smsInfoContainer.appendChild(smsActivationElem);
+                smsInfoContainer.appendChild(smsPhoneNumberElem);
+                smsInfoContainer.appendChild(smsDeleteElem);
+
+                x.appendChild(smsInfoContainer);
+            }
         }
     }
 }
