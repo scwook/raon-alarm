@@ -154,31 +154,40 @@ def checkPVName(pvname):
 # --------------------------
 async def ws_handler(ws):
     connected_clients.add(ws)
+    client_ip, client_port = ws.remote_address
+    message = f'Connection websocket {client_ip} {client_port}'
+    clue.writeMessageLog(message)
+    clue.printConsole(message)
     try:
         async for msg in ws:
-            print("WS Received:", msg)
+            message = f'Websocket received {msg}'
+            clue.printConsole(message)
     finally:
         connected_clients.remove(ws)
+        message = f'Disconnection websocket {client_ip} {client_port}'
+        clue.writeMessageLog(message)
+        clue.printConsole(message)
+
 
 async def ws_server():
     async with websockets.serve(ws_handler, SERVER_ADDR, WEBSOCKET_PORT):
-        print("WebSocket server started on :", WEBSOCKET_PORT)
+        clue.printConsole(f"WebSocket server started on {WEBSOCKET_PORT}")
         await asyncio.Future()  # forever
 
 async def ws_broadcast(message):
-    print("[WS Broadcast] sending:", message)
+    clue.printConsole(f"Websocket broadcast sending {message}")
     if connected_clients:
         await asyncio.gather(*(client.send(json.dumps(message)) for client in connected_clients))
     else:
-        print("No WebSocket clients connected")
+        clue.printConsole("No WebSocket clients connected")
 
 # --------------------------
 # Flask Server
 # --------------------------
 @app.route('/', methods=['POST'])
 def test():
-    formData = request.form
-    print(formData)
+    # formData = request.form
+    # print(formData)
     return "OK"
 
 @app.route('/updateAlarmInfo', methods=['POST'])

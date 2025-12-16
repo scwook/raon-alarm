@@ -86,6 +86,17 @@ function getAlarmListFromPVName(search) {
         .catch(err => console.log("Fetch error: " + err));
 }
 
+function getAlarmDataFromPVName(pvname) {
+    url = wasEndPoint + '/getAlarmListFromPV/' + pvname;
+    fetch(url)
+        .then(res => res.json())
+        .then(data => { 
+            console.log(data[0]);
+            updateAlarmConfigurationDialog(data[0]);
+        })
+        .catch(err => console.log("Fetch error: " + err));
+}
+
 function getAlarmListFromPhone(search) {
     url = wasEndPoint + '/getAlarmListFromPhone/' + search;
     fetch(url)

@@ -81,7 +81,7 @@ function createAlarmInfo(data) {
     editElem.classList.add('alarmEdit');
     editElem.innerHTML = SVG_EDIT;
     editElem.addEventListener('click', () => {
-        showAlarmConfigurationDialog('update', data);
+        showAlarmConfigurationDialog('update', data['pvname']);
     });
 
     const clearElem = document.createElement('div');
@@ -269,14 +269,14 @@ function setSMSActivation(elem, data) {
 function displaySMSList(container) {
     const smsNodes = container.getElementsByClassName('smsInfo');
 
-    for (let i = 0; i < smsNodes.length; i++) {
-        let id = smsNodes[i];
+    for (let id of smsNodes) {
         if (id.style.display == 'none') {
-            id.style.display = "flex";
+            id.style.display = 'flex';
         }
         else {
-            id.style.display = "none";
+            id.style.display = 'none';
         }
+
     }
 }
 
@@ -409,7 +409,7 @@ function addMessageUser(data) {
     messageList.insertBefore(messageListItemElem, messageList.firstChild);
 }
 
-function showAlarmConfigurationDialog(target, data) {
+function showAlarmConfigurationDialog(target, pvname) {
 
     switch (target) {
         case 'create':
@@ -435,28 +435,8 @@ function showAlarmConfigurationDialog(target, data) {
             break;
 
         case 'update':
-            document.getElementById('config-pvname').value = data['pvname'];
-            document.getElementById('config-description').value = data['description'];
-            document.getElementById('config-value').value = data['value'];
-            document.getElementById('config-condition').selectedIndex = data['operator'];
-            document.getElementById('config-delay').value = String(data['delay']);
-            document.getElementById('config-repetation').value = String(data['repetation'] / 60);
+            getAlarmDataFromPVName(pvname);
 
-            // Set readonly
-            document.getElementById('config-pvname').readOnly = true;
-            document.getElementById('config-pvname').style.color = 'var(--color-sub-text)';
-
-            // Remove all child nodes which are message list 
-            var messageList = document.getElementById('config-message-user-list');
-            messageList.textContent = '';
-
-            for (let x of data['sms']) {
-                addMessageUser(x['phone']);
-            }
-
-            var createButtonID = document.getElementById('config-set-button');
-            createButtonID.innerText = 'Update';
-            createButtonID.addEventListener('click', updateAlarm);
             break;
     }
 
@@ -478,6 +458,31 @@ function showAlarmConfigurationDialog(target, data) {
         easing: "ease-out",
         fill: "forwards"
     });
+}
+
+function updateAlarmConfigurationDialog(data) {
+    document.getElementById('config-pvname').value = data['pvname'];
+    document.getElementById('config-description').value = data['description'];
+    document.getElementById('config-value').value = data['value'];
+    document.getElementById('config-condition').selectedIndex = data['operator'];
+    document.getElementById('config-delay').value = String(data['delay']);
+    document.getElementById('config-repetation').value = String(data['repetation'] / 60);
+
+    // Set readonly
+    document.getElementById('config-pvname').readOnly = true;
+    document.getElementById('config-pvname').style.color = 'var(--color-sub-text)';
+
+    // Remove all child nodes which are message list 
+    var messageList = document.getElementById('config-message-user-list');
+    messageList.textContent = '';
+
+    for (let x of data['sms']) {
+        addMessageUser(x['phone']);
+    }
+
+    var createButtonID = document.getElementById('config-set-button');
+    createButtonID.innerText = 'Update';
+    createButtonID.addEventListener('click', updateAlarm);
 }
 
 function createAlarm() {
@@ -517,10 +522,13 @@ function updateAlarm() {
         closeAlarmConfigurationDialog();
     }
     else if (formDataCheck == "EMPTY") {
-        alert('The Process Variable or Value is required')
+        alert('The Process Variable or value or phone number is required');
     }
     else if (formDataCheck == "VALUE") {
-        alert('The input value must be a number')
+        alert('The input value must be a number');
+    }
+    else if (formDataCheck == 'MESSAGE') {
+        alert('Message list not allowed empty');
     }
     else {
         alert('Check Input Data');
@@ -556,6 +564,7 @@ function closeAlarmConfigurationDialog() {
 
 function checkFromData(formData) {
     for (let [key, value] of formData.entries()) {
+        console.log(key, value);
         switch (key) {
             case 'pvname':
                 if (!value) {
@@ -573,6 +582,11 @@ function checkFromData(formData) {
                     }
                 }
                 break;
+            
+            case 'phone':
+                if(!value) {
+                    return 'MESSAGE';
+                }
         }
     }
 
@@ -794,10 +808,8 @@ function applyUpdateAlarmInfo(data) {
                 alarmInfo.querySelector('.alarmRepetation').innerText = String(data['repetation'] / 60) + 'm';
             }
 
-            const smsList = x.querySelectorAll('.smsPhoneNumber');
+            // const smsList = x.querySelectorAll('.smsPhoneNumber');
             const currentList = Array.from(x.querySelectorAll('.smsPhoneNumber')).map(el => el.textContent);
-
-            // const removeList = currentList.filter((v) => !data['sms'].includes(v));
 
             // Find remove index of DOM
             const removeIndex = currentList.reduce((acc, value, index) => {
@@ -821,11 +833,14 @@ function applyUpdateAlarmInfo(data) {
                 'activation': 1
             }));
 
+            // Get current display status
+            const displayStatus = smsInfo.length > 0 ? getComputedStyle(smsInfo[0]).display : 'none';
+
+            // Create new sms list
             for (let sms of addList) {
-                console.log(sms);
                 const smsInfoContainer = document.createElement('div');
                 smsInfoContainer.classList.add('smsInfo');
-                smsInfoContainer.style.display = 'none';
+                smsInfoContainer.style.display = displayStatus;
 
                 const smsActivationElem = document.createElement('div');
                 smsActivationElem.classList.add('smsActivation');
