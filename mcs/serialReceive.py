@@ -247,20 +247,26 @@ if __name__ == '__main__':
                 if x['phone'].isdecimal() and x['activation'] == 1:
                     user = x['phone']
                     pvname = x['pvname']
-                    message = pvname + '\r\n' + desc + '\r\n' + value
+                    mmsMessage = pvname + '\r\n' + desc + '\r\n' + value
                     # message = user + ' ' + pvname + ' ' + value
-                    print(datetime.datetime.now(), pvname, value, desc)
+                    # print(datetime.datetime.now(), pvname, value, desc)
 
                     try:
-                        result = mcs.sendMMS(user, message)
+                        result = mcs.sendMMS(user, mmsMessage)
                         # result = mcs.test(user, message)
-                        print('result:', result)
+                        # print('result:', result)
                         if result:
+                            message = f'{pvname} {user} request message send to mms server'
                             clue.writeMessageLog(message)
+                            clue.printConsole(message)
                         else:
-                            clue.writeErrorLog(result)
+                            message = f'{pvname} {user} mms message sending error'
+                            clue.writeMessageLog(message)
+                            clue.printConsole(message)
                     except Exception as e:
-                        clue.writeErrorLog(e)
+                        message = f'{pvname} {user} {e}'
+                        clue.writeMessageLog(message)
+                        clue.printConsole(message)
 
         def connection_lost(self, exc):
             if exc:
