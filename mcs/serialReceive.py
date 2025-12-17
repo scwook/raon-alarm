@@ -252,9 +252,9 @@ if __name__ == '__main__':
                     # print(datetime.datetime.now(), pvname, value, desc)
 
                     try:
-                        result = mcs.sendMMS(user, mmsMessage)
-                        # result = mcs.test(user, message)
-                        # print('result:', result)
+                        # result = mcs.sendMMS(user, mmsMessage)
+                        result = mcs.test(user, message)
+
                         if result:
                             message = f'{pvname} {user} request message send to mms server'
                             clue.writeMessageLog(message)
