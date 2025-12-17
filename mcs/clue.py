@@ -3,20 +3,24 @@ import datetime
 
 CLUE_ENABLE = True
 
-def printConsole(pvName, message):
+def printConsole(message):
     if CLUE_ENABLE:
-        print(time.strftime('%Y-%m-%d %H:%M:%S') + ': ' + pvName + ' ' + message)
+        print(time.strftime('%Y-%m-%d %H:%M:%S') + ' ' + message)
 
-def writeErrorLog(error):
-    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    error = '\n' + now + ' ' + str(error)
-
+def writeErrorLog(message, error=''):
     with open('error.log', 'a', encoding='utf-8') as file:
-        file.write(error)
+        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        if len(message):
+            message = now + ' ' + message + '\n'
+            file.write(message)
+
+        if len(error):
+            error = now + ' ' + str(error) + '\n'
+            file.write(error)
 
 def writeMessageLog(message):
-    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    message = '\n' + now + ' ' + message
-
     with open('message.log', 'a', encoding='utf-8') as file:
-        file.write(message)
+        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        if len(message):
+            message = now + ' ' + message + '\n'
+            file.write(message)

@@ -29,60 +29,80 @@ def getDbConnection():
 # Retrieve all alarm list with sms infomation
 def getAlarmListAll():
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
-        with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
-            query='SELECT * FROM alarm_info'
-            cursor.execute(query)
-            result = cursor.fetchall()
-
-            for x in result:
-                pvname = x['pvname']
-                query = 'SELECT * FROM sms_info WHERE pvname="%s"' % (pvname)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            try:
+                query='SELECT * FROM alarm_info'
                 cursor.execute(query)
-                x['sms'] = cursor.fetchall()
+                data = cursor.fetchall()
 
-            return result
+                for x in data:
+                    pvname = x['pvname']
+                    query = 'SELECT * FROM sms_info WHERE pvname="%s"' % (pvname)
+                    cursor.execute(query)
+                    x['sms'] = cursor.fetchall()
+
+                return 'OK', data
+
+            except pymysql.Error as e:
+                
+                return e
 
 # Retrieve all alarm status
 def getAlarmStateAll():
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
-        with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
-            query='SELECT * FROM alarm_info'
-            cursor.execute(query)
-            result = cursor.fetchall()
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            try:   
+                query='SELECT * FROM alarm_info'
+                cursor.execute(query)
+                data = cursor.fetchall()
 
-            return result
+                return 'OK', data
+                        
+            except pymysql.Error as e:
+                
+                return e
 
 # Retrieve only one alarm info for pvName with sms information
 def getAlarmListFromPV(pvName):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
-        with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
-            query='SELECT * FROM alarm_info WHERE pvname LIKE "%s"' % (pvName)
-            cursor.execute(query)
-            result = cursor.fetchall()
-
-            for x in result:
-                pvname = x['pvname']
-                query = 'SELECT * FROM sms_info WHERE pvname="%s"' % (pvname)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            try:     
+                query='SELECT * FROM alarm_info WHERE pvname LIKE "%s"' % (pvName)
                 cursor.execute(query)
-                x['sms'] = cursor.fetchall()
-            
-            return result
+                data = cursor.fetchall()
+
+                for x in data:
+                    pvname = x['pvname']
+                    query = 'SELECT * FROM sms_info WHERE pvname="%s"' % (pvname)
+                    cursor.execute(query)
+                    x['sms'] = cursor.fetchall()
+                
+                return 'OK', data
+            except pymysql.Error as e:
+                
+                return 'ERROR', e
+
 
 # Retrieve alarm list related phone
 def getAlarmListFromPhone(phone):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
-        with conn.cursor(pymysql.cursors.DictCursor) as cursor:        
-            query='SELECT * FROM sms_info WHERE phone LIKE "%s"' % (phone)
-            cursor.execute(query)
-            result = cursor.fetchall()
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            try:        
+                query='SELECT * FROM sms_info WHERE phone LIKE "%s"' % (phone)
+                cursor.execute(query)
+                result = cursor.fetchall()
 
-            data = []
-            for x in result:
-                pvname = x['pvname']
-                pvAlarmInfo = getAlarmListFromPV(pvname)
-                data.append(pvAlarmInfo[0])
-            
-            return data
+                data = []
+                for x in result:
+                    pvname = x['pvname']
+                    pvAlarmInfo = getAlarmListFromPV(pvname)
+                    data.append(pvAlarmInfo[0])
+                
+                return 'OK', data
+
+            except pymysql.Error as e:
+                
+                return 'ERROR', e            
 
 # Retrieve sms list for pvName
 def getSMSListFromPV(pvName):
@@ -202,12 +222,12 @@ def updateAlarmFieldStr(pvName, field, strValue):
 
                 return e
             
-def clearAlarm():
-    with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
-        with conn.cursor() as cursor:        
-            query = 'UPDATE alarm_info SET state="normal"'
-            cursor.execute(query)
-            conn.commit()
+# def clearAlarm():
+#     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:
+#         with conn.cursor() as cursor:        
+#             query = 'UPDATE alarm_info SET state="normal"'
+#             cursor.execute(query)
+#             conn.commit()
 
 def updateAlarmInfo(data):
     with pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_DATABASE, charset='utf8') as conn:

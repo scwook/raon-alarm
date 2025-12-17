@@ -145,9 +145,9 @@ def checkInvalidValue(data):
 def checkPVName(pvname):
     result = sql.getAlarmListFromPV(pvname)
     if len(result):
-        return True
+        return False
 
-    return False
+    return True
 
 # --------------------------
 # WebSocket Server
@@ -155,31 +155,31 @@ def checkPVName(pvname):
 async def ws_handler(ws):
     connected_clients.add(ws)
     client_ip, client_port = ws.remote_address
-    message = f'Connection websocket {client_ip} {client_port}'
+    message = f'{client_ip} connection websocket'
     clue.writeMessageLog(message)
     clue.printConsole(message)
     try:
         async for msg in ws:
-            message = f'Websocket received {msg}'
+            message = f'{client_ip} websocket received {msg}'
             clue.printConsole(message)
     finally:
         connected_clients.remove(ws)
-        message = f'Disconnection websocket {client_ip} {client_port}'
+        message = f'{client_ip} disconnection websocke'
         clue.writeMessageLog(message)
         clue.printConsole(message)
 
 
 async def ws_server():
     async with websockets.serve(ws_handler, SERVER_ADDR, WEBSOCKET_PORT):
-        clue.printConsole(f"WebSocket server started on {WEBSOCKET_PORT}")
+        clue.printConsole(f"[WebSocket] server started on {WEBSOCKET_PORT}")
         await asyncio.Future()  # forever
 
 async def ws_broadcast(message):
-    clue.printConsole(f"Websocket broadcast sending {message}")
+    clue.printConsole(f"[Websocket] broadcast sending {message}")
     if connected_clients:
         await asyncio.gather(*(client.send(json.dumps(message)) for client in connected_clients))
     else:
-        clue.printConsole("No WebSocket clients connected")
+        clue.printConsole("[WebSocket] no clients connected")
 
 # --------------------------
 # Flask Server
@@ -195,9 +195,11 @@ def updateAlarmInfo():
     jsonData = request.get_json()
 
     result = checkInvalidValue(jsonData)
-    if not result == 'OK':
-        message = '(updateAlarmInfo) %s' % (jsonData)
-        clue.writeErrorLog(message, result)
+    if result != 'OK':
+        message = f'{request.remote_addr} [ERROR] {result} (updateAlarmInfo) {jsonData}'
+        # clue.writeErrorLog(message, result)
+        clue.writeMessageLog(message)
+        clue.printConsole(message)
         return 'Invalid Value'
 
     pvname = jsonData['pvname']
@@ -211,18 +213,23 @@ def updateAlarmInfo():
     recordData = {'pvname':pvname, 'description':description, 'value':value, 'operator':operator, 'dealy':delay, 'repetation':repetation, 'sms':sms}
 
     result = sql.updateAlarmInfo(recordData)
-    if result == 'OK':
-        sql.insertAlarmLog(pvname, 'Update alarm info: %s' % (jsonData))
-        # checkAlarmRepeat(pvname)
-        restartMonitoring(pvname)
+    if result != 'OK':
+        message = f'{request.remote_addr} [ERROR] {result} (updateAlarmInfo) {jsonData}'
+        clue.writeMessageLog(message)
+        clue.printConsole(message)
+        return result
 
-        global main_loop
-        brocast_data = {**recordData, 'delay':jsonData['delay'], 'field':'update'}
-        main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
+    sql.insertAlarmLog(pvname, 'Update alarm info: %s' % (jsonData))
+    # checkAlarmRepeat(pvname)
+    restartMonitoring(pvname)
 
-    else:
-        message = '(updateAlarmInfo) %s' % (jsonData)
-        clue.writeErrorLog(message, result)
+    message = f'{request.remote_addr} [MESSAGE] (updateAlarmInfo) update alarm info {jsonData}'
+    clue.writeMessageLog(message)
+    clue.printConsole(message)
+
+    global main_loop
+    brocast_data = {**recordData, 'delay':jsonData['delay'], 'field':'update'}
+    main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
 
     return result
 
@@ -232,13 +239,20 @@ def insertAlarmInfo():
 
     pvname = jsonData['pvname'].strip()
     result = checkPVName(pvname)
-    if result:
+    if not result:
+        message = f'{request.remote_addr} [ERROR] pv already exists (insertAlarmInfo) {jsonData}'
+        clue.writeMessageLog(message)
+        clue.printConsole(message)
+
         return 'Invalid PV'
 
     result = checkInvalidValue(jsonData)
-    if not result == 'OK':
-        message = '(insertAlarmInfo) %s' % (jsonData)
-        clue.writeErrorLog(message, result)
+    if result != 'OK':
+        # message = '(insertAlarmInfo) %s' % (jsonData)
+        # clue.writeErrorLog(message, result)
+        message = f'{request.remote_addr} [ERROR] {result} (insertAlarmInfo) {jsonData}'
+        clue.writeMessageLog(message)
+        clue.printConsole(message)
         return 'Invalid Value'
     
     description = jsonData['desc']
@@ -254,88 +268,80 @@ def insertAlarmInfo():
 
     result = sql.insertAlarmInfo(recordData)
 
-    if result == 'OK':
-        channelClass = epics.ChannelMonitor(pvname, q)
-        channelList.append(channelClass)
-        channelClass.channel.subscribe(pvname, channelClass.alarmMonitor)
-        channelClass.channel.startMonitor('field(value)')
-
-        sql.insertAlarmLog(pvname, 'Create new alarm monitoring')
-
-        global main_loop
-        brocast_data = {**recordData, 'delay':jsonData['delay'], 'field':'create'}
-        main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
-
-    else:
-        message = '(insertAlarmInfo) %s' % (jsonData)
-        clue.writeErrorLog(message, result)
-
-    return result
-
-@app.route('/getAlarmListFromPV/<pvname>', methods=['GET'])
-def getAlarmListFromPV(pvname):
-    sqlWildcardString = pvname.replace('*', '%')
-    result = sql.getAlarmListFromPV(sqlWildcardString)
-
-    return json.dumps(result, ensure_ascii=False)
-
-@app.route('/getAlarmListFromPhone/<phone>', methods=['GET'])
-def getAlarmListFromPhone(phone):
-    # sqlWildcardString = phone.replace('*', '%')
-    result = sql.getAlarmListFromPhone(phone)
-
-    return json.dumps(result, ensure_ascii=False)
-
-@app.route('/updateAlarmField', methods=['POST'])
-def setUpdateAlarmField():
-    jsonData = request.get_json()
-    pvname = jsonData['pvname']
-    field = jsonData['field']
-    value = jsonData['value']
-
-    if field == 'pvname':
-        result = sql.updateAlarmFieldStr(pvname, field, value)
-        if result == 'OK':
-            sql.insertAlarmLog(pvname, 'Update PV name to %s' % (value))
-
-    elif field == 'description' or field == 'value':
-        result = sql.updateAlarmFieldStr(pvname, field, value)
-
-    elif field == 'state':
-        result = sql.updateAlarmFieldStr(pvname, field, value)
-        if result == 'OK':
-            restartMonitoring(pvname)
-            sql.insertAlarmLog(pvname, 'Change alarm state to %s' % (value))
-
-    elif field == 'operator' or field == 'repetation' or field == 'delay':
-        value = int(value)
-        result = sql.updateAlarmFieldInt(pvname, field, value)
-        if result == 'OK':
-            sql.insertAlarmLog(pvname, 'Change condition to %s' % (value))
-
-    elif field == 'activation':
-        value = bool(value)
-        result = sql.updateAlarmFieldInt(pvname, field, value)
-        if result == 'OK':
-            # if value:
-            #     startMonitoring(pvname)
-            # else:
-            #     stopMonitoring(pvname)
-
-            sql.insertAlarmLog(pvname, 'Change activation to %s' % (value))
-
-    else:
-        result = 'Field name error'
-
     if result != 'OK':
-        message = '(updateAlarmField) pvname:%s, field:%s, value:%s' % (pvname, field, value) 
-        clue.writeErrorLog(message, result)
-    else:
-        global main_loop
-        brocast_data = {'pvname':pvname, 'field':field, 'value':value}
-        main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
+        message = f'{request.remote_addr} [ERROR] {result} (insertAlarmInfo) {jsonData}'
+        clue.writeMessageLog(message)
+        clue.printConsole(message)
+        return result
+
+
+    channelClass = epics.ChannelMonitor(pvname, q)
+    channelList.append(channelClass)
+    channelClass.channel.subscribe(pvname, channelClass.alarmMonitor)
+    channelClass.channel.startMonitor('field(value)')
+
+    sql.insertAlarmLog(pvname, 'Create new alarm monitoring')
+
+    message = f'{request.remote_addr} [MESSAGE] (insertAlarmInfo) create new alarm monitoring {jsonData}'
+    clue.writeMessageLog(message)
+    clue.printConsole(message)
+
+    global main_loop
+    brocast_data = {**recordData, 'delay':jsonData['delay'], 'field':'create'}
+    main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
 
     return result
+
+# @app.route('/updateAlarmField', methods=['POST'])
+# def setUpdateAlarmField():
+#     jsonData = request.get_json()
+#     pvname = jsonData['pvname']
+#     field = jsonData['field']
+#     value = jsonData['value']
+
+#     if field == 'pvname':
+#         result = sql.updateAlarmFieldStr(pvname, field, value)
+#         if result == 'OK':
+#             sql.insertAlarmLog(pvname, 'Update PV name to %s' % (value))
+
+#     elif field == 'description' or field == 'value':
+#         result = sql.updateAlarmFieldStr(pvname, field, value)
+
+#     elif field == 'state':
+#         result = sql.updateAlarmFieldStr(pvname, field, value)
+#         if result == 'OK':
+#             restartMonitoring(pvname)
+#             sql.insertAlarmLog(pvname, 'Change alarm state to %s' % (value))
+
+#     elif field == 'operator' or field == 'repetation' or field == 'delay':
+#         value = int(value)
+#         result = sql.updateAlarmFieldInt(pvname, field, value)
+#         if result == 'OK':
+#             sql.insertAlarmLog(pvname, 'Change condition to %s' % (value))
+
+#     elif field == 'activation':
+#         value = bool(value)
+#         result = sql.updateAlarmFieldInt(pvname, field, value)
+#         if result == 'OK':
+#             # if value:
+#             #     startMonitoring(pvname)
+#             # else:
+#             #     stopMonitoring(pvname)
+
+#             sql.insertAlarmLog(pvname, 'Change activation to %s' % (value))
+
+#     else:
+#         result = 'Field name error'
+
+#     if result != 'OK':
+#         message = '(updateAlarmField) pvname:%s, field:%s, value:%s' % (pvname, field, value) 
+#         clue.writeErrorLog(message, result)
+#     else:
+#         global main_loop
+#         brocast_data = {'pvname':pvname, 'field':field, 'value':value}
+#         main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
+
+#     return result
 
 @app.route('/smsInfoUpdate', methods=['POST'])
 def setSMSInfoUpdate():
@@ -348,62 +354,133 @@ def setSMSInfoUpdate():
     result = sql.updateSMSFieldInt(phone, pvname, field, value)
     
     if result != 'OK':
-        message = '(smsInfoUpdate) %s %' % (jsonData)
-        clue.writeErrorLog(message, result)
-    else:
-        global main_loop
-        brocast_data = {'phone': phone, 'pvname':pvname, 'field':field, 'value':value}
-        main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
+        message = f'{request.remote_addr} [ERROR] {result} (smsInfoUpdate) {jsonData}'
+        clue.writeMessageLog(message)
+        clue.printConsole(message)
+        return result
+
+    sql.insertAlarmLog(pvname, 'Update sms info')
+
+    message = f'{request.remote_addr} [MESSAGE] (smsInfoUpdate) update sms info {jsonData}'
+    clue.writeMessageLog(message)
+    clue.printConsole(message)
+
+    global main_loop
+    brocast_data = {'phone': phone, 'pvname':pvname, 'field':field, 'value':value}
+    main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
 
     return result
 
-@app.route('/get', methods=['GET'])
-def getData():
-    result = sql.getAlarmList()
+# @app.route('/get', methods=['GET'])
+# def getData():
+#     result = sql.getAlarmList()
 
-    return json.dumps(result, ensure_ascii=False)
+#     return json.dumps(result, ensure_ascii=False)
 
 
-@app.route('/clear', methods=['POST'])
-def clearAlarm():
-    sql.clearAlarm()
+# @app.route('/clear', methods=['POST'])
+# def clearAlarm():
+#     sql.clearAlarm()
 
-    for x in channelList:
-        x.alarmInfo['state'] = 'normal'
+#     for x in channelList:
+#         x.alarmInfo['state'] = 'normal'
 
-    return "OK"
+#     return "OK"
 
 @app.route('/getAlarmListAll', methods=['GET'])
 def getAlarmListAll():
-    result = sql.getAlarmListAll()
+    result, data = sql.getAlarmListAll()
 
-    return json.dumps(result, ensure_ascii=False)
+    if result != 'OK':
+        message = f'{request.remote_addr} [ERROR] {result} (getAlarmListAll) {data}'
+        clue.writeMessageLog(message)
+        clue.printConsole(message)
+        return result
+
+    message = f'{request.remote_addr} [MESSAGE] (getAlarmListAll) get alarm list all'
+    clue.writeMessageLog(message)
+    clue.printConsole(message)
+
+    return json.dumps(data, ensure_ascii=False)
 
 @app.route('/getAlarmStateAll', methods=['GET'])
 def getAlarmStateAll():
-    result = sql.getAlarmStateAll()
+    result, data = sql.getAlarmStateAll()
 
-    return json.dumps(result, ensure_ascii=False)
+    if result != 'OK':
+        message = f'{request.remote_addr} [ERROR] {result} (getAlarmStateAll) {data}'
+        # clue.writeMessageLog(message)
+        # clue.printConsole(message)
+        return result
+    
+    message = f'{request.remote_addr} [MESSAGE] (getAlarmStateAll) get alarm state all'
+    # clue.writeMessageLog(message)
+    # clue.printConsole(message)
+
+    return json.dumps(data, ensure_ascii=False)
 
 @app.route('/getConnectionStateAll', methods=['GET'])
 def getConnectionStateAll():
-    result = connectionStateAll()
+    data = connectionStateAll()
 
-    return json.dumps(result, ensure_ascii=False)
+    return json.dumps(data, ensure_ascii=False)
+
+@app.route('/getAlarmListFromPV/<pvname>', methods=['GET'])
+def getAlarmListFromPV(pvname):
+    sqlWildcardString = pvname.replace('*', '%')
+    result, data = sql.getAlarmListFromPV(sqlWildcardString)
+
+    if result != 'OK':
+        message = f'{request.remote_addr} [ERROR] {result} (getAlarmListFromPV) {data}'
+        clue.writeMessageLog(message)
+        clue.printConsole(message)
+
+        return result
+        
+    message = f'{request.remote_addr} [MESSAGE] (getAlarmListFromPV) get alarm list from pv {pvname}'
+    clue.writeMessageLog(message)
+    clue.printConsole(message)
+
+    return json.dumps(data, ensure_ascii=False)
+
+@app.route('/getAlarmListFromPhone/<phone>', methods=['GET'])
+def getAlarmListFromPhone(phone):
+    # sqlWildcardString = phone.replace('*', '%')
+    result, data = sql.getAlarmListFromPhone(phone)
+
+    if result != 'OK':
+        message = f'{request.remote_addr} [ERROR] {result} (getAlarmListFromPhone) {data}'
+        clue.writeMessageLog(message)
+        clue.printConsole(message)
+
+        return result
+
+    message = f'{request.remote_addr} [MESSAGE] (getAlarmListFromPhone) get alarm list from phone {phone}'
+    clue.writeMessageLog(message)
+    clue.printConsole(message)
+
+    return json.dumps(data, ensure_ascii=False)
 
 @app.route('/deleteAlarmInfo/<pvname>', methods=['GET'])
 def deleteAlarmInfo(pvname):
     result  = sql.deleteAlarmInfo(pvname)
     
-    if result == 'OK':
-        deleteMonitoring(pvname)
-        sql.insertAlarmLog(pvname, 'Delete alarm monitoring')
+    if result != 'OK':
+        message = f'{request.remote_addr} [ERROR] {result} (deleteAlarmInfo) {pvname}'
+        clue.writeMessageLog(message)
+        clue.printConsole(message)
+        return result
 
-        global main_loop
-        brocast_data = {'pvname':pvname, 'field':'delete'}
-        main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
-    else:
-        clue.writeErrorLog(result)
+    deleteMonitoring(pvname)
+    sql.insertAlarmLog(pvname, 'Delete alarm monitoring')
+
+    message = f'{request.remote_addr} [MESSAGE] (deleteAlarmInfo) delete alarm monitoring {pvname}'
+    clue.writeMessageLog(message)
+    clue.printConsole(message)
+
+    global main_loop
+    brocast_data = {'pvname':pvname, 'field':'delete'}
+    main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
 
     return result
 
@@ -414,13 +491,20 @@ def deleteSMSInfo():
     pvname = jsonData['pvname']
     result = sql.deleteSMSList(phone, pvname)
 
-    if result == 'OK':
-        global main_loop
-        brocast_data = {'phone':phone, 'pvname':pvname, 'field':'delete'}
-        main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
-    else:
-        clue.writeErrorLog(result)
+    if result != 'OK':
+        message = f'{request.remote_addr} [ERROR] {result} (deleteSMSInfo) {pvname}'
+        clue.writeMessageLog(message)
+        clue.printConsole(message)
+        return result
 
+    message = f'{request.remote_addr} [MESSAGE] (deleteSMSInfo) delete sms info {pvname}'
+    clue.writeMessageLog(message)
+    clue.printConsole(message)
+
+    global main_loop
+    brocast_data = {'phone':phone, 'pvname':pvname, 'field':'delete'}
+    main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
+    
     return result
 
 def run_flask():
@@ -436,8 +520,9 @@ def waitConnection(q):
     while not ser.is_open:
         try:
             ser.open()
-            clue.writeErrorLog('connection open')
-            clue.printConsole('serial', 'connection open')
+            message = f'[SERIAL] connection open {PORT}'
+            clue.writeMessageLog(message)
+            clue.printConsole(message)
 
             # throw away queue data
             while not q.empty():
@@ -455,16 +540,19 @@ def sendMessage(q):
             data = q.get(block=False)
             if ser.is_open:
                 ser.write(data.encode('utf-8') + b'\r\n')
-                print('sned data: ' + data)
+                message = f'[SERIAL] transmit alarm data {data}'
+                clue.writeMessageLog(message)
+                clue.printConsole(message)
 
         except queue.Empty:
             pass
 
         except serial.SerialException as e:
             ser.close()
-            print(e)
-            clue.writeErrorLog('connection lost', str(e))
-            clue.printConsole('serial','connection lost')
+            message = f'[SERIAL] connection lost, {e}'
+            clue.writeMessageLog(message)
+            clue.printConsole(message)
+            
             waitConnection(q)
 
         time.sleep(0.1)

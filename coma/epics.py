@@ -64,12 +64,14 @@ class ChannelMonitor:
         
             repeatTime = int(alarmInfo['repetation'])
             if repeatTime == 0:
-                clue.printConsole(pvNmae, 'already alarm raised no repeat')
+                message = f'[EPICS] already alarm raised no repeat {pvName}'
+                # clue.printConsole(message)
                 return
             
             self.channel.stopMonitor()
 
-            clue.printConsole(pvNmae, 'start repeat loop')
+            message = f'[EPICS] start repeat loop {pvName}'
+            # clue.printConsole(message)
             self.timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeatTime])
             self.timer.start()
             return
@@ -95,10 +97,12 @@ class ChannelMonitor:
  
         # just ignore when alarm conditions are not met
         if not result:
-            clue.printConsole(pvNmae, 'no alarm')
+            message = f'[EPICS] alarm conditions are not met {pvName}'
+            # clue.printConsole(message)
             return
         
-        clue.printConsole(pvNmae, 'stop monitoring and start delay timer')
+        message = f'[EPICS] stop monitoring and start delay timer {pvName}'
+        # clue.printConsole(message)
 
         self.channel.stopMonitor()
         delayTime = int(alarmInfo['delay'])
@@ -110,7 +114,8 @@ class ChannelMonitor:
         pvName = alarmInfo['pvname']
 
         if self.channel.isConnected() == False:
-            clue.printConsole(pvName, 'channel disconnected')
+            message = f'[EPICS] channel disconnected {pvName}'
+            clue.printConsole(message)
             self.channel.startMonitor()
             return
         
@@ -125,23 +130,30 @@ class ChannelMonitor:
             self.updateAlarmFieldStr(pvName, 'state', 'alarm')
             self.writeAlarmLog(pvName, 'alarm raised')
             
+            message = f'[EPICS] alarm raised {pvNmae}'
+            clue.printConsole(message)
+            clue.writeMessageLog(message)
             # message = {"desc":alarmInfo['description'], "value":alarmInfo['value'], "list":alarmInfo['sms']}
-            message = {"desc":alarmInfo['description'], "value":str(pvValue), "list":alarmInfo['sms']}
+            txMessage = {"desc":alarmInfo['description'], "value":str(pvValue), "list":alarmInfo['sms']}
 
-            self.messageQueue.put(str(message))
+            self.messageQueue.put(str(txMessage))
             self.writeAlarmLog(pvName, 'send alarm message')
 
-            clue.printConsole(pvName, 'alarm raised')
+            # clue.printConsole(pvName, 'alarm raised')
         else:
-            clue.printConsole(pvName, 'alarm delay overtime')
+            message = f'[EPICS] alarm delay overtime {pvName}'
+            # clue.printConsole(message)
 
         self.channel.startMonitor()
-        clue.printConsole(pvName, 'restart monitoring')
+
+        message = f'[EPICS] restart monitoring {pvNmae}'
+        # clue.printConsole(message)
 
     def alarmRepeat(self, repeatTime):
 
         if not self.channel.isConnected():
-            clue.printConsole(self.pvname, 'channel disconnected')
+            message = f'[EPICS] channel disconnected {pvName}'
+            clue.printConsole(message)
             # self.channel.startMonitor()
             return
 
@@ -156,21 +168,26 @@ class ChannelMonitor:
         self.timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeat])
         self.timer.start()
 
+        message = f'[EPICS] start repeat {pvNmae}'
+        # clue.printConsole(message)
+
         if alarmState == 'alarm' and alarmActivation:
             # message = {"desc":alarmInfo['description'], "value":alarmInfo['value'], "list":alarmInfo['sms']}
-            message = {"desc":alarmInfo['description'], "value":str(pvValue), "list":alarmInfo['sms']}
+            txMessage = {"desc":alarmInfo['description'], "value":str(pvValue), "list":alarmInfo['sms']}
 
-            self.messageQueue.put(str(message))
+            self.messageQueue.put(str(txMessage))
             self.writeAlarmLog(pvName, 'send alarm message')
 
         if alarmState == 'normal' or repeat == 0:
             self.timer.cancel()
             self.channel.startMonitor()
 
-            clue.printConsole(pvName, 'stop alarm repeat and start monitoring')
+            message = f'[EPICS] stop alarm repeat and start monitoring {pvName}'
+            clue.printConsole(message)
 
     def updateAlarmFieldStr(self, pvname, field, value):
-        sql.updateAlarmFieldStr(pvname, field, value)
+        result = sql.updateAlarmFieldStr(pvname, field, value)
+        return result
 
     def writeAlarmLog(self, pvname, log):
         sql.insertAlarmLog(pvname, log)
