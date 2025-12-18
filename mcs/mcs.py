@@ -28,6 +28,6 @@ def sendMMS(user, message):
 def test(user, message):
     dest_info = 'COMA^' + user
     query = f'INSERT INTO sdk_mms_send(USER_ID,SCHEDULE_TYPE,SUBJECT,NOW_DATE,SEND_DATE,CALLBACK,DEST_COUNT,DEST_INFO,MSG_TYPE,MMS_MSG,CONTENT_COUNT,CONTENT_DATA) values("raon",0,"Control Message Alarm",DATE_FORMAT(NOW(),"%Y%m%d%H%i%s"),DATE_FORMAT(NOW(),"%Y%m%d%H%i%s"),"0428788831",1,"{dest_info}",0,"{message}",0,"")'
-    print(datetime.datetime.now(), message)
+    # print(datetime.datetime.now(), message)
 
     return True
