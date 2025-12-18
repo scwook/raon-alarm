@@ -254,7 +254,7 @@ if __name__ == '__main__':
 
                     try:
                         # result = mcs.sendMMS(user, mmsMessage)
-                        result = mcs.test(user, message)
+                        result = mcs.test(user, mmsMessage)
 
                         if result:
                             message = f'{pvname} {user} request message send to mms server'
