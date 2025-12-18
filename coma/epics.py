@@ -42,14 +42,23 @@ class ChannelMonitor:
 
     def alarmMonitor(self, channelData):
         recordData = dict(channelData)
-        alarmInfo = sql.getAlarmListFromPV(self.channel.getName())[0]
+        # result, alarmInfo = sql.getAlarmListFromPV(self.channel.getName())[0]
+        result, alarmInfo = sql.getAlarmListFromPV(self.channel.getName())
+
+        if result != 'OK':
+            message = f'[EPICS] (alarmMonitor) query error from DB {self.channel.getName()}'
+            clue.writeMessageLog(message)
+            clue.printConsole(message)
+            return
+
+        alarmInfo = alarmInfo[0]
         alarmState = alarmInfo['state']
         # alarmActivation = alarmInfo['activation']
-        pvNmae = alarmInfo['pvname']
+        pvName = alarmInfo['pvname']
 
         # in case of alarm activation value 0, not going to alarm sequence
         # if not alarmActivation:
-            # clue.printConsole(pvNmae, 'alarm activation fasle')
+            # clue.printConsole(pvName, 'alarm activation fasle')
             # return
         
         ######################################################################################
@@ -130,7 +139,7 @@ class ChannelMonitor:
             self.updateAlarmFieldStr(pvName, 'state', 'alarm')
             self.writeAlarmLog(pvName, 'alarm raised')
             
-            message = f'[EPICS] alarm raised {pvNmae}'
+            message = f'[EPICS] alarm raised {pvName}'
             clue.printConsole(message)
             clue.writeMessageLog(message)
             # message = {"desc":alarmInfo['description'], "value":alarmInfo['value'], "list":alarmInfo['sms']}
@@ -146,29 +155,29 @@ class ChannelMonitor:
 
         self.channel.startMonitor()
 
-        message = f'[EPICS] restart monitoring {pvNmae}'
+        message = f'[EPICS] restart monitoring {pvName}'
         # clue.printConsole(message)
 
     def alarmRepeat(self, repeatTime):
 
         if not self.channel.isConnected():
-            message = f'[EPICS] channel disconnected {pvName}'
+            message = f'[EPICS] channel disconnected {self.pvName}'
             clue.printConsole(message)
             # self.channel.startMonitor()
             return
 
-        alarmInfo = sql.getAlarmListFromPV(self.channel.getName())[0]
+        result, alarmInfo = sql.getAlarmListFromPV(self.channel.getName())
+        alarmInfo = alarmInfo[0]
         pvName = alarmInfo['pvname']
         pvValue = self.channel.get().toDict()['value']
         alarmState = alarmInfo['state']
         alarmActivation = alarmInfo['activation']
         repeat = alarmInfo['repetation']
 
-        clue.printConsole(pvName, 'start repeat')
         self.timer = threading.Timer(repeatTime, self.alarmRepeat, args=[repeat])
         self.timer.start()
 
-        message = f'[EPICS] start repeat {pvNmae}'
+        message = f'[EPICS] start repeat {pvName}'
         # clue.printConsole(message)
 
         if alarmState == 'alarm' and alarmActivation:
@@ -176,7 +185,7 @@ class ChannelMonitor:
             txMessage = {"desc":alarmInfo['description'], "value":str(pvValue), "list":alarmInfo['sms']}
 
             self.messageQueue.put(str(txMessage))
-            self.writeAlarmLog(pvName, 'send alarm message')
+            # self.writeAlarmLog(pvName, 'send alarm message')
 
         if alarmState == 'normal' or repeat == 0:
             self.timer.cancel()

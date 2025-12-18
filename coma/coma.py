@@ -6,6 +6,7 @@ import queue
 import logging
 import asyncio
 import threading
+import os
 
 # extenstion library
 import json
@@ -22,6 +23,9 @@ import clue
 
 # websocket librarys
 import websockets
+
+os.environ['EPICS_CA_ADDR_LIST'] = '192.168.131.27'
+os.environ['EPICS_CA_AUTO_ADDR_LIST'] = 'no'
 
 # SERVER_ADDR = 'localhost'
 SERVER_ADDR = '192.168.131.194'
@@ -196,7 +200,7 @@ def updateAlarmInfo():
 
     result = checkInvalidValue(jsonData)
     if result != 'OK':
-        message = f'{request.remote_addr} [ERROR] {result} (updateAlarmInfo) {jsonData}'
+        message = f'{request.remote_addr} [ERROR] (updateAlarmInfo) {result} {jsonData}'
         # clue.writeErrorLog(message, result)
         clue.writeMessageLog(message)
         clue.printConsole(message)
@@ -214,7 +218,7 @@ def updateAlarmInfo():
 
     result = sql.updateAlarmInfo(recordData)
     if result != 'OK':
-        message = f'{request.remote_addr} [ERROR] {result} (updateAlarmInfo) {jsonData}'
+        message = f'{request.remote_addr} [ERROR] (updateAlarmInfo) {result} {jsonData}'
         clue.writeMessageLog(message)
         clue.printConsole(message)
         return result
@@ -250,7 +254,7 @@ def insertAlarmInfo():
     if result != 'OK':
         # message = '(insertAlarmInfo) %s' % (jsonData)
         # clue.writeErrorLog(message, result)
-        message = f'{request.remote_addr} [ERROR] {result} (insertAlarmInfo) {jsonData}'
+        message = f'{request.remote_addr} [ERROR] (insertAlarmInfo) {result} {jsonData}'
         clue.writeMessageLog(message)
         clue.printConsole(message)
         return 'Invalid Value'
@@ -354,7 +358,7 @@ def setSMSInfoUpdate():
     result = sql.updateSMSFieldInt(phone, pvname, field, value)
     
     if result != 'OK':
-        message = f'{request.remote_addr} [ERROR] {result} (smsInfoUpdate) {jsonData}'
+        message = f'{request.remote_addr} [ERROR] (smsInfoUpdate) {jsonData}'
         clue.writeMessageLog(message)
         clue.printConsole(message)
         return result
@@ -392,7 +396,7 @@ def getAlarmListAll():
     result, data = sql.getAlarmListAll()
 
     if result != 'OK':
-        message = f'{request.remote_addr} [ERROR] {result} (getAlarmListAll) {data}'
+        message = f'{request.remote_addr} [ERROR] (getAlarmListAll) {data}'
         clue.writeMessageLog(message)
         clue.printConsole(message)
         return result
@@ -408,7 +412,7 @@ def getAlarmStateAll():
     result, data = sql.getAlarmStateAll()
 
     if result != 'OK':
-        message = f'{request.remote_addr} [ERROR] {result} (getAlarmStateAll) {data}'
+        message = f'{request.remote_addr} [ERROR] (getAlarmStateAll) {data}'
         # clue.writeMessageLog(message)
         # clue.printConsole(message)
         return result
@@ -431,7 +435,7 @@ def getAlarmListFromPV(pvname):
     result, data = sql.getAlarmListFromPV(sqlWildcardString)
 
     if result != 'OK':
-        message = f'{request.remote_addr} [ERROR] {result} (getAlarmListFromPV) {data}'
+        message = f'{request.remote_addr} [ERROR] (getAlarmListFromPV) {data}'
         clue.writeMessageLog(message)
         clue.printConsole(message)
 
@@ -449,7 +453,7 @@ def getAlarmListFromPhone(phone):
     result, data = sql.getAlarmListFromPhone(phone)
 
     if result != 'OK':
-        message = f'{request.remote_addr} [ERROR] {result} (getAlarmListFromPhone) {data}'
+        message = f'{request.remote_addr} [ERROR] (getAlarmListFromPhone) {data}'
         clue.writeMessageLog(message)
         clue.printConsole(message)
 
@@ -466,7 +470,7 @@ def deleteAlarmInfo(pvname):
     result  = sql.deleteAlarmInfo(pvname)
     
     if result != 'OK':
-        message = f'{request.remote_addr} [ERROR] {result} (deleteAlarmInfo) {pvname}'
+        message = f'{request.remote_addr} [ERROR] (deleteAlarmInfo) {pvname}'
         clue.writeMessageLog(message)
         clue.printConsole(message)
         return result
@@ -492,7 +496,7 @@ def deleteSMSInfo():
     result = sql.deleteSMSList(phone, pvname)
 
     if result != 'OK':
-        message = f'{request.remote_addr} [ERROR] {result} (deleteSMSInfo) {pvname}'
+        message = f'{request.remote_addr} [ERROR] (deleteSMSInfo) {pvname}'
         clue.writeMessageLog(message)
         clue.printConsole(message)
         return result
@@ -552,7 +556,7 @@ def sendMessage(q):
             message = f'[SERIAL] connection lost, {e}'
             clue.writeMessageLog(message)
             clue.printConsole(message)
-            
+
             waitConnection(q)
 
         time.sleep(0.1)
@@ -561,7 +565,13 @@ def sendMessage(q):
 # Main Loop
 # --------------------------
 if __name__ == "__main__":
-    for alarmlist in sql.getAlarmList():
+    result, data = sql.getAlarmListAll()
+    
+    if result != 'OK':
+        clue.printConsole(f'[ERROR] cannot get data from DB {data}')
+        sys.exit(1)
+
+    for alarmlist in data:
         channelList.append(epics.ChannelMonitor(alarmlist['pvname'], q))
 
     for channelMonitor in channelList:
