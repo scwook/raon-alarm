@@ -1,0 +1,1 @@
+{'timestamp':'10:30:00', 'desc': 'COMA BEACON', 'value': '0', 'list': [{'phone': '01048792718', 'pvname': 'scwook', 'activation': 1}]}

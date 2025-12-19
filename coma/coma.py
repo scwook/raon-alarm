@@ -7,6 +7,8 @@ import logging
 import asyncio
 import threading
 import os
+import ast
+from datetime import datetime
 
 # extenstion library
 import json
@@ -24,7 +26,12 @@ import clue
 # websocket librarys
 import websockets
 
-os.environ['EPICS_CA_ADDR_LIST'] = '192.168.131.27'
+# EPICS Addr list
+kobra_addr = '192.168.131.27'
+ndps_addr = '192.168.135.27'
+cls_addr = '192.168.150.197'
+addr_list = f'{kobra_addr} {ndps_addr} {cls_addr}'
+os.environ['EPICS_CA_ADDR_LIST'] = addr_list
 os.environ['EPICS_CA_AUTO_ADDR_LIST'] = 'no'
 
 # SERVER_ADDR = 'localhost'
@@ -296,56 +303,56 @@ def insertAlarmInfo():
 
     return result
 
-# @app.route('/updateAlarmField', methods=['POST'])
-# def setUpdateAlarmField():
-#     jsonData = request.get_json()
-#     pvname = jsonData['pvname']
-#     field = jsonData['field']
-#     value = jsonData['value']
+@app.route('/updateAlarmField', methods=['POST'])
+def setUpdateAlarmField():
+    jsonData = request.get_json()
+    pvname = jsonData['pvname']
+    field = jsonData['field']
+    value = jsonData['value']
 
-#     if field == 'pvname':
-#         result = sql.updateAlarmFieldStr(pvname, field, value)
-#         if result == 'OK':
-#             sql.insertAlarmLog(pvname, 'Update PV name to %s' % (value))
+    if field == 'pvname':
+        result = sql.updateAlarmFieldStr(pvname, field, value)
+        if result == 'OK':
+            sql.insertAlarmLog(pvname, 'Update PV name to %s' % (value))
 
-#     elif field == 'description' or field == 'value':
-#         result = sql.updateAlarmFieldStr(pvname, field, value)
+    elif field == 'description' or field == 'value':
+        result = sql.updateAlarmFieldStr(pvname, field, value)
 
-#     elif field == 'state':
-#         result = sql.updateAlarmFieldStr(pvname, field, value)
-#         if result == 'OK':
-#             restartMonitoring(pvname)
-#             sql.insertAlarmLog(pvname, 'Change alarm state to %s' % (value))
+    elif field == 'state':
+        result = sql.updateAlarmFieldStr(pvname, field, value)
+        if result == 'OK':
+            restartMonitoring(pvname)
+            sql.insertAlarmLog(pvname, 'Change alarm state to %s' % (value))
 
-#     elif field == 'operator' or field == 'repetation' or field == 'delay':
-#         value = int(value)
-#         result = sql.updateAlarmFieldInt(pvname, field, value)
-#         if result == 'OK':
-#             sql.insertAlarmLog(pvname, 'Change condition to %s' % (value))
+    elif field == 'operator' or field == 'repetation' or field == 'delay':
+        value = int(value)
+        result = sql.updateAlarmFieldInt(pvname, field, value)
+        if result == 'OK':
+            sql.insertAlarmLog(pvname, 'Change condition to %s' % (value))
 
-#     elif field == 'activation':
-#         value = bool(value)
-#         result = sql.updateAlarmFieldInt(pvname, field, value)
-#         if result == 'OK':
-#             # if value:
-#             #     startMonitoring(pvname)
-#             # else:
-#             #     stopMonitoring(pvname)
+    elif field == 'activation':
+        value = bool(value)
+        result = sql.updateAlarmFieldInt(pvname, field, value)
+        if result == 'OK':
+            # if value:
+            #     startMonitoring(pvname)
+            # else:
+            #     stopMonitoring(pvname)
 
-#             sql.insertAlarmLog(pvname, 'Change activation to %s' % (value))
+            sql.insertAlarmLog(pvname, 'Change activation to %s' % (value))
 
-#     else:
-#         result = 'Field name error'
+    else:
+        result = 'Field name error'
 
-#     if result != 'OK':
-#         message = '(updateAlarmField) pvname:%s, field:%s, value:%s' % (pvname, field, value) 
-#         clue.writeErrorLog(message, result)
-#     else:
-#         global main_loop
-#         brocast_data = {'pvname':pvname, 'field':field, 'value':value}
-#         main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
+    if result != 'OK':
+        message = '(updateAlarmField) pvname:%s, field:%s, value:%s' % (pvname, field, value) 
+        clue.writeErrorLog(message, result)
+    else:
+        global main_loop
+        brocast_data = {'pvname':pvname, 'field':field, 'value':value}
+        main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
 
-#     return result
+    return result
 
 @app.route('/smsInfoUpdate', methods=['POST'])
 def setSMSInfoUpdate():
@@ -562,6 +569,48 @@ def sendMessage(q):
         time.sleep(0.1)
 
 # --------------------------
+# Management
+# --------------------------
+def management():
+    # management_time = datetime.now().replace(hour=9, minute=30, second=0, microsecond=0)
+    management_send = False
+    midnight = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+
+    while True:
+        with open("manage.txt", "r", encoding="utf-8") as file:
+            text = file.read().strip()
+
+        if not text:
+            pass
+        else:
+            try:
+                data = ast.literal_eval(text)
+                send_time = datetime.strptime(data.get("timestamp"), "%H:%M:%S").time()
+                send_sec = int(send_time.hour * 3600 + send_time.minute * 60 + send_time.second)
+
+                now = datetime.now()
+                now_sec = int((now - midnight).total_seconds())
+                
+                print(midnight, now_sec, send_sec, management_send)
+
+                if now_sec >= send_sec and not management_send:
+                    ser.write(text.encode('utf-8') + b'\r\n')
+                    management_send = True
+
+                if now_sec < send_sec:
+                    management_send = False
+
+            except (ValueError, SyntaxError):
+                pass
+
+        # now = datetime.now()
+        # now_sec = int((now - midnight).total_seconds())
+        # management_sec = int((management_time - midnight).total_seconds())
+
+        
+
+        time.sleep(60)
+# --------------------------
 # Main Loop
 # --------------------------
 if __name__ == "__main__":
@@ -588,6 +637,9 @@ if __name__ == "__main__":
     # crate main event loop
     main_loop = asyncio.new_event_loop()
     asyncio.set_event_loop(main_loop)
+
+    # management message send thread
+    threading.Thread(target=management, daemon=True).start()
 
     # flask thread
     threading.Thread(target=run_flask, daemon=True).start()
