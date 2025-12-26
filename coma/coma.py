@@ -574,7 +574,6 @@ def sendMessage(q):
 def management():
     # management_time = datetime.now().replace(hour=9, minute=30, second=0, microsecond=0)
     management_send = False
-    midnight = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
     while True:
         with open("manage.txt", "r", encoding="utf-8") as file:
@@ -587,6 +586,7 @@ def management():
                 data = ast.literal_eval(text)
                 send_time = datetime.strptime(data.get("timestamp"), "%H:%M:%S").time()
                 send_sec = int(send_time.hour * 3600 + send_time.minute * 60 + send_time.second)
+                midnight = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
                 now = datetime.now()
                 now_sec = int((now - midnight).total_seconds())
