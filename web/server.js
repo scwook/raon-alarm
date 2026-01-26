@@ -14,10 +14,10 @@ ws.onopen = () => {
 
 ws.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    console.log(data);
+    // console.log(data);
 
     let field = data['field'];
-    switch(field) {
+    switch (field) {
         case 'activation':
             applyActivationState(data);
             break;
@@ -33,11 +33,11 @@ ws.onmessage = (event) => {
         case 'update':
             applyUpdateAlarmInfo(data);
             break;
-            
+
         default:
             console.log('unknown');
     }
-    
+
 };
 
 ws.onclose = () => {
@@ -90,7 +90,7 @@ function getAlarmDataFromPVName(pvname) {
     url = wasEndPoint + '/getAlarmListFromPV/' + pvname;
     fetch(url)
         .then(res => res.json())
-        .then(data => { 
+        .then(data => {
             console.log(data[0]);
             updateAlarmConfigurationDialog(data[0]);
         })
@@ -124,7 +124,7 @@ function updateAlarmInfo(sendData) {
             body: JSON.stringify(sendData)
         })
         .then(res => res.text())
-        .then(data => {} )
+        .then(data => { })
         .catch(err => console.log("Fetch error: " + err));
 }
 
@@ -138,13 +138,13 @@ function updateAlarmField(pvname, field, value) {
             body: JSON.stringify(sendData)
         })
         .then(res => res.text())
-        .then(data => { })
+        .then(data => {})
         .catch(err => console.log("Fetch error: " + err));
 }
 
 function deleteSMSInfo(phone, pvname) {
     url = wasEndPoint + '/deleteSMSInfo';
-    sendData = { 'phone':phone, 'pvname': pvname};
+    sendData = { 'phone': phone, 'pvname': pvname };
     fetch(url,
         {
             method: 'POST',

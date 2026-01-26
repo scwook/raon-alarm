@@ -136,7 +136,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: left;
-    flex: 3;
+    flex: 4;
 }
 
 #title-value,
@@ -152,8 +152,9 @@ body {
 
 #title-phone,
 #title-edit,
-#title-delete,
-#title-clear {
+#title-clear,
+#title-delete
+ {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -236,7 +237,7 @@ input:checked+.activationToggelButton::before {
     justify-content: left;
     color: var(--color-ioc-disconnection);
     font-size: 24px;
-    flex: 3;
+    flex: 4;
 }
 
 .alarmValue {

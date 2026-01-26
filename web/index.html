@@ -68,7 +68,7 @@
         <div id="title-activation"></div>
         <div id="title-pvname">Process Variable</div>
         <div id="title-value">Value</div>
-        <div id="title-condition">Condition</div>
+        <div id="title-condition">condition</div>
         <div id="title-status">Status</div>
         <div id="title-delay">Delay</div>
         <div id="title-repetation">Repetation</div>
@@ -76,11 +76,11 @@
         <div id="title-edit">Edit</div>
         <div id="title-clear">Clear</div>
         <div id="title-delete">Delete</div>
-
     </div>
-    <!-- This is example data for test -->
+
     <div id="alarm-list-container">
-        <div class="alarmItem">
+        <!-- This is example data for test -->
+        <!-- <div class="alarmItem">
             <div class="alarmInfo">
                 <div class="alarmActivation"></div>
                 <div class="alarmPVName">SYS-SUBSYS:DEV-SUBDEV:Signal</div>
@@ -107,6 +107,14 @@
                             d="M0,25.01v4.42c0,.44.48.72.86.5l3.83-2.21c.17-.1.32-.24.42-.42L16.39,7.75l-4.95-2.86L.15,24.44c-.1.17-.15.37-.15.57Z" />
                         <path class="icon-fill"
                             d="M17.34.38c-1.37-.79-3.12-.32-3.9,1.05l-1.43,2.48,4.95,2.86,1.43-2.48c.79-1.37.32-3.12-1.05-3.9Z" />
+                    </svg>
+                </div>
+                <div class="alarmClear">
+                    <svg class="svgIcon" width="30" height="30">
+                        <path class="icon-fill"
+                            d="M23.11,12.58l-2.86-1.65,4.62-8c.54-.93.22-2.13-.71-2.67-.94-.54-2.13-.22-2.67.71l-4.62,8-2.85-1.65c-2.33-1.35-5.32-.55-6.67,1.79l-.09.16,17.54,10.13.09-.16c1.35-2.33.55-5.32-1.79-6.67Z" />
+                        <path class="icon-fill"
+                            d="M22.21,20.23L7.7,11.85c-.84-.48-1.9-.31-2.54.42L.25,17.85c-.42.48-.3,1.23.25,1.55l4.93,2.84,4.57-5.09-2.12,6.5,10.76,6.21c.52.3,1.18.09,1.43-.46l2.97-6.58c.43-.95.07-2.07-.84-2.59Z" />
                     </svg>
                 </div>
                 <div class="alarmDelete">
@@ -152,7 +160,7 @@
                     </svg>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <!-- New Alarm Form -->
@@ -204,7 +212,7 @@
                     <div class="configFormChildItem">
                         <select id="config-repetation" name="repetation" style="width: 80px; margin-right: 0px;">
                             <option value="0" selected="selected">No</option>
-                            <option value="1">1m</option>
+                            <!-- <option value="1">1m</option> -->
                             <option value="5">5m</option>
                             <option value="10">10m</option>
                             <option value="30">30m</option>
@@ -255,7 +263,6 @@
 </body>
 <script>
 
-    // getAlarmListAll();
     makeAlarmList();
     setInterval(monitoringAlarmState, 2000);
     setInterval(monitoringConnectionState, 2000);

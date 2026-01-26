@@ -29,7 +29,7 @@ import websockets
 # EPICS Addr list
 kobra_addr = '192.168.131.27'
 ndps_addr = '192.168.135.27'
-cls_addr = '192.168.150.197'
+cls_addr = '192.168.150.30'
 addr_list = f'{kobra_addr} {ndps_addr} {cls_addr}'
 os.environ['EPICS_CA_ADDR_LIST'] = addr_list
 os.environ['EPICS_CA_AUTO_ADDR_LIST'] = 'no'
@@ -154,8 +154,8 @@ def checkInvalidValue(data):
         return e
 
 def checkPVName(pvname):
-    result = sql.getAlarmListFromPV(pvname)
-    if len(result):
+    result, data = sql.getAlarmListFromPV(pvname)
+    if len(data):
         return False
 
     return True
@@ -250,6 +250,7 @@ def insertAlarmInfo():
 
     pvname = jsonData['pvname'].strip()
     result = checkPVName(pvname)
+
     if not result:
         message = f'{request.remote_addr} [ERROR] pv already exists (insertAlarmInfo) {jsonData}'
         clue.writeMessageLog(message)
@@ -342,15 +343,25 @@ def setUpdateAlarmField():
             sql.insertAlarmLog(pvname, 'Change activation to %s' % (value))
 
     else:
-        result = 'Field name error'
+        return 'Field name error'
 
     if result != 'OK':
-        message = '(updateAlarmField) pvname:%s, field:%s, value:%s' % (pvname, field, value) 
-        clue.writeErrorLog(message, result)
-    else:
-        global main_loop
-        brocast_data = {'pvname':pvname, 'field':field, 'value':value}
-        main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
+        message = f'{request.remote_addr} [ERROR] {result} (updateAlarField) {jsonData}'
+        clue.writeMessageLog(message)
+        clue.printConsole(message)
+
+        return 'Database update error'
+        # message = '(updateAlarmField) pvname:%s, field:%s, value:%s' % (pvname, field, value) 
+        # clue.writeErrorLog(message, result)
+    
+    
+    message = f'{request.remote_addr} [MESSAGE] (updateAlarField) {jsonData}'
+    clue.writeMessageLog(message)
+    clue.printConsole(message)
+    
+    global main_loop
+    brocast_data = {'pvname':pvname, 'field':field, 'value':value}
+    main_loop.call_soon_threadsafe(asyncio.create_task, ws_broadcast(brocast_data))
 
     return result
 
@@ -591,7 +602,7 @@ def management():
                 now = datetime.now()
                 now_sec = int((now - midnight).total_seconds())
                 
-                print(midnight, now_sec, send_sec, management_send)
+                # print(midnight, now_sec, send_sec, management_send)
 
                 if now_sec >= send_sec and not management_send:
                     ser.write(text.encode('utf-8') + b'\r\n')

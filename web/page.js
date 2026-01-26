@@ -96,7 +96,9 @@ function createAlarmInfo(data) {
     deleteElem.innerHTML = SVG_DELETE;
     deleteElem.addEventListener('click', () => {
         // deleteAlarmItem(alarmListContainer, alarmItemContainer, data['pvname']);
-        deleteAlarmItem(data['pvname']);
+        if (confirm(`Really deleted ${data['pvname']}?`)) {
+            deleteAlarmItem(data['pvname']);
+        }
     });
 
     alarmInfoContainer.appendChild(activationElem);
@@ -582,9 +584,9 @@ function checkFromData(formData) {
                     }
                 }
                 break;
-            
+
             case 'phone':
-                if(!value) {
+                if (!value) {
                     return 'MESSAGE';
                 }
         }

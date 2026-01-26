@@ -253,8 +253,8 @@ if __name__ == '__main__':
                     # print(datetime.datetime.now(), pvname, value, desc)
 
                     try:
-                        # result = mcs.sendMMS(user, mmsMessage)
-                        result = mcs.test(user, mmsMessage)
+                        result = mcs.sendMMS(user, mmsMessage)
+                        # result = mcs.test(user, mmsMessage)
 
                         if result:
                             message = f'{pvname} {user} request message send to mms server'
