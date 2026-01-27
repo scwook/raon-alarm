@@ -9,6 +9,7 @@ import threading
 import os
 import ast
 from datetime import datetime
+from pathlib import Path
 
 # extenstion library
 import json
@@ -39,6 +40,9 @@ SERVER_ADDR = '192.168.131.194'
 REST_PORT = 9009
 WEBSOCKET_PORT = 9010
 # SERVER_ADDR = '192.168.150.219'
+
+# file path
+BASE_DIR = Path(__file__).resolve().parent
 
 app = Flask(__name__)
 CORS(app)
@@ -587,7 +591,7 @@ def management():
     management_send = False
 
     while True:
-        with open("manage.txt", "r", encoding="utf-8") as file:
+        with open(BASE_DIR / "manage.txt", "r", encoding="utf-8") as file:
             text = file.read().strip()
 
         if not text:
