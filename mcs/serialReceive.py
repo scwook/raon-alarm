@@ -240,7 +240,8 @@ if __name__ == '__main__':
             smsList = dictData['list']
 
             if isinstance(value, dict):
-                value = str(value['index'])
+                idx = int(value['index'])
+                value = f"{idx} ({value['choices'][idx]})"
             else:
                 value = str(value)
 
