@@ -566,7 +566,7 @@ function closeAlarmConfigurationDialog() {
 
 function checkFromData(formData) {
     for (let [key, value] of formData.entries()) {
-        console.log(key, value);
+        // console.log(key, value);
         switch (key) {
             case 'pvname':
                 if (!value) {
@@ -575,14 +575,18 @@ function checkFromData(formData) {
                 break;
 
             case 'value':
-                if (!value) {
-                    return 'EMPTY';
-                }
-                else {
-                    if (!(parseFloat(value))) {
-                        return 'VALUE';
-                    }
-                }
+                // if (!value) {
+                //     return 'EMPTY';
+                // }
+                // else {
+                //     if (!(parseFloat(value))) {
+                //         return 'VALUE';
+                //     }
+                // }
+                const num = Number(value);
+                if (!(value !== "" && Number.isFinite(num))) {
+                    return 'VALUE';
+                } 
                 break;
 
             case 'phone':

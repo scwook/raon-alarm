@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>SRS Pure JS Player</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #f4f4f4; }
+        video { width: 80%; max-width: 800px; background: #000; border-radius: 8px; margin-top: 20px; }
+        .controls { margin: 20px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h2>SRS WebRTC (No Library)</h2>
+    <video id="videoPlayer" controls autoplay muted playsinline></video>
+    
+    <div class="controls">
+        <button id="startBtn">스트림 연결</button>
+    </div>
+
+    <script>
+        const serverIp = "192.168.131.216";
+        const streamUrl = `webrtc://${serverIp}/live/livestream`;
+        const apiUrl = `http://${serverIp}:1985/rtc/v1/play/`;
+
+        async function startPlay() {
+            const videoElement = document.getElementById('videoPlayer');
+
+            // 1. PeerConnection 생성 (STUN 서버 없이 로컬 네트워크용으로 설정)
+            const pc = new RTCPeerConnection(null);
+
+            // 2. 서버로부터 트랙(영상/음성)을 받을 준비
+            pc.ontrack = (event) => {
+                if (videoElement.srcObject !== event.streams[0]) {
+                    videoElement.srcObject = event.streams[0];
+                    console.log("스트림 수신 시작");
+                }
+            };
+
+            // 3. 트랜시버 추가 (받기 전용 모드)
+            pc.addTransceiver("audio", { direction: "recvonly" });
+            pc.addTransceiver("video", { direction: "recvonly" });
+
+            try {
+                // 4. Offer 생성
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+
+                // 5. SRS API에 SDP 교환 요청
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        api: apiUrl,
+                        streamurl: streamUrl,
+                        sdp: offer.sdp
+                    })
+                });
+
+                const answer = await response.json();
+
+                if (answer.code !== 0) {
+                    throw new Error("SRS 응답 오류: " + JSON.stringify(answer));
+                }
+
+                // 6. 서버로부터 받은 Answer SDP 등록
+                await pc.setRemoteDescription(new RTCSessionDescription({
+                    type: 'answer',
+                    sdp: answer.sdp
+                }));
+
+                console.log("WebRTC 세션 연결 성공");
+            } catch (e) {
+                console.error("연결 실패:", e);
+                alert("연결에 실패했습니다. 콘솔 로그를 확인하세요.");
+            }
+        }
+
+        document.getElementById('startBtn').onclick = startPlay;
+    </script>
+</body>
+</html>
